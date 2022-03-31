@@ -42,6 +42,27 @@ namespace Infrastructure.Persistence
             return result;
         }
 
+        public override int SaveChanges()
+        {      
+            foreach (var entry in ChangeTracker.Entries<AuditableEntity>())
+            {
+                switch (entry.State)
+                {
+                    case EntityState.Added:
+                        entry.Entity.CreatedBy = _currentUserService.UserId;
+                        entry.Entity.Created = DateTime.Now;
+                        break;
+
+                    case EntityState.Modified:
+                        entry.Entity.LastModifiedBy = _currentUserService.UserId;
+                        entry.Entity.LastModified = DateTime.Now;
+                        break;
+                }
+            }
+            return base.SaveChanges();
+
+        }
+
 
 
         protected override void OnModelCreating(ModelBuilder builder)

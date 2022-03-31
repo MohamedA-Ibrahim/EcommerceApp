@@ -7,6 +7,7 @@ using WebApi.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using System.Reflection;
+using Infrastructure.Repository;
 
 namespace WebApi
 {
@@ -22,17 +23,16 @@ namespace WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Install services from other projects
             services.AddApplication();
             services.AddInfrastructure(Configuration);
+
             services.AddDatabaseDeveloperPageExceptionFilter();
-
-            services.AddSingleton<ICurrentUserService, CurrentUserService>();
-
             services.AddHttpContextAccessor();
 
             services.AddSwaggerGen(x =>
             {
-                x.SwaggerDoc("v1", new OpenApiInfo { Title = "TweetBook Api", Version = "v1" });
+                x.SwaggerDoc("v1", new OpenApiInfo { Title = "Ecommerce Api", Version = "v1" });
 
                 //Add the filters
                 x.ExampleFilters();
@@ -62,16 +62,17 @@ namespace WebApi
 
              
             });
-
-            //Register the filters
             services.AddSwaggerExamplesFromAssemblyOf<Startup>();
 
             services.AddRazorPages();
+            services.AddControllers();
+
+            services.AddSingleton<ICurrentUserService, CurrentUserService>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
 
             // Customise default API behaviour
             services.Configure<ApiBehaviorOptions>(options =>
-                options.SuppressModelStateInvalidFilter = true);
-         
+                options.SuppressModelStateInvalidFilter = true);     
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -92,8 +93,7 @@ namespace WebApi
             
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseAuthentication();
-            app.UseAuthorization();
+
 
             var swaggerOptions = new SwaggerOptions();
             Configuration.GetSection(nameof(SwaggerOptions)).Bind(swaggerOptions);
@@ -108,9 +108,13 @@ namespace WebApi
                 option.SwaggerEndpoint(swaggerOptions.UIEndpoint, swaggerOptions.Description);
             });
 
-            app.UseRouting();
-
-           
+           app.UseRouting();
+        
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapRazorPages();
+                endpoints.MapControllers();
+            });
         }
     }
 

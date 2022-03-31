@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Application.Common.Interfaces;
 using Infrastructure.Identity;
 using Infrastructure.Persistence;
-using Infrastructure.Services;
 namespace Infrastructure
 {
     public static class DependencyInjection
@@ -25,13 +24,6 @@ namespace Infrastructure
             .AddDefaultUI()
             .AddDefaultTokenProviders();
 
-            //services
-            //    .AddDefaultIdentity<ApplicationUser>()
-            //    .AddRoles<IdentityRole>()
-            //    .AddEntityFrameworkStores<ApplicationDbContext>();
-
-
-            services.AddTransient<IDateTime, DateTimeService>();
             services.AddTransient<IIdentityService, IdentityService>();
 
             services.AddAuthentication();

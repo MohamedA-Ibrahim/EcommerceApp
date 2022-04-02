@@ -7,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<ILoggedInUserModel, LoggedInUserModel>();
 builder.Services.AddSingleton<IApiHelper, ApiHelper>();
+builder.Services.AddScoped<ICategoryEndpoint, CategoryEndpoint>();
+builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 
 var app = builder.Build();
 
@@ -24,6 +26,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+app.MapRazorPages();
 
 app.MapControllerRoute(
     name: "default",

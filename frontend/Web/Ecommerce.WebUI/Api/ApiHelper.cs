@@ -23,7 +23,7 @@ namespace Ecommerce.WebUI.Api
 
         private void InitializeClient()
         {
-            string api = "";
+            string api = "https://localhost:7243/api/v1/";
             _apiClient = new HttpClient();
             _apiClient.BaseAddress = new Uri(api);
             _apiClient.DefaultRequestHeaders.Accept.Clear();
@@ -35,8 +35,8 @@ namespace Ecommerce.WebUI.Api
             var data = new FormUrlEncodedContent(new[]
             {
                 new KeyValuePair<string, string>("grant_type", "password"),
-                new KeyValuePair<string, string>("username", "username"),
-                new KeyValuePair<string, string>("password", "password")
+                new KeyValuePair<string, string>("username", username),
+                new KeyValuePair<string, string>("password", password)
 
             });
 

@@ -29,10 +29,10 @@ namespace Ecommerce.WebUI.Controllers
         {
             _categoryEndpoint.Create(cat);
 
-            return View(cat);
+            return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> Update(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if(id == null || id == 0)
             {
@@ -49,11 +49,11 @@ namespace Ecommerce.WebUI.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update(Category category)
+        public async Task<IActionResult> Edit(Category category)
         {
-            var updatedCategory = await _categoryEndpoint.UpdateAsync(category);
+            await _categoryEndpoint.UpdateAsync(category);
 
-            return View(updatedCategory);
+            return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> Delete(int? id)

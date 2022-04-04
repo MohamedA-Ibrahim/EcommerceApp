@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Ecommerce.WebUI.Controllers
 {
+    [Area("Admin")]
     public class CategoryController : Controller
     {
         private ICategoryEndpoint _categoryEndpoint;

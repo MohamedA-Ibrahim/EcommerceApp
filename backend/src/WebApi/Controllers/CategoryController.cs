@@ -24,10 +24,16 @@ namespace WebApi.Controllers
         }
 
         [HttpGet(ApiRoutes.Categories.Get)]
-        public IActionResult Get([FromRoute] int itemId)
+        public IActionResult Get([FromRoute] int categoryId)
         {
+            var category = _db.GetFirstOrDefault(x => x.Id == categoryId);
 
-            return Ok();
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(category);
         }
 
         [HttpPost(ApiRoutes.Categories.Create)]

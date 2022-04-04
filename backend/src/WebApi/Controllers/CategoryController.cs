@@ -8,25 +8,25 @@ namespace WebApi.Controllers
 {
     public class CategoryController : Controller
     {
-        private readonly ICategoryRepository _db;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CategoryController(ICategoryRepository db)
+        public CategoryController(IUnitOfWork unitOfWork)
         {
-            _db = db;
+            _unitOfWork = unitOfWork;
         }
 
 
         [HttpGet(ApiRoutes.Categories.GetAll)]
         public IActionResult GetAll()
         {
-            IEnumerable<Category> categories = _db.GetAll();
+            IEnumerable<Category> categories = _unitOfWork.Category.GetAll();
             return Ok(categories);
         }
 
         [HttpGet(ApiRoutes.Categories.Get)]
         public IActionResult Get([FromRoute] int categoryId)
         {
-            var category = _db.GetFirstOrDefault(x => x.Id == categoryId);
+            var category = _unitOfWork.Category.GetFirstOrDefault(x => x.Id == categoryId);
 
             if (category == null)
             {
@@ -41,8 +41,8 @@ namespace WebApi.Controllers
         {
             Category category = new Category{Name = categoryRequest.Name};
 
-            _db.Add(category);
-            _db.SaveChanges();
+            _unitOfWork.Category.Add(category);
+            _unitOfWork.Save();
 
             return Ok(category);
         }
@@ -57,7 +57,7 @@ namespace WebApi.Controllers
             //    return BadRequest(new { error = "You don't own this item" });
             //}
 
-            var category = _db.GetFirstOrDefault(x=> x.Id == categoryId);
+            var category = _unitOfWork.Category.GetFirstOrDefault(x=> x.Id == categoryId);
 
             if(category == null)
             {
@@ -66,23 +66,23 @@ namespace WebApi.Controllers
 
             category.Name = request.Name;
 
-            _db.Update(category);
-            _db.SaveChanges();
+            _unitOfWork.Category.Update(category);
+            _unitOfWork.Save();
              return Ok(category);
         }
 
         [HttpDelete(ApiRoutes.Categories.Delete)]
         public IActionResult Delete([FromRoute] int categoryId)
         {
-            var category = _db.GetFirstOrDefault(x => x.Id == categoryId);
+            var category = _unitOfWork.Category.GetFirstOrDefault(x => x.Id == categoryId);
 
             if (category == null)
             {
                 return NotFound();
             }
 
-            _db.Remove(category);
-            _db.SaveChanges();
+            _unitOfWork.Category.Remove(category);
+            _unitOfWork.Save();
 
             return NoContent();
         }

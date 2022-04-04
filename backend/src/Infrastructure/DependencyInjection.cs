@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Application.Common.Interfaces;
 using Infrastructure.Identity;
 using Infrastructure.Persistence;
+using Infrastructure.Repository;
+
 namespace Infrastructure
 {
     public static class DependencyInjection
@@ -25,6 +27,7 @@ namespace Infrastructure
             .AddDefaultTokenProviders();
 
             services.AddTransient<IIdentityService, IdentityService>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddAuthentication();
 

@@ -44,11 +44,30 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("Domain.Entities.CoverType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CoverTypes");
                 });
 
             modelBuilder.Entity("Domain.Entities.Item", b =>
@@ -65,7 +84,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Items", (string)null);
+                    b.ToTable("Items");
                 });
 
             modelBuilder.Entity("Infrastructure.Identity.ApplicationUser", b =>

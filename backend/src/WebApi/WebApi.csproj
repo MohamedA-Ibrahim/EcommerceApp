@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Contracts\V1\Responses\**" />
+    <Content Remove="Contracts\V1\Responses\**" />
+    <EmbeddedResource Remove="Contracts\V1\Responses\**" />
+    <None Remove="Contracts\V1\Responses\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FluentValidation.AspNetCore" Version="10.3.4" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.3">
@@ -20,10 +27,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Application\Application.csproj" />
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Contracts\V1\Responses\" />
   </ItemGroup>
 
 </Project>

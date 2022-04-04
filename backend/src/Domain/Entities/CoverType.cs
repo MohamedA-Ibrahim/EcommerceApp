@@ -8,13 +8,14 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class Category : AuditableEntity
+    public class CoverType : AuditableEntity
     {
         [Key]
         public int Id { get; set; }
 
+        [Display(Name = "Cover Type")]
         [Required]
         [MaxLength(50)]
-        public string Name { get;set;}
+        public string Name { get; set; }
     }
 }

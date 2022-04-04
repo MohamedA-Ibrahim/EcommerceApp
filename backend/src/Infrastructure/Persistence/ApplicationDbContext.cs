@@ -13,6 +13,7 @@ namespace Infrastructure.Persistence
     {
         private readonly ICurrentUserService _currentUserService;
 
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, ICurrentUserService currentUserService)
             : base(options)
         {
@@ -63,14 +64,18 @@ namespace Infrastructure.Persistence
 
         }
 
-
-
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
         }
 
+        #region Dbsets
+
         public DbSet<Item> Items { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<CoverType> CoverTypes { get; set; }
+
+
+        #endregion
     }
 }

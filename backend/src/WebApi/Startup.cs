@@ -68,7 +68,6 @@ namespace WebApi
             services.AddControllers();
 
             services.AddSingleton<ICurrentUserService, CurrentUserService>();
-            services.AddScoped<ICategoryRepository, CategoryRepository>();
 
             // Customise default API behaviour
             services.Configure<ApiBehaviorOptions>(options =>

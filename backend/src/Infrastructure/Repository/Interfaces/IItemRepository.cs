@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repository
 {
-    public interface ICoverTypeRepository : IRepository<CoverType>
+    public interface IItemRepository : IRepository<Item>
     {
-        void Update(CoverType category);
+        void Update(Item item);
     }
 }

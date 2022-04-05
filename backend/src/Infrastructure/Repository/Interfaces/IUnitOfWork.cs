@@ -9,8 +9,7 @@ namespace Infrastructure.Repository
     public interface IUnitOfWork
     {
         ICategoryRepository Category { get; }
-        ICoverTypeRepository CoverType { get; }
-
+        IItemRepository Item { get; }
         void Save();
     }
 }

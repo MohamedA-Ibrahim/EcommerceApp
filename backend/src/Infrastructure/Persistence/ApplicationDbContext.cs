@@ -13,11 +13,22 @@ namespace Infrastructure.Persistence
     {
         private readonly ICurrentUserService _currentUserService;
 
+        #region Constructor
+
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, ICurrentUserService currentUserService)
             : base(options)
         {
             _currentUserService = currentUserService;
+        }
+
+        #endregion
+
+        #region Overrides
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
@@ -64,17 +75,12 @@ namespace Infrastructure.Persistence
 
         }
 
-        protected override void OnModelCreating(ModelBuilder builder)
-        {
-            base.OnModelCreating(builder);
-        }
+        #endregion
 
         #region Dbsets
 
         public DbSet<Item> Items { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<CoverType> CoverTypes { get; set; }
-
 
         #endregion
     }

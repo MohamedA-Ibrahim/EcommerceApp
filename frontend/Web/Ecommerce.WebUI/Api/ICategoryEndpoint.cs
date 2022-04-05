@@ -7,7 +7,7 @@ namespace Ecommerce.WebUI.Api
     {
         Task Create(Category cat);
         Task<HttpStatusCode> DeleteAsync(int id);
-        Task<List<Category>> GetAll();
+        Task<IEnumerable<Category>> GetAll();
         Task<Category> GetById(int? id);
         Task<Category> UpdateAsync(Category category);
     }

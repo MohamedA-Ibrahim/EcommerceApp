@@ -26,7 +26,7 @@ namespace WebUI
                     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
                 await ApplicationDbContextSeed.SeedDefaultUserAsync(userManager, roleManager);
-                    await ApplicationDbContextSeed.SeedSampleDataAsync(context);
+                //await ApplicationDbContextSeed.SeedSampleDataAsync(context);
              
             }
 

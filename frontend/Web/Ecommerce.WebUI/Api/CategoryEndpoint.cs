@@ -12,7 +12,7 @@ namespace Ecommerce.WebUI.Api
             _apiHelper = apiHelper;
         }
 
-        public async Task<List<Category>> GetAll()
+        public async Task<IEnumerable<Category>> GetAll()
         {
             using (HttpResponseMessage response = await _apiHelper.ApiClient.GetAsync("categories"))
             {

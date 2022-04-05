@@ -1,11 +1,15 @@
 ﻿using Domain.Entities;
 using Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Mime;
 using WebApi.Contracts.V1;
 using WebApi.Contracts.V1.Requests;
 
 namespace WebApi.Controllers
 {
+    [ApiController]
+    [Consumes(MediaTypeNames.Application.Json)]
+    [Produces("application/json")]
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

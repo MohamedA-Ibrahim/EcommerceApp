@@ -8,7 +8,6 @@ namespace Ecommerce.WebUI.Controllers
     public class CategoryController : Controller
     {
         private ICategoryEndpoint _categoryEndpoint;
-
         public CategoryController(ICategoryEndpoint categoryEndpoint)
         {
             _categoryEndpoint = categoryEndpoint;
@@ -26,9 +25,9 @@ namespace Ecommerce.WebUI.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Category cat)
+        public async Task<IActionResult> Create(Category cat)
         {
-            _categoryEndpoint.Create(cat);
+            await _categoryEndpoint.Create(cat);
 
             return RedirectToAction("Index");
         }
@@ -49,9 +48,12 @@ namespace Ecommerce.WebUI.Controllers
             return View(categoryFromDb);
         }
 
-        [HttpPut]
+        [HttpPost]
         public async Task<IActionResult> Edit(Category category)
         {
+            if(!ModelState.IsValid)
+                return BadRequest();
+
             await _categoryEndpoint.UpdateAsync(category);
 
             return RedirectToAction("Index");
@@ -73,7 +75,7 @@ namespace Ecommerce.WebUI.Controllers
             return View(categoryFromDb);
 
         }
-        [HttpDelete, ActionName("Delete")]
+        [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeletePOST(int id)
         {
             await _categoryEndpoint.DeleteAsync(id);

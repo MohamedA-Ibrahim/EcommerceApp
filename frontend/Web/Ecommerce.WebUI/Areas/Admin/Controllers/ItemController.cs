@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq;
 using System.Collections;
+using Ecommerce.WebUI.ViewModels;
 
 namespace Ecommerce.WebUI.Controllers
 {
@@ -32,25 +33,22 @@ namespace Ecommerce.WebUI.Controllers
 
         public async Task<IActionResult> Upsert(int? id)
         {
-            Item item = new ();
-            var CategoryList = await _categoryEndpoint.GetAll();
-
-            SelectList categoryList = new SelectList(CategoryList, "Id", "Name");
-
+            ItemVM itemVM = new()
+            {
+                Item = new(),
+                CategoryList = new SelectList(await _categoryEndpoint.GetAll(), "Id", "Name")       
+            };
 
             if(id == null || id == 0)
             {
-                //create item
-                ViewBag.CategoryList = categoryList;
-                return View(item);
+                return View(itemVM);
             }
             else
             {
                 //update item
             }
 
-
-            return View(item);
+            return View(itemVM);
         }
 
         [HttpPost]

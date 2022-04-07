@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq;
 using System.Collections;
 using Ecommerce.WebUI.ViewModels;
+using Microsoft.AspNetCore.Http;
 
 namespace Ecommerce.WebUI.Controllers
 {
@@ -48,16 +49,17 @@ namespace Ecommerce.WebUI.Controllers
                 //update item
             }
 
+
             return View(itemVM);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(Item item)
+        public async Task<IActionResult> Upsert(ItemVM itemVM, IFormFile file)
         {
             if(!ModelState.IsValid)
                 return BadRequest();
 
-            await _itemEndpoint.UpdateAsync(item);
+            //await _itemEndpoint.UpdateAsync(item);
 
             return RedirectToAction("Index");
         }

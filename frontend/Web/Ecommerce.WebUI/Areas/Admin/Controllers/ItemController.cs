@@ -14,11 +14,13 @@ namespace Ecommerce.WebUI.Controllers
     {
         private IItemEndpoint _itemEndpoint;
         private ICategoryEndpoint _categoryEndpoint;
+        private readonly IWebHostEnvironment _hostEnvironment;
 
-        public ItemController(IItemEndpoint itemEndpoint, ICategoryEndpoint categoryEndpoint)
+        public ItemController(IItemEndpoint itemEndpoint, ICategoryEndpoint categoryEndpoint, IWebHostEnvironment hostEnvironment)
         {
             _itemEndpoint = itemEndpoint;
             _categoryEndpoint = categoryEndpoint;
+            _hostEnvironment = hostEnvironment;
         }
 
         public async Task<IActionResult> Index()
@@ -54,13 +56,29 @@ namespace Ecommerce.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Upsert(ItemVM itemVM, IFormFile file)
+        public async Task<IActionResult> Upsert(ItemVM itemVM, IFormFile? file)
         {
             if(!ModelState.IsValid)
                 return BadRequest();
 
-            //await _itemEndpoint.UpdateAsync(item);
+            //Get image
+            string wwRootPath = _hostEnvironment.WebRootPath;
+            if(file != null)
+            {
+                string fileName = Guid.NewGuid().ToString();
+                var uploads = Path.Combine(wwRootPath, @"images\items");
+                var extension = Path.GetExtension(file.FileName);
 
+                using(var fileStreams = new FileStream(Path.Combine(uploads, fileName+extension), FileMode.Create))
+                {
+                    file.CopyTo(fileStreams);
+                }
+
+                itemVM.Item.ImageUrl = @"\images\items\" + fileName + extension;
+            }
+
+            await _itemEndpoint.CreateAsync(itemVM.Item);
+            TempData["success"] = "Item created succesfully";
             return RedirectToAction("Index");
         }
 

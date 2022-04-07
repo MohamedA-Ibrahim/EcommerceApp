@@ -5,7 +5,7 @@ namespace Ecommerce.WebUI.Api
 {
     public interface IItemEndpoint
     {
-        Task Create(Item item);
+        Task CreateAsync(Item item);
         Task<HttpStatusCode> DeleteAsync(int id);
         Task<IEnumerable<Item>> GetAll();
         Task<Item> GetById(int? id);

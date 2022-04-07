@@ -28,7 +28,7 @@ namespace Ecommerce.WebUI.Api
             }
         }
 
-        public async Task Create(Item item)
+        public async Task CreateAsync(Item item)
         {
             using (HttpResponseMessage response = await _apiHelper.ApiClient.PostAsJsonAsync("items", item))
             {

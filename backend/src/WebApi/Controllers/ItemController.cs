@@ -40,12 +40,30 @@ namespace WebApi.Controllers
             return Ok(category);
         }
 
-        [HttpPut(ApiRoutes.Items.Update)]
-        public IActionResult Upsert([FromRoute] int id, [FromBody] UpdateItemRequest request)
+        [HttpPost(ApiRoutes.Items.Create)]
+        public IActionResult Create([FromBody] CreateItemRequest request)
         {
-            var item = _unitOfWork.Item.GetFirstOrDefault(x=> x.Id == id);
+            Item item = new Item
+            {
+                Name = request.Name,
+                Description = request.Description,
+                Price = request.Price,
+                ImageUrl = request.ImageUrl,
+                CategoryId = request.CategoryId,
+                ExpirationDate = request.ExpirationDate,
+            };
+            _unitOfWork.Item.Add(item);
+            _unitOfWork.Save();
 
-            if(item == null)
+            return Ok(item);
+        }
+
+        [HttpPut(ApiRoutes.Items.Update)]
+        public IActionResult Update([FromRoute] int id, [FromBody] UpdateItemRequest request)
+        {
+            var item = _unitOfWork.Item.GetFirstOrDefault(x => x.Id == id);
+
+            if (item == null)
             {
                 return NotFound();
             }
@@ -59,7 +77,7 @@ namespace WebApi.Controllers
 
             _unitOfWork.Item.Update(item);
             _unitOfWork.Save();
-             return Ok(item);
+            return Ok(item);
         }
 
         [HttpDelete(ApiRoutes.Items.Delete)]

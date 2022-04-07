@@ -14,7 +14,7 @@ namespace Domain.Entities
 
         [Required]
         public string Name { get; set; }
-        public int Description { get;set;}
+        public string Description { get;set;}
 
         [Required]
         [Range(1,10000)]

@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Http;
 
 namespace Ecommerce.WebUI.Controllers
 {
-    [Area("Admin")]
     public class ItemController : Controller
     {
         private IItemEndpoint _itemEndpoint;

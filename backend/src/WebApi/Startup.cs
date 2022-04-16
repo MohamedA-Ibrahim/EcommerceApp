@@ -105,6 +105,7 @@ namespace WebApi
             app.UseSwaggerUI(option =>
             {
                 option.SwaggerEndpoint(swaggerOptions.UIEndpoint, swaggerOptions.Description);
+
             });
 
            app.UseRouting();

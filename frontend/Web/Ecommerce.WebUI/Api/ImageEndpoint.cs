@@ -12,7 +12,7 @@ namespace Ecommerce.WebUI.Api
 
         public async Task<string> UploadImage(IFormFile file)
         {
-            HttpResponseMessage response = await _apiHelper.ApiClient.PostAsync("image", GetFileFromForm(file));
+            HttpResponseMessage response = await _apiHelper.ApiClient.PostAsync("images", GetFileFromForm(file));
             response.EnsureSuccessStatusCode();
 
             var item = await response.Content.ReadAsAsync<string>();
@@ -21,7 +21,7 @@ namespace Ecommerce.WebUI.Api
 
         public async Task<HttpStatusCode> DeleteImage(string imageName)
         {
-            HttpResponseMessage response = await _apiHelper.ApiClient.DeleteAsync($"image/{imageName}");
+            HttpResponseMessage response = await _apiHelper.ApiClient.DeleteAsync($"images/{imageName}");
             response.EnsureSuccessStatusCode();
 
             return response.StatusCode;

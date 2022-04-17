@@ -19,31 +19,32 @@ namespace WebApi.Controllers
 
 
 
-        [HttpPost(ApiRoutes.Image.Upload)]
+        [HttpPost(ApiRoutes.Images.Upload)]
         public async Task<string> Upload([FromForm] IFormFile file)
         {
             try
             {
+
                 if (file.Length <= 0)
                     return "Not Uploaded.";
 
                     string fileName = Guid.NewGuid().ToString();
                     string extension = Path.GetExtension(file.FileName);
-                    string path = _webHostEnvironment.WebRootPath + "\\image\\";
+                     string wwwPath = _webHostEnvironment.WebRootPath;
+                     string uploadsPath = Path.Combine(wwwPath, @"images\");
 
-                    if (!Directory.Exists(path))
+                if (!Directory.Exists(uploadsPath))
                     {
-                        Directory.CreateDirectory(path);
+                        Directory.CreateDirectory(uploadsPath);
                     }
 
-                    using (FileStream fileStream = System.IO.File.Create(path + fileName + extension))
+                    using (FileStream fileStream = System.IO.File.Create(uploadsPath + fileName + extension))
                     {
                         file.CopyTo(fileStream);
                         fileStream.Flush();
-                        return path + fileName + extension;
                     }
 
-                
+                return @"\images\" + fileName + extension;
             }
             catch (Exception ex)
             {
@@ -52,10 +53,10 @@ namespace WebApi.Controllers
         }
 
         
-        [HttpGet(ApiRoutes.Image.Get)]
+        [HttpGet(ApiRoutes.Images.Get)]
         public async Task<IActionResult> GetImageByName([FromRoute] string imageName)
         {
-            string path = _webHostEnvironment.WebRootPath + "\\image\\";
+            string path = _webHostEnvironment.WebRootPath + "\\images\\";
 
             var filePath = Path.Combine(path, imageName);
 
@@ -71,10 +72,10 @@ namespace WebApi.Controllers
         /// </summary>
         /// <param name="imageName">The name of the image to delete</param>
         /// <returns>Deleted <paramref name="imageName"/></returns>
-        [HttpDelete(ApiRoutes.Image.Delete)]
+        [HttpDelete(ApiRoutes.Images.Delete)]
         public async Task<IActionResult> Delete([FromRoute] string imageName)
         {
-            string rootPath = _webHostEnvironment.WebRootPath + "\\image\\";
+            string rootPath = _webHostEnvironment.WebRootPath + "\\images\\";
 
             var imagePath = Path.Combine(rootPath, imageName);
 

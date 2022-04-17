@@ -24,11 +24,11 @@
             public const string Create = Base + "/items";
         }
 
-        public static class Image
+        public static class Images
         {
-            public const string Upload = Base + "/image";
-            public const string Get = Base + "/image/{imageName}";
-            public const string Delete = Base + "/image/{imageName}";
+            public const string Upload = Base + "/images";
+            public const string Get = Base + "/images/{imageName}";
+            public const string Delete = Base + "/images/{imageName}";
 
         }
 

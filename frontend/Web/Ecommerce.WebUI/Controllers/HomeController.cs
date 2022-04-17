@@ -1,4 +1,5 @@
-﻿using Ecommerce.WebUI.Models;
+﻿using Ecommerce.WebUI.Api;
+using Ecommerce.WebUI.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -7,15 +8,19 @@ namespace Ecommerce.WebUI.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        private IItemEndpoint _itemEndpoint;
+        private ICategoryEndpoint _categoryEndpoint;
+        public HomeController(ILogger<HomeController> logger, IItemEndpoint itemEndpoint, ICategoryEndpoint categoryEndpoint)
         {
             _logger = logger;
+            _itemEndpoint = itemEndpoint;
+            _categoryEndpoint = categoryEndpoint;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var itemList = await _itemEndpoint.GetAll();
+            return View(itemList);
         }
 
         public IActionResult Privacy()

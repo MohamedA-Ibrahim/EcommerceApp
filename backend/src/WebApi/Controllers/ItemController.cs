@@ -10,7 +10,7 @@ namespace WebApi.Controllers
     [ApiController]
     [Consumes(MediaTypeNames.Application.Json)]
     [Produces("application/json")]
-    public class ItemController : Controller
+    public class ItemController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -24,20 +24,21 @@ namespace WebApi.Controllers
         public IActionResult GetAll()
         {
             IEnumerable<Item> items = _unitOfWork.Item.GetAll();
+
             return Ok(items);
         }
 
         [HttpGet(ApiRoutes.Items.Get)]
-        public IActionResult Get([FromRoute] int categoryId)
+        public IActionResult Get([FromRoute] int itemId)
         {
-            var category = _unitOfWork.Category.GetFirstOrDefault(x => x.Id == categoryId);
+            var item = _unitOfWork.Item.GetFirstOrDefault(x => x.Id == itemId);
 
-            if (category == null)
+            if (item == null)
             {
                 return NotFound();
             }
 
-            return Ok(category);
+            return Ok(item);
         }
 
         [HttpPost(ApiRoutes.Items.Create)]
@@ -59,9 +60,9 @@ namespace WebApi.Controllers
         }
 
         [HttpPut(ApiRoutes.Items.Update)]
-        public IActionResult Update([FromRoute] int id, [FromBody] UpdateItemRequest request)
+        public IActionResult Update([FromRoute] int itemId, [FromBody] UpdateItemRequest request)
         {
-            var item = _unitOfWork.Item.GetFirstOrDefault(x => x.Id == id);
+            var item = _unitOfWork.Item.GetFirstOrDefault(x => x.Id == itemId);
 
             if (item == null)
             {
@@ -81,9 +82,9 @@ namespace WebApi.Controllers
         }
 
         [HttpDelete(ApiRoutes.Items.Delete)]
-        public IActionResult Delete([FromRoute] int id)
+        public IActionResult Delete([FromRoute] int itemId)
         {
-            var item = _unitOfWork.Item.GetFirstOrDefault(x => x.Id == id);
+            var item = _unitOfWork.Item.GetFirstOrDefault(x => x.Id == itemId);
 
             if (item == null)
             {

@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using System.Reflection;
 using Infrastructure.Repository;
+using WebApi.Filters;
 
 namespace WebApi
 {
@@ -26,6 +27,12 @@ namespace WebApi
             //Install services from other projects
             services.AddApplication();
             services.AddInfrastructure(Configuration);
+            services
+                .AddMvc(options =>
+                 {
+                         options.EnableEndpointRouting = false;
+                         options.Filters.Add<ValidationFilter>();
+                });
 
             services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddHttpContextAccessor();
@@ -33,6 +40,7 @@ namespace WebApi
             services.AddSwaggerGen(x =>
             {
                 x.SwaggerDoc("v1", new OpenApiInfo { Title = "Ecommerce Api", Version = "v1" });
+                x.OperationFilter<SwaggerFileOperationFilter>();
 
                 //Add the filters
                 x.ExampleFilters();
@@ -86,13 +94,11 @@ namespace WebApi
             else
             {
                 app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
             }
             
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            app.UseHsts();
 
             var swaggerOptions = new SwaggerOptions();
             Configuration.GetSection(nameof(SwaggerOptions)).Bind(swaggerOptions);
@@ -115,6 +121,8 @@ namespace WebApi
                 endpoints.MapRazorPages();
                 endpoints.MapControllers();
             });
+
+
         }
     }
 

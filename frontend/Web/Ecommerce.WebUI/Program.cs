@@ -9,6 +9,7 @@ builder.Services.AddSingleton<ILoggedInUserModel, LoggedInUserModel>();
 builder.Services.AddSingleton<IApiHelper, ApiHelper>();
 builder.Services.AddScoped<ICategoryEndpoint, CategoryEndpoint>();
 builder.Services.AddScoped<IItemEndpoint, ItemEndpoint>();
+builder.Services.AddScoped<IImageEndpoint, ImageEndpoint>();
 
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 

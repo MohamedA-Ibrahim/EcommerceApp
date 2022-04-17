@@ -23,7 +23,8 @@ namespace Ecommerce.WebUI.Api
 
         private void InitializeClient()
         {
-            string api = "https://ecommerceapiappservice.azurewebsites.net/api/v1/";
+            string api = "https://localhost:7243/api/v1/";
+            //string api = "https://ecommerceapiappservice.azurewebsites.net/api/v1/";
             _apiClient = new HttpClient();
             _apiClient.BaseAddress = new Uri(api);
             _apiClient.DefaultRequestHeaders.Accept.Clear();

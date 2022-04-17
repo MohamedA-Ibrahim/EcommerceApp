@@ -24,6 +24,12 @@
             public const string Create = Base + "/items";
         }
 
+        public static class Image
+        {
+            public const string Upload = Base + "/image";
+            public const string Get = Base + "/image/{imageName}";
+        }
+
         public static class Identity
         {
             public const string Login = Base + "/identity/login";

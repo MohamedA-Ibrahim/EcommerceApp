@@ -6,6 +6,7 @@ using System.Linq;
 using System.Collections;
 using Ecommerce.WebUI.ViewModels;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Ecommerce.WebUI.Controllers
 {
@@ -13,13 +14,14 @@ namespace Ecommerce.WebUI.Controllers
     {
         private IItemEndpoint _itemEndpoint;
         private ICategoryEndpoint _categoryEndpoint;
-        private readonly IWebHostEnvironment _hostEnvironment;
+        private IImageEndpoint _imageEndpoint;
 
-        public ItemController(IItemEndpoint itemEndpoint, ICategoryEndpoint categoryEndpoint, IWebHostEnvironment hostEnvironment)
+        public ItemController(IItemEndpoint itemEndpoint,
+            ICategoryEndpoint categoryEndpoint, IImageEndpoint imageEndpoint)
         {
             _itemEndpoint = itemEndpoint;
             _categoryEndpoint = categoryEndpoint;
-            _hostEnvironment = hostEnvironment;
+            _imageEndpoint = imageEndpoint;
         }
 
         public async Task<IActionResult> Index()
@@ -55,25 +57,18 @@ namespace Ecommerce.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Upsert(ItemVM itemVM, IFormFile? file)
+        public async Task<IActionResult> Upsert(ItemVM itemVM, IFormFile file)
         {
-            if(!ModelState.IsValid)
-                return BadRequest();
-
-            //Get image
-            string wwRootPath = _hostEnvironment.WebRootPath;
-            if(file != null)
+            if (!ModelState.IsValid)
             {
-                string fileName = Guid.NewGuid().ToString();
-                var uploads = Path.Combine(wwRootPath, @"images\items");
-                var extension = Path.GetExtension(file.FileName);
+                IEnumerable<ModelError> allErrors = ModelState.Values.SelectMany(v => v.Errors);
+                return BadRequest();
+            }
 
-                using(var fileStreams = new FileStream(Path.Combine(uploads, fileName+extension), FileMode.Create))
-                {
-                    file.CopyTo(fileStreams);
-                }
+            if (file != null)
+            {
+                itemVM.Item.ImageUrl = await _imageEndpoint.UploadImage(file);
 
-                itemVM.Item.ImageUrl = @"\images\items\" + fileName + extension;
             }
 
             await _itemEndpoint.CreateAsync(itemVM.Item);

@@ -19,7 +19,10 @@ namespace WebApi.Controllers
             _unitOfWork = unitOfWork;
         }
 
-
+        /// <summary>
+        /// Get All Items
+        /// </summary>
+        /// <returns></returns>
         [HttpGet(ApiRoutes.Items.GetAll)]
         public IActionResult GetAll()
         {
@@ -28,6 +31,11 @@ namespace WebApi.Controllers
             return Ok(items);
         }
 
+        /// <summary>
+        /// Get an Item by Id
+        /// </summary>
+        /// <param name="itemId">The id of the item</param>
+        /// <returns></returns>
         [HttpGet(ApiRoutes.Items.Get)]
         public IActionResult Get([FromRoute] int itemId)
         {

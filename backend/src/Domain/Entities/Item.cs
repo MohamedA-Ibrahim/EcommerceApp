@@ -22,6 +22,7 @@ namespace Domain.Entities
 
         public string? ImageUrl { get;set;}
 
+        [Display(Name ="Category")]
         [Required]
         public int CategoryId { get;set;}
         public Category Category { get; set; }

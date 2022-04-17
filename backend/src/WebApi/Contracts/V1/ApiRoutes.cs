@@ -28,6 +28,8 @@
         {
             public const string Upload = Base + "/image";
             public const string Get = Base + "/image/{imageName}";
+            public const string Delete = Base + "/image/{imageName}";
+
         }
 
         public static class Identity

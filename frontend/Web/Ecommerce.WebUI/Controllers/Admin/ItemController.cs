@@ -26,8 +26,7 @@ namespace Ecommerce.WebUI.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var items = await _itemEndpoint.GetAll();
-             return View(items);  
+             return View();  
         }
 
         public IActionResult Create()
@@ -100,5 +99,16 @@ namespace Ecommerce.WebUI.Controllers
             return RedirectToAction("Index");
 
         }
+
+        #region API Calls
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var items = await _itemEndpoint.GetAll();
+            return Json(new {data = items});
+        }
+
+        #endregion
     }
 }

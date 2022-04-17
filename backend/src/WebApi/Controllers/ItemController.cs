@@ -23,7 +23,7 @@ namespace WebApi.Controllers
         [HttpGet(ApiRoutes.Items.GetAll)]
         public IActionResult GetAll()
         {
-            IEnumerable<Item> items = _unitOfWork.Item.GetAll();
+            IEnumerable<Item> items = _unitOfWork.Item.GetAll(includeProperties:"Category");
 
             return Ok(items);
         }

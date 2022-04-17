@@ -1,4 +1,6 @@
-﻿namespace Ecommerce.WebUI.Api
+﻿using System.Net;
+
+namespace Ecommerce.WebUI.Api
 {
     public class ImageEndpoint : IImageEndpoint
     {
@@ -15,6 +17,14 @@
 
             var item = await response.Content.ReadAsAsync<string>();
             return item;
+        }
+
+        public async Task<HttpStatusCode> DeleteImage(string imageName)
+        {
+            HttpResponseMessage response = await _apiHelper.ApiClient.DeleteAsync($"image/{imageName}");
+            response.EnsureSuccessStatusCode();
+
+            return response.StatusCode;
         }
 
         private static MultipartFormDataContent GetFileFromForm(IFormFile file)

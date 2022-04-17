@@ -1,9 +1,14 @@
 ﻿@model Ecommerce.WebUI.ViewModels.ItemVM
 
 <form method="post" asp-action="Upsert" enctype="multipart/form-data">
-    <div class="border p-3 mt-4 row">
+    <input asp-for="Item.Id" hidden />
+    <input asp-for="Item.ImageUrl" hidden />
+
+    <div class="row">
+        <div class="col-10">           
+        <div class="border p-3 mt-4 row">
         <div class="row pb-2">
-            <h2 class="text-primary">(@Model.Item.Id !=0 ? "Update" : "Create") Item</h2>
+            <h2 class="text-primary">@(Model.Item.Id!=0?"Update" : "Create") Item</h2>
             <hr />
         </div>
         <div class="mb-3">
@@ -48,11 +53,19 @@
                 <button type="submit" onclick="return ValidateInput()" class="btn btn-primary" style="width:150px">Create</button>    
             }
 
-            <a asp-controller="Category" asp-action="Index" class="btn btn-secondary" style="width:150px">
+            <a asp-controller="Item" asp-action="Index" class="btn btn-secondary" style="width:150px">
                 Back to List
             </a>
         </div>
     </div>
+        </div>
+
+        <div class="col-2 pt-4">        
+            <img src="@Model.Item.ImageUrl" width="200" style="border-radius:5px; border:1px solid #bbb9b9" />
+        </div>
+        
+    </div>
+
 </form>
 
 @section Scripts{

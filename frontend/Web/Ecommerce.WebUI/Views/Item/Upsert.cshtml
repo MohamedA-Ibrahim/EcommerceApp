@@ -2,7 +2,7 @@
 
 <form method="post" asp-action="Upsert" enctype="multipart/form-data">
     <input asp-for="Item.Id" hidden />
-    <input asp-for="Item.ImageUrl" hidden />
+    <input asp-for="Item.Image" hidden />
 
     <div class="row">
         <div class="col-10">           
@@ -31,9 +31,9 @@
             <input asp-for="Item.ExpirationDate" class="form-control" />
         </div>
         <div class="mb-3">
-            <label asp-for="Item.ImageUrl"></label>
+            <label asp-for="Item.Image"></label>
             <input type="file" id="uploadBox" name="file" class="form-control" />
-            <span asp-validation-for="Item.ImageUrl" class="text-danger"></span>
+            <span asp-validation-for="Item.Image" class="text-danger"></span>
         </div>
 
         <div class="mb-3">
@@ -60,9 +60,14 @@
     </div>
         </div>
 
-        <div class="col-2 pt-4">        
-            <img src="@Model.Item.ImageUrl" width="200" style="border-radius:5px; border:1px solid #bbb9b9" />
-        </div>
+         @if(Model.Item.Id != 0)
+            {
+                <div class="col-2 pt-4">        
+                <img class="img-responsive full-width" src="data:image/jpeg;base64,@Convert.ToBase64String(@Model.Item.Image)" width="200" style="border-radius:5px; border:1px solid #bbb9b9"/>
+                 </div>
+            }
+
+
         
     </div>
 

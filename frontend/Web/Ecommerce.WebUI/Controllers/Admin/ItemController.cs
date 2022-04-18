@@ -14,14 +14,13 @@ namespace Ecommerce.WebUI.Controllers
     {
         private IItemEndpoint _itemEndpoint;
         private ICategoryEndpoint _categoryEndpoint;
-        private IImageEndpoint _imageEndpoint;
 
         public ItemController(IItemEndpoint itemEndpoint,
-            ICategoryEndpoint categoryEndpoint, IImageEndpoint imageEndpoint)
+            ICategoryEndpoint categoryEndpoint)
         {
             _itemEndpoint = itemEndpoint;
             _categoryEndpoint = categoryEndpoint;
-            _imageEndpoint = imageEndpoint;
+
         }
 
         public async Task<IActionResult> Index()
@@ -62,12 +61,11 @@ namespace Ecommerce.WebUI.Controllers
 
             if (file != null)
             {
-                if(itemVM.Item.ImageUrl != null)
+                using (var ms = new MemoryStream())
                 {
-                    await _imageEndpoint.DeleteImage(Path.GetFileName(itemVM.Item.ImageUrl));
+                    file.CopyTo(ms);
+                    itemVM.Item.Image = ms.ToArray();
                 }
-
-                itemVM.Item.ImageUrl = await _imageEndpoint.UploadImage(file);
             }
 
             if(itemVM.Item.Id == 0)
@@ -99,9 +97,7 @@ namespace Ecommerce.WebUI.Controllers
                 return Json(new {success = false, message = "item not found"});
             }
 
-            await Task.WhenAll(
-                _itemEndpoint.DeleteAsync(id),
-                _imageEndpoint.DeleteImage(Path.GetFileName(itemFromDb.ImageUrl)));
+                await _itemEndpoint.DeleteAsync(id);
 
             return Json(new { success = true, message = "Deleted Successfully" });
 

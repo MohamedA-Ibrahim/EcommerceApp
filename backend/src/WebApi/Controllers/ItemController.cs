@@ -50,17 +50,18 @@ namespace WebApi.Controllers
         }
 
         [HttpPost(ApiRoutes.Items.Create)]
-        public IActionResult Create([FromBody] CreateItemRequest request)
+        public IActionResult Create([FromBody] CreateItemRequest request, [FromForm] IFormFile? file)
         {
             Item item = new Item
             {
                 Name = request.Name,
                 Description = request.Description,
                 Price = request.Price,
-                ImageUrl = request.ImageUrl,
+                Image = request.Image,
                 CategoryId = request.CategoryId,
                 ExpirationDate = request.ExpirationDate,
             };
+
             _unitOfWork.Item.Add(item);
             _unitOfWork.Save();
 
@@ -80,7 +81,7 @@ namespace WebApi.Controllers
             item.Name = request.Name;
             item.Description = request.Description;
             item.Price = request.Price;
-            item.ImageUrl = request.ImageUrl;
+            item.Image = request.Image;
             item.CategoryId = request.CategoryId;
             item.ExpirationDate = request.ExpirationDate;
 

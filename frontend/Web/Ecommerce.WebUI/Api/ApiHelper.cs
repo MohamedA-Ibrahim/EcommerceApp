@@ -4,9 +4,7 @@ using System.Net.Http.Headers;
 namespace Ecommerce.WebUI.Api
 {
     public class ApiHelper : IApiHelper
-    {
-        public string ServerUrl { get; private set; }
-        
+    {        
         private HttpClient _apiClient;
         private ILoggedInUserModel _loggedInUser;
 
@@ -25,11 +23,11 @@ namespace Ecommerce.WebUI.Api
 
         private void InitializeClient()
         {
-            ServerUrl = "https://localhost:7243/";
-            //string serverUrl = "https://ecommerceapiappservice.azurewebsites.net/";
+            string serverUrl = "https://localhost:7243/api/v1/";
+            //string serverUrl = "https://ecommerceapiappservice.azurewebsites.net/api/v1/";
 
             _apiClient = new HttpClient();
-            _apiClient.BaseAddress = new Uri(ServerUrl + "api/v1/");
+            _apiClient.BaseAddress = new Uri(serverUrl);
             _apiClient.DefaultRequestHeaders.Accept.Clear();
             _apiClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }

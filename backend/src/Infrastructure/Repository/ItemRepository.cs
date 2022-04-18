@@ -30,9 +30,9 @@ namespace Infrastructure.Repository
             itemFromDb.CategoryId = item.CategoryId;
             itemFromDb.ExpirationDate = item.ExpirationDate;
 
-            if (item.ImageUrl != null)
+            if (item.Image != null)
             {
-                itemFromDb.ImageUrl = item.ImageUrl;
+                itemFromDb.Image = item.Image;
             }
 
             //We can use this directly if we want to update everything

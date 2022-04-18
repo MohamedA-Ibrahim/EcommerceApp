@@ -20,16 +20,7 @@ namespace Ecommerce.WebUI.Api
                 if (response.IsSuccessStatusCode)
                 {
                     var result = await response.Content.ReadAsAsync<List<Item>>();
-                    return result.Select(x => new Item
-                    {
-                        Id = x.Id,
-                        Name = x.Name,
-                        Price = x.Price,
-                        Description = x.Description,
-                        ExpirationDate = x.ExpirationDate,
-                        Category = x.Category,
-                        ImageUrl = _apiHelper.ServerUrl + x.ImageUrl,
-                    });
+                    return result;
                 }
                 else
                 {
@@ -68,8 +59,6 @@ namespace Ecommerce.WebUI.Api
                 if (response.IsSuccessStatusCode)
                 {
                     var result = await response.Content.ReadAsAsync<Item>();
-                    result.ImageUrl = _apiHelper.ServerUrl + result.ImageUrl;
-
                     return result;
                 }
                 else

@@ -20,7 +20,7 @@ namespace Domain.Entities
         [Range(1,10000)]
         public double Price { get; set; }
 
-        public string? ImageUrl { get;set;}
+        public byte[] Image { get;set;}
 
         [Display(Name ="Category")]
         [Required]

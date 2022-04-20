@@ -3,23 +3,30 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Application.Common.Interfaces;
+using Infrastructure.Settings;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 
 namespace Infrastructure.Identity
 {
     public class IdentityService : IIdentityService
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly JwtSettings _jwtSettings;
         private readonly IUserClaimsPrincipalFactory<ApplicationUser> _userClaimsPrincipalFactory;
         private readonly IAuthorizationService _authorizationService;
 
         public IdentityService(
             UserManager<ApplicationUser> userManager,
             IUserClaimsPrincipalFactory<ApplicationUser> userClaimsPrincipalFactory,
-            IAuthorizationService authorizationService)
+            IAuthorizationService authorizationService, JwtSettings jwtSettings)
         {
             _userManager = userManager;
             _userClaimsPrincipalFactory = userClaimsPrincipalFactory;
             _authorizationService = authorizationService;
+            _jwtSettings = jwtSettings;
         }
 
         public async Task<string> GetUserNameAsync(string userId)
@@ -29,17 +36,52 @@ namespace Infrastructure.Identity
             return user.UserName;
         }
 
-        public async Task<(Result Result, string UserId)> CreateUserAsync(string userName, string password)
+        public async Task<AuthenticationResult> RegisterAsync(string email, string password)
         {
-            var user = new ApplicationUser
+            var existingUser = await _userManager.FindByEmailAsync(email);
+
+            if(existingUser != null)
             {
-                UserName = userName,
-                Email = userName,
+                return new AuthenticationResult { Errors = new[] { "User with this email already exists" } };
+            }
+
+            var newUser = new ApplicationUser
+            {
+                Email = email,
+                UserName = email
             };
 
-            var result = await _userManager.CreateAsync(user, password);
+            var result = await _userManager.CreateAsync(newUser, password);
 
-            return (result.ToApplicationResult(), user.Id);
+            if (!result.Succeeded)
+            {
+                return new AuthenticationResult { Errors = result.Errors.Select(e => e.Description) };
+            }
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new []
+                {
+                    new Claim(JwtRegisteredClaimNames.Sub, newUser.Email),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(JwtRegisteredClaimNames.Email, newUser.Email),
+                    new Claim("id", newUser.Id),
+                }),
+                Expires = DateTime.Now.AddHours(2),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            return new AuthenticationResult
+            {
+                Success = true,
+                Token = tokenHandler.WriteToken(token),
+                UserId = newUser.Id
+            };
+
         }
 
         public async Task<bool> IsInRoleAsync(string userId, string role)
@@ -65,18 +107,20 @@ namespace Infrastructure.Identity
             return result.Succeeded;
         }
 
-        public async Task<Result> DeleteUserAsync(string userId)
+        public async Task<AuthenticationResult> DeleteUserAsync(string userId)
         {
             var user = _userManager.Users.SingleOrDefault(u => u.Id == userId);
 
-            return user != null ? await DeleteUserAsync(user) : Result.Success();
+            return user != null ? await DeleteUserAsync(user) : new AuthenticationResult { Errors = null};
         }
 
-        public async Task<Result> DeleteUserAsync(ApplicationUser user)
+        public async Task<AuthenticationResult> DeleteUserAsync(ApplicationUser user)
         {
             var result = await _userManager.DeleteAsync(user);
 
-            return result.ToApplicationResult();
+            return new AuthenticationResult { Errors = result.Errors.Select(e => e.Description) };
+
+            //return result/*.ToApplicationResult()*/;
         }
     }
 }

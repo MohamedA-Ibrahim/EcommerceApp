@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using Application.Common.Interfaces;
+using Infrastructure.Identity;
+using Infrastructure.Persistence;
+using Infrastructure.Repository;
+using Infrastructure.Settings;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Application.Common.Interfaces;
-using Infrastructure.Identity;
-using Infrastructure.Persistence;
-using Infrastructure.Repository;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Infrastructure
 {
@@ -20,7 +23,7 @@ namespace Infrastructure
                         configuration.GetConnectionString("RemoteConnection"),
                         b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
             
-            services.AddScoped<IApplicationDbContext>(provider => (IApplicationDbContext)provider.GetRequiredService<ApplicationDbContext>());
+            services.AddScoped(provider => (IApplicationDbContext)provider.GetRequiredService<ApplicationDbContext>());
 
             services.AddIdentity<ApplicationUser, IdentityRole>() 
             .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -30,7 +33,29 @@ namespace Infrastructure
             services.AddTransient<IIdentityService, IdentityService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-            services.AddAuthentication();
+            var jwtSettings = new JwtSettings();
+            configuration.Bind(nameof(jwtSettings), jwtSettings);
+            services.AddSingleton(jwtSettings);
+
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x=>
+            {
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Secret)),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    RequireExpirationTime = false,
+                    ValidateLifetime = true
+                };
+            });
 
             services.AddAuthorization(options =>
                 options.AddPolicy("CanPurge", policy => policy.RequireRole("Administrator")));

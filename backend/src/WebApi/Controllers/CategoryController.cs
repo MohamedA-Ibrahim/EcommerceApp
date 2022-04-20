@@ -1,5 +1,7 @@
 ﻿using Domain.Entities;
 using Infrastructure.Repository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using WebApi.Contracts.V1;
@@ -10,6 +12,7 @@ namespace WebApi.Controllers
     [ApiController]
     [Consumes(MediaTypeNames.Application.Json)]
     [Produces("application/json")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

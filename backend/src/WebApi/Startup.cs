@@ -1,14 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Application;
+﻿using Application;
 using Application.Common.Interfaces;
 using Infrastructure;
-using WebApi.Services;
-using WebApi.Options;
+using Infrastructure.Settings;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using System.Reflection;
-using Infrastructure.Repository;
 using WebApi.Filters;
+using WebApi.Services;
 
 namespace WebApi
 {
@@ -33,6 +32,8 @@ namespace WebApi
                          options.EnableEndpointRouting = false;
                          options.Filters.Add<ValidationFilter>();
                 });
+            services.AddSingleton<ICurrentUserService, CurrentUserService>();
+
 
             services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddHttpContextAccessor();
@@ -68,6 +69,7 @@ namespace WebApi
                     }
                 });
 
+                //Add documentation to swagger
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 x.IncludeXmlComments(xmlPath);
@@ -78,11 +80,9 @@ namespace WebApi
             services.AddRazorPages();
             services.AddControllers();
 
-            services.AddSingleton<ICurrentUserService, CurrentUserService>();
 
             // Customise default API behaviour
-            services.Configure<ApiBehaviorOptions>(options =>
-                options.SuppressModelStateInvalidFilter = true);     
+            services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);     
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -103,8 +103,8 @@ namespace WebApi
             app.UseStaticFiles();
             app.UseHsts();
 
-            var swaggerOptions = new SwaggerOptions();
-            Configuration.GetSection(nameof(SwaggerOptions)).Bind(swaggerOptions);
+            var swaggerOptions = new SwaggerSettings();
+            Configuration.GetSection(nameof(SwaggerSettings)).Bind(swaggerOptions);
 
             app.UseSwagger(option =>
             {
@@ -117,8 +117,9 @@ namespace WebApi
 
             });
 
-           app.UseRouting();
-        
+            app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();

@@ -29,18 +29,12 @@ namespace Infrastructure.Identity
             _jwtSettings = jwtSettings;
         }
 
-        public async Task<string> GetUserNameAsync(string userId)
-        {
-            var user = await _userManager.Users.FirstAsync(u => u.Id == userId);
-
-            return user.UserName;
-        }
 
         public async Task<AuthenticationResult> RegisterAsync(string email, string password)
         {
             var existingUser = await _userManager.FindByEmailAsync(email);
 
-            if(existingUser != null)
+            if (existingUser != null)
             {
                 return new AuthenticationResult { Errors = new[] { "User with this email already exists" } };
             }
@@ -58,11 +52,35 @@ namespace Infrastructure.Identity
                 return new AuthenticationResult { Errors = result.Errors.Select(e => e.Description) };
             }
 
+            return GenerateAuthenticationResult(newUser);
+
+        }
+
+        public async Task<AuthenticationResult> LoginAsync(string email, string password)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                return new AuthenticationResult { Errors = new[] { "User doesn't exist" } };
+            }
+            var userHasValidPassword = await _userManager.CheckPasswordAsync(user,password);
+
+            if (!userHasValidPassword)
+            {
+                return new AuthenticationResult { Errors = new[] { "Invalid Password" } };
+            }
+
+            return GenerateAuthenticationResult(user);
+        }
+
+        private AuthenticationResult GenerateAuthenticationResult(ApplicationUser newUser)
+        {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new []
+                Subject = new ClaimsIdentity(new[]
                 {
                     new Claim(JwtRegisteredClaimNames.Sub, newUser.Email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
@@ -81,7 +99,14 @@ namespace Infrastructure.Identity
                 Token = tokenHandler.WriteToken(token),
                 UserId = newUser.Id
             };
+        }
 
+        #region Old
+        public async Task<string> GetUserNameAsync(string userId)
+        {
+            var user = await _userManager.Users.FirstAsync(u => u.Id == userId);
+
+            return user.UserName;
         }
 
         public async Task<bool> IsInRoleAsync(string userId, string role)
@@ -122,6 +147,10 @@ namespace Infrastructure.Identity
 
             //return result/*.ToApplicationResult()*/;
         }
+
+
+        #endregion
+
     }
 }
 

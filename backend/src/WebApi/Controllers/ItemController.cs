@@ -1,5 +1,8 @@
-﻿using Domain.Entities;
+﻿using Application.Common.Interfaces;
+using Domain.Entities;
 using Infrastructure.Repository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using WebApi.Contracts.V1;
@@ -10,13 +13,16 @@ namespace WebApi.Controllers
     [ApiController]
     [Consumes(MediaTypeNames.Application.Json)]
     [Produces("application/json")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class ItemController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICurrentUserService _currentUserService;
 
-        public ItemController(IUnitOfWork unitOfWork)
+        public ItemController(IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
         {
             _unitOfWork = unitOfWork;
+            _currentUserService = currentUserService;
         }
 
         /// <summary>
@@ -69,13 +75,19 @@ namespace WebApi.Controllers
         }
 
         [HttpPut(ApiRoutes.Items.Update)]
-        public IActionResult Update([FromRoute] int itemId, [FromBody] UpdateItemRequest request)
+        public async Task<IActionResult> Update([FromRoute] int itemId, [FromBody] UpdateItemRequest request)
         {
             var item = _unitOfWork.Item.GetFirstOrDefault(x => x.Id == itemId);
 
             if (item == null)
             {
                 return NotFound();
+            }
+
+            var userOwnsItem = await _unitOfWork.Item.UserOwnsItemAsync(itemId, _currentUserService.UserId);
+            if (!userOwnsItem)
+            {
+                return BadRequest(new {error ="You don't own this item"});
             }
 
             item.Name = request.Name;
@@ -91,13 +103,19 @@ namespace WebApi.Controllers
         }
 
         [HttpDelete(ApiRoutes.Items.Delete)]
-        public IActionResult Delete([FromRoute] int itemId)
+        public async Task<IActionResult> Delete([FromRoute] int itemId)
         {
             var item = _unitOfWork.Item.GetFirstOrDefault(x => x.Id == itemId);
 
             if (item == null)
             {
                 return NotFound();
+            }
+
+            var userOwnsItem = await _unitOfWork.Item.UserOwnsItemAsync(itemId, _currentUserService.UserId);
+            if (!userOwnsItem)
+            {
+                return BadRequest(new { error = "You don't own this item" });
             }
 
             _unitOfWork.Item.Remove(item);

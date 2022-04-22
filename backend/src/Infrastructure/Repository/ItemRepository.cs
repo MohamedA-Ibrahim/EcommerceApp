@@ -1,5 +1,6 @@
 ﻿using Domain.Entities;
 using Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,10 +35,23 @@ namespace Infrastructure.Repository
             {
                 itemFromDb.Image = item.Image;
             }
+        }
 
-            //We can use this directly if we want to update everything
-            //but here we don't update image so we don't call this
-            //_db.Items.Update(item);
+        public async Task<bool> UserOwnsItemAsync(int itemId, string? userId)
+        {
+            var item = await _db.Items.AsNoTracking().SingleOrDefaultAsync(x=> x.Id == itemId);
+
+            if (item == null)
+            {
+                return false;
+            }
+
+            if(item.CreatedBy != userId)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

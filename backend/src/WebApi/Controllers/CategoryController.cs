@@ -57,13 +57,6 @@ namespace WebApi.Controllers
         [HttpPut(ApiRoutes.Categories.Update)]
         public IActionResult Update([FromRoute] int categoryId, [FromBody] UpdateCategoryRequest request)
         {
-            //var userOwnsItem = await _postService.UserOwnsPostAsync(postId, HttpContext.GetUserId());
-
-            //if (!userOwnsItem)
-            //{
-            //    return BadRequest(new { error = "You don't own this item" });
-            //}
-
             var category = _unitOfWork.Category.GetFirstOrDefault(x=> x.Id == categoryId);
 
             if(category == null)

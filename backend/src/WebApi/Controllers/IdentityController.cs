@@ -15,6 +15,11 @@ namespace WebApi.Controllers
             _identityService = identityService;
         }
 
+        /// <summary>
+        /// Register user
+        /// </summary>
+        /// <param name="request">the user email and password</param>
+        /// <returns></returns>
         [HttpPost(ApiRoutes.Identity.Register)]
         public async Task<IActionResult> RegisterAsync([FromBody]UserRegistrationRequest request)
         {
@@ -41,6 +46,11 @@ namespace WebApi.Controllers
             });
         }
 
+        /// <summary>
+        /// Login a user
+        /// </summary>
+        /// <param name="request">The user email and password</param>
+        /// <returns></returns>
         [HttpPost(ApiRoutes.Identity.Login)]
         public async Task<IActionResult> LoginAsync([FromBody] UserLoginRequest request)
         {

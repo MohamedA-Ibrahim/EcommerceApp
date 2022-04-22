@@ -15,17 +15,12 @@ namespace Infrastructure.Identity
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly JwtSettings _jwtSettings;
-        private readonly IUserClaimsPrincipalFactory<ApplicationUser> _userClaimsPrincipalFactory;
-        private readonly IAuthorizationService _authorizationService;
 
         public IdentityService(
             UserManager<ApplicationUser> userManager,
-            IUserClaimsPrincipalFactory<ApplicationUser> userClaimsPrincipalFactory,
-            IAuthorizationService authorizationService, JwtSettings jwtSettings)
+            JwtSettings jwtSettings)
         {
             _userManager = userManager;
-            _userClaimsPrincipalFactory = userClaimsPrincipalFactory;
-            _authorizationService = authorizationService;
             _jwtSettings = jwtSettings;
         }
 
@@ -74,7 +69,7 @@ namespace Infrastructure.Identity
             return GenerateAuthenticationResult(user);
         }
 
-        private AuthenticationResult GenerateAuthenticationResult(ApplicationUser newUser)
+        private AuthenticationResult GenerateAuthenticationResult(ApplicationUser user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);
@@ -82,10 +77,10 @@ namespace Infrastructure.Identity
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim(JwtRegisteredClaimNames.Sub, newUser.Email),
+                    new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(JwtRegisteredClaimNames.Email, newUser.Email),
-                    new Claim("id", newUser.Id),
+                    new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                    new Claim("id", user.Id),
                 }),
                 Expires = DateTime.Now.AddHours(2),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -97,39 +92,8 @@ namespace Infrastructure.Identity
             {
                 Success = true,
                 Token = tokenHandler.WriteToken(token),
-                UserId = newUser.Id
+                UserId = user.Id
             };
-        }
-
-        #region Old
-        public async Task<string> GetUserNameAsync(string userId)
-        {
-            var user = await _userManager.Users.FirstAsync(u => u.Id == userId);
-
-            return user.UserName;
-        }
-
-        public async Task<bool> IsInRoleAsync(string userId, string role)
-        {
-            var user = _userManager.Users.SingleOrDefault(u => u.Id == userId);
-
-            return user != null && await _userManager.IsInRoleAsync(user, role);
-        }
-
-        public async Task<bool> AuthorizeAsync(string userId, string policyName)
-        {
-            var user = _userManager.Users.SingleOrDefault(u => u.Id == userId);
-
-            if (user == null)
-            {
-                return false;
-            }
-
-            var principal = await _userClaimsPrincipalFactory.CreateAsync(user);
-
-            var result = await _authorizationService.AuthorizeAsync(principal, policyName);
-
-            return result.Succeeded;
         }
 
         public async Task<AuthenticationResult> DeleteUserAsync(string userId)
@@ -144,12 +108,8 @@ namespace Infrastructure.Identity
             var result = await _userManager.DeleteAsync(user);
 
             return new AuthenticationResult { Errors = result.Errors.Select(e => e.Description) };
-
-            //return result/*.ToApplicationResult()*/;
         }
 
-
-        #endregion
 
     }
 }

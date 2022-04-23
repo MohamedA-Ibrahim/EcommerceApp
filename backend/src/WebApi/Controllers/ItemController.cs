@@ -13,7 +13,6 @@ namespace WebApi.Controllers
     [ApiController]
     [Consumes(MediaTypeNames.Application.Json)]
     [Produces("application/json")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class ItemController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -56,6 +55,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost(ApiRoutes.Items.Create)]
+        [Authorize(Roles = "Admin, User")]
         public IActionResult Create([FromBody] CreateItemRequest request, [FromForm] IFormFile? file)
         {
             Item item = new Item
@@ -75,6 +75,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPut(ApiRoutes.Items.Update)]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> Update([FromRoute] int itemId, [FromBody] UpdateItemRequest request)
         {
             var item = _unitOfWork.Item.GetFirstOrDefault(x => x.Id == itemId);
@@ -103,6 +104,7 @@ namespace WebApi.Controllers
         }
 
         [HttpDelete(ApiRoutes.Items.Delete)]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> Delete([FromRoute] int itemId)
         {
             var item = _unitOfWork.Item.GetFirstOrDefault(x => x.Id == itemId);

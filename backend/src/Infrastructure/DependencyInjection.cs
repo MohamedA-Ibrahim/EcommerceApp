@@ -25,7 +25,8 @@ namespace Infrastructure
             
             services.AddScoped(provider => (IApplicationDbContext)provider.GetRequiredService<ApplicationDbContext>());
 
-            services.AddIdentity<ApplicationUser, IdentityRole>() 
+            services.AddDefaultIdentity<ApplicationUser>()
+            .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultUI()
             .AddDefaultTokenProviders();
@@ -60,12 +61,7 @@ namespace Infrastructure
                 x.SaveToken = true;
                 x.TokenValidationParameters = tokenValidationParameters;
             });
-
-            services.AddAuthorization(options =>
-                options.AddPolicy("CanPurge", policy => policy.RequireRole("Administrator")));
-
             return services;
         }
     }
-
 }

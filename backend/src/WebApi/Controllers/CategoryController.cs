@@ -12,7 +12,7 @@ namespace WebApi.Controllers
     [ApiController]
     [Consumes(MediaTypeNames.Application.Json)]
     [Produces("application/json")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles ="Admin,User")]
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -44,6 +44,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost(ApiRoutes.Categories.Create)]
+        [Authorize(Roles ="Admin")]
         public IActionResult Create([FromBody] CreateCategoryRequest categoryRequest)
         {
             Category category = new Category{Name = categoryRequest.Name};
@@ -55,6 +56,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPut(ApiRoutes.Categories.Update)]
+        [Authorize(Roles = "Admin")]
         public IActionResult Update([FromRoute] int categoryId, [FromBody] UpdateCategoryRequest request)
         {
             var category = _unitOfWork.Category.GetFirstOrDefault(x=> x.Id == categoryId);
@@ -72,6 +74,7 @@ namespace WebApi.Controllers
         }
 
         [HttpDelete(ApiRoutes.Categories.Delete)]
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete([FromRoute] int categoryId)
         {
             var category = _unitOfWork.Category.GetFirstOrDefault(x => x.Id == categoryId);

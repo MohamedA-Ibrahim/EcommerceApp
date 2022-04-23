@@ -81,6 +81,7 @@ namespace Infrastructure.Persistence
 
         public DbSet<Item> Items { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         #endregion
     }

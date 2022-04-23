@@ -12,5 +12,6 @@ namespace Application.Common.Interfaces
         Task<AuthenticationResult> RegisterAsync(string email, string password);
         Task<AuthenticationResult> LoginAsync(string email, string password);
         Task<AuthenticationResult> DeleteUserAsync(string userId);
+        Task<AuthenticationResult> RefreshTokenAsync(string token, string refreshToken);
     }
 }

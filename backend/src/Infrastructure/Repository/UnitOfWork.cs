@@ -1,29 +1,23 @@
 ﻿using Infrastructure.Persistence;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Infrastructure.Repository
+namespace Infrastructure.Repository;
+
+public class UnitOfWork : IUnitOfWork
 {
-    public class UnitOfWork : IUnitOfWork
+    private readonly ApplicationDbContext _db;
+
+    public UnitOfWork(ApplicationDbContext db)
     {
-        private ApplicationDbContext _db;
+        _db = db;
+        Category = new CategoryRepository(_db);
+        Item = new ItemRepository(_db);
+    }
 
-        public ICategoryRepository Category { get; private set; }
-        public IItemRepository Item { get; private set; }
+    public ICategoryRepository Category { get; }
+    public IItemRepository Item { get; }
 
-        public UnitOfWork(ApplicationDbContext db) 
-        {
-            _db = db;
-            Category = new CategoryRepository(_db);
-            Item = new ItemRepository(_db);
-        }
-
-        public void Save()
-        {
-            _db.SaveChanges();
-        }
+    public void Save()
+    {
+        _db.SaveChanges();
     }
 }

@@ -1,8 +1,7 @@
-﻿namespace WebApi.Contracts.V1.Requests
+﻿namespace WebApi.Contracts.V1.Requests;
+
+public class UserLoginRequest
 {
-    public class UserLoginRequest
-    {
-        public string Email { get; set; }
-        public string Password { get; set; }
-    }
+    public string Email { get; set; }
+    public string Password { get; set; }
 }

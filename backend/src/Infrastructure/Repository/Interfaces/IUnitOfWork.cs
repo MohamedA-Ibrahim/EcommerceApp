@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Infrastructure.Repository;
 
-namespace Infrastructure.Repository
+public interface IUnitOfWork
 {
-    public interface IUnitOfWork
-    {
-        ICategoryRepository Category { get; }
-        IItemRepository Item { get; }
-        void Save();
-    }
+    ICategoryRepository Category { get; }
+    IItemRepository Item { get; }
+    void Save();
 }

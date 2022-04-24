@@ -1,41 +1,38 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Infrastructure.Identity;
 using Infrastructure.Persistence;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using WebApi;
 
-namespace WebUI
+namespace WebUI;
+
+public class Program
 {
-    public class Program
+    public static async Task Main(string[] args)
     {
-        public async static Task Main(string[] args)
+        var host = CreateHostBuilder(args).Build();
+
+        using (var scope = host.Services.CreateScope())
         {
-            var host = CreateHostBuilder(args).Build();
+            var services = scope.ServiceProvider;
 
-            using (var scope = host.Services.CreateScope())
-            {
-                var services = scope.ServiceProvider;
+            var context = services.GetRequiredService<ApplicationDbContext>();
+            if (context.Database.IsSqlServer()) context.Database.Migrate();
 
-                    var context = services.GetRequiredService<ApplicationDbContext>();
-                if (context.Database.IsSqlServer())
-                {
-                    context.Database.Migrate();
-                }
+            var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+            var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
-                var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-                var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-
-                await ApplicationDbContextSeed.SeedDefaultUserAsync(userManager, roleManager);
-                //await ApplicationDbContextSeed.SeedSampleDataAsync(context);
-             
-            }
-
-            await host.RunAsync();
+            await ApplicationDbContextSeed.SeedDefaultUserAsync(userManager, roleManager);
+            //await ApplicationDbContextSeed.SeedSampleDataAsync(context);
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                    webBuilder.UseStartup<Startup>());
+        await host.RunAsync();
+    }
+
+    public static IHostBuilder CreateHostBuilder(string[] args)
+    {
+        return Host.CreateDefaultBuilder(args)
+            .ConfigureWebHostDefaults(webBuilder =>
+                webBuilder.UseStartup<Startup>());
     }
 }

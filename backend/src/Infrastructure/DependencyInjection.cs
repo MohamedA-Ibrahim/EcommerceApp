@@ -1,4 +1,5 @@
-﻿using Application.Common.Interfaces;
+﻿using System.Text;
+using Application.Common.Interfaces;
 using Infrastructure.Identity;
 using Infrastructure.Persistence;
 using Infrastructure.Repository;
@@ -9,59 +10,57 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
 
-namespace Infrastructure
+namespace Infrastructure;
+
+public static class DependencyInjection
 {
-    public static class DependencyInjection
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
-        {
-                services.AddDbContext<ApplicationDbContext>(options =>
-                    options.UseSqlServer(
-                        //configuration.GetConnectionString("DefaultConnection"),
-                        configuration.GetConnectionString("RemoteConnection"),
-                        b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
-            
-            services.AddScoped(provider => (IApplicationDbContext)provider.GetRequiredService<ApplicationDbContext>());
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlServer(
+                //configuration.GetConnectionString("DefaultConnection"),
+                configuration.GetConnectionString("RemoteConnection"),
+                b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
 
-            services.AddDefaultIdentity<ApplicationUser>()
+        services.AddScoped(provider => (IApplicationDbContext) provider.GetRequiredService<ApplicationDbContext>());
+
+        services.AddDefaultIdentity<ApplicationUser>()
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultUI()
             .AddDefaultTokenProviders();
 
-            services.AddTransient<IIdentityService, IdentityService>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddTransient<IIdentityService, IdentityService>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-            var jwtSettings = new JwtSettings();
-            configuration.Bind(nameof(jwtSettings), jwtSettings);
-            services.AddSingleton(jwtSettings);
+        var jwtSettings = new JwtSettings();
+        configuration.Bind(nameof(jwtSettings), jwtSettings);
+        services.AddSingleton(jwtSettings);
 
-            var tokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Secret)),
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                RequireExpirationTime = false,
-                ValidateLifetime = true
-            };
+        var tokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Secret)),
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            RequireExpirationTime = false,
+            ValidateLifetime = true
+        };
 
-            services.AddSingleton(tokenValidationParameters);
+        services.AddSingleton(tokenValidationParameters);
 
-            services.AddAuthentication(x =>
+        services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-            .AddJwtBearer(x=>
+            .AddJwtBearer(x =>
             {
                 x.SaveToken = true;
                 x.TokenValidationParameters = tokenValidationParameters;
             });
-            return services;
-        }
+        return services;
     }
 }

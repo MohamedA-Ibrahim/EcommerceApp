@@ -1,93 +1,81 @@
-﻿using Domain.Entities;
+﻿using System.Net.Mime;
+using Domain.Entities;
 using Infrastructure.Repository;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.Mime;
 using WebApi.Contracts.V1;
 using WebApi.Contracts.V1.Requests;
 
-namespace WebApi.Controllers
+namespace WebApi.Controllers;
+
+[ApiController]
+[Consumes(MediaTypeNames.Application.Json)]
+[Produces("application/json")]
+public class CategoryController : Controller
 {
-    [ApiController]
-    [Consumes(MediaTypeNames.Application.Json)]
-    [Produces("application/json")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles ="Admin,User")]
-    public class CategoryController : Controller
+    private readonly IUnitOfWork _unitOfWork;
+
+    public CategoryController(IUnitOfWork unitOfWork)
     {
-        private readonly IUnitOfWork _unitOfWork;
-
-        public CategoryController(IUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
-        }
+        _unitOfWork = unitOfWork;
+    }
 
 
-        [HttpGet(ApiRoutes.Categories.GetAll)]
-        public IActionResult GetAll()
-        {
-            IEnumerable<Category> categories = _unitOfWork.Category.GetAll();
-            return Ok(categories);
-        }
+    [HttpGet(ApiRoutes.Categories.GetAll)]
+    public IActionResult GetAll()
+    {
+        var categories = _unitOfWork.Category.GetAll();
+        return Ok(categories);
+    }
 
-        [HttpGet(ApiRoutes.Categories.Get)]
-        public IActionResult Get([FromRoute] int categoryId)
-        {
-            var category = _unitOfWork.Category.GetFirstOrDefault(x => x.Id == categoryId);
+    [HttpGet(ApiRoutes.Categories.Get)]
+    public IActionResult Get([FromRoute] int categoryId)
+    {
+        var category = _unitOfWork.Category.GetFirstOrDefault(x => x.Id == categoryId);
 
-            if (category == null)
-            {
-                return NotFound();
-            }
+        if (category == null) return NotFound();
 
-            return Ok(category);
-        }
+        return Ok(category);
+    }
 
-        [HttpPost(ApiRoutes.Categories.Create)]
-        [Authorize(Roles ="Admin")]
-        public IActionResult Create([FromBody] CreateCategoryRequest categoryRequest)
-        {
-            Category category = new Category{Name = categoryRequest.Name};
+    [HttpPost(ApiRoutes.Categories.Create)]
+    [Authorize(Roles = "Admin")]
+    public IActionResult Create([FromBody] CreateCategoryRequest categoryRequest)
+    {
+        var category = new Category {Name = categoryRequest.Name};
 
-            _unitOfWork.Category.Add(category);
-            _unitOfWork.Save();
+        _unitOfWork.Category.Add(category);
+        _unitOfWork.Save();
 
-            return Ok(category);
-        }
+        return Ok(category);
+    }
 
-        [HttpPut(ApiRoutes.Categories.Update)]
-        [Authorize(Roles = "Admin")]
-        public IActionResult Update([FromRoute] int categoryId, [FromBody] UpdateCategoryRequest request)
-        {
-            var category = _unitOfWork.Category.GetFirstOrDefault(x=> x.Id == categoryId);
+    [HttpPut(ApiRoutes.Categories.Update)]
+    [Authorize(Roles = "Admin")]
+    public IActionResult Update([FromRoute] int categoryId, [FromBody] UpdateCategoryRequest request)
+    {
+        var category = _unitOfWork.Category.GetFirstOrDefault(x => x.Id == categoryId);
 
-            if(category == null)
-            {
-                return NotFound();
-            }
+        if (category == null) return NotFound();
 
-            category.Name = request.Name;
+        category.Name = request.Name;
 
-            _unitOfWork.Category.Update(category);
-            _unitOfWork.Save();
-             return Ok(category);
-        }
+        _unitOfWork.Category.Update(category);
+        _unitOfWork.Save();
+        return Ok(category);
+    }
 
-        [HttpDelete(ApiRoutes.Categories.Delete)]
-        [Authorize(Roles = "Admin")]
-        public IActionResult Delete([FromRoute] int categoryId)
-        {
-            var category = _unitOfWork.Category.GetFirstOrDefault(x => x.Id == categoryId);
+    [HttpDelete(ApiRoutes.Categories.Delete)]
+    [Authorize(Roles = "Admin")]
+    public IActionResult Delete([FromRoute] int categoryId)
+    {
+        var category = _unitOfWork.Category.GetFirstOrDefault(x => x.Id == categoryId);
 
-            if (category == null)
-            {
-                return NotFound();
-            }
+        if (category == null) return NotFound();
 
-            _unitOfWork.Category.Remove(category);
-            _unitOfWork.Save();
+        _unitOfWork.Category.Remove(category);
+        _unitOfWork.Save();
 
-            return NoContent();
-        }
+        return NoContent();
     }
 }

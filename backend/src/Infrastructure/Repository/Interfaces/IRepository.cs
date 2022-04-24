@@ -1,19 +1,13 @@
-﻿using Domain.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq.Expressions;
+using Domain.Common;
 
-namespace Infrastructure.Repository
+namespace Infrastructure.Repository;
+
+public interface IRepository<T> where T : AuditableEntity
 {
-    public interface IRepository<T> where T : AuditableEntity
-    {
-        T GetFirstOrDefault(Expression<Func<T, bool>> filter, string? includeProperties = null);
-        IEnumerable<T> GetAll(string? includeProperties = null);
-        void Add(T entity);
-        void Remove(T entity);
-        void RemoveRange(IEnumerable<T> entities);
-    }
+    T GetFirstOrDefault(Expression<Func<T, bool>> filter, string? includeProperties = null);
+    IEnumerable<T> GetAll(string? includeProperties = null);
+    void Add(T entity);
+    void Remove(T entity);
+    void RemoveRange(IEnumerable<T> entities);
 }

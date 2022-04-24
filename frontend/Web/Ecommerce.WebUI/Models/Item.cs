@@ -17,7 +17,7 @@ namespace Ecommerce.WebUI.Models
         public double Price { get; set; }
 
         [ValidateNever]
-        public byte[] Image { get; set; }
+        public string ImageUrl { get; set; }
 
         [Required]
         public int CategoryId { get; set; }

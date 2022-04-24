@@ -8,7 +8,7 @@
             <div class="row p-2">
                 <div class="col-12 p-1" style="border:1px solid #008cba; border-radius:5px;">
                     <div class="card">
-                        <img class="img-responsive full-width" src="data:image/jpeg;base64,@Convert.ToBase64String(item.Image)" />
+                        <img src="@item.ImageUrl" class="card-img-top rounded" />
                         <div class="card-body">
                         <div class="pl-1">
                             <p class="card-title h5 text-primary">@item.Name</p>

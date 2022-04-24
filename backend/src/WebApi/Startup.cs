@@ -33,8 +33,13 @@ public class Startup
             })
             .AddFluentValidation(mvcConfiguration=> mvcConfiguration.RegisterValidatorsFromAssemblyContaining<Startup>());
 
+        //Get the facebook settings and register the DI
+        var facebookAuthSettings = new FacebookAuthSettings();
+        Configuration.Bind(nameof(FacebookAuthSettings), facebookAuthSettings);
+        services.AddSingleton(facebookAuthSettings);
+        services.AddSingleton<IFacebookAuthService, FacebookAuthService>();
+        services.AddHttpClient();
         services.AddSingleton<ICurrentUserService, CurrentUserService>();
-
 
         services.AddDatabaseDeveloperPageExceptionFilter();
         services.AddHttpContextAccessor();

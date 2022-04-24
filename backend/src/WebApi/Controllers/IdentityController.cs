@@ -72,7 +72,7 @@ public class IdentityController : Controller
     /// <param name="request"></param>
     /// <returns>the token and refresh token</returns>
     [HttpPost(ApiRoutes.Identity.Refresh)]
-    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
+    public async Task<IActionResult> RefreshTokenAsync([FromBody] RefreshTokenRequest request)
     {
         var authResponse = await _identityService.RefreshTokenAsync(request.Token, request.RefreshToken);
 
@@ -88,4 +88,30 @@ public class IdentityController : Controller
             RefreshToken = authResponse.RefreshToken
         });
     }
+
+    /// <summary>
+    /// Register/Login with facebook
+    /// </summary>
+    /// <param name="accessToken">The access token provided from the frontend</param>
+    /// <returns></returns>
+    [HttpPost(ApiRoutes.Identity.FacebookAuth)]
+    public async Task<IActionResult> FacebookAuthAsync([FromBody] string accessToken)
+    {
+        var authResponse = await _identityService.LoginWithFacebookAsync(accessToken);
+
+        if (!authResponse.Success)
+        {
+            return BadRequest(new AuthFailedResponse
+            {
+                Errors = authResponse.Errors
+            });
+        }
+
+        return Ok(new AuthSuccessResponse
+        {
+            Token = authResponse.Token,
+            RefreshToken = authResponse.RefreshToken
+        });
+    }
+
 }

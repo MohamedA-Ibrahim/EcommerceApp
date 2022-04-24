@@ -37,5 +37,7 @@ public static class ApiRoutes
         public const string Register = Base + "/identity/register";
         public const string Delete = Base + "/identity/delete";
         public const string Refresh = Base + "/identity/refresh";
+        public const string FacebookAuth = Base + "/identity/auth/fb";
+
     }
 }

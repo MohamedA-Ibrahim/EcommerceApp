@@ -18,15 +18,16 @@ public class IdentityService : IIdentityService
     private readonly JwtSettings _jwtSettings;
     private readonly TokenValidationParameters _tokenValidationParameters;
     private readonly UserManager<ApplicationUser> _userManager;
-
+    private readonly IFacebookAuthService _facebookAuthService;
     public IdentityService(
         UserManager<ApplicationUser> userManager,
-        JwtSettings jwtSettings, TokenValidationParameters tokenValidationParameters, ApplicationDbContext dataContext)
+        JwtSettings jwtSettings, TokenValidationParameters tokenValidationParameters, ApplicationDbContext dataContext, IFacebookAuthService facebookAuthService)
     {
         _userManager = userManager;
         _jwtSettings = jwtSettings;
         _tokenValidationParameters = tokenValidationParameters;
         _dataContext = dataContext;
+        _facebookAuthService = facebookAuthService;
     }
 
     public async Task<AuthenticationResult> RegisterAsync(string email, string password)
@@ -69,7 +70,12 @@ public class IdentityService : IIdentityService
             ? await DeleteUserAsync(user)
             : new AuthenticationResult {Errors = new[] {"User not found"}};
     }
+    public async Task<AuthenticationResult> DeleteUserAsync(ApplicationUser user)
+    {
+        var result = await _userManager.DeleteAsync(user);
 
+        return new AuthenticationResult { Errors = result.Errors.Select(e => e.Description) };
+    }
     public async Task<AuthenticationResult> RefreshTokenAsync(string token, string refreshToken)
     {
         var validatedToken = GetPrincipalFromToken(token);
@@ -115,11 +121,45 @@ public class IdentityService : IIdentityService
         return await GenerateAuthenticationResultAsync(user);
     }
 
-    public async Task<AuthenticationResult> DeleteUserAsync(ApplicationUser user)
+    public async Task<AuthenticationResult> LoginWithFacebookAsync(string accessToken)
     {
-        var result = await _userManager.DeleteAsync(user);
+        var validatedTokenResult = await _facebookAuthService.ValidateAccessTokenAsync(accessToken);
+        if (!validatedTokenResult.Data.IsValid)
+        {
+            return new AuthenticationResult
+            {
+                Errors = new[] { "Invalid Facebook token" }
+            };
+        }
 
-        return new AuthenticationResult {Errors = result.Errors.Select(e => e.Description)};
+        var userInfo = await _facebookAuthService.GetUserInfoAsync(accessToken);
+
+        var user = await _userManager.FindByEmailAsync(userInfo.Email);
+
+        //User is already registered with email/facebook
+        if (user != null)
+        {
+            return await GenerateAuthenticationResultAsync(user);
+        }
+
+        var identityUser = new ApplicationUser
+        {
+            Id = Guid.NewGuid().ToString(),
+            Email = userInfo.Email,
+            UserName = userInfo.Email,
+        };
+
+        var createdResult = await _userManager.CreateAsync(identityUser);
+        if (!createdResult.Succeeded)
+        {
+            return new AuthenticationResult
+            {
+                //Error is vague in purpose
+                Errors = new[] { "Something went wrong" }
+            };
+        }
+
+        return await GenerateAuthenticationResultAsync(identityUser);
     }
 
     #region Token Helpers

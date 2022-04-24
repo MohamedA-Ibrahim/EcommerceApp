@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Application.Common.Interfaces;
+using FluentValidation.AspNetCore;
 using Infrastructure;
 using Infrastructure.Settings;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +30,8 @@ public class Startup
             {
                 options.EnableEndpointRouting = false;
                 options.Filters.Add<ValidationFilter>();
-            });
+            })
+            .AddFluentValidation(mvcConfiguration=> mvcConfiguration.RegisterValidatorsFromAssemblyContaining<Startup>());
 
         services.AddSingleton<ICurrentUserService, CurrentUserService>();
 

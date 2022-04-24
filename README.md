@@ -20,3 +20,7 @@ To run the API:
 To run the frontend web
 - Make sure that the api program is running
 - build and run the front end project when 
+
+## Demo
+* [Api](https://ecommerceapiservice.azurewebsites.net/swagger/index.html)
+* [WebUI (WIP)](https://ecommercewebui.azurewebsites.windows.net)

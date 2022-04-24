@@ -25,7 +25,8 @@ public class ItemRepository : Repository<Item>, IItemRepository
         itemFromDb.CategoryId = item.CategoryId;
         itemFromDb.ExpirationDate = item.ExpirationDate;
 
-        if (item.Image != null) itemFromDb.Image = item.Image;
+        if (item.ImageUrl != null)
+            itemFromDb.ImageUrl = item.ImageUrl;
     }
 
     public async Task<bool> UserOwnsItemAsync(int itemId, string? userId)

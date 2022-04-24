@@ -52,14 +52,14 @@ public class ItemController : ControllerBase
 
     [HttpPost(ApiRoutes.Items.Create)]
     [Authorize(Roles = "Admin, User")]
-    public IActionResult Create([FromBody] CreateItemRequest request, [FromForm] IFormFile? file)
+    public IActionResult Create([FromBody] CreateItemRequest request)
     {
         var item = new Item
         {
             Name = request.Name,
             Description = request.Description,
             Price = request.Price,
-            Image = request.Image,
+            ImageUrl = request.ImageUrl,
             CategoryId = request.CategoryId,
             ExpirationDate = request.ExpirationDate
         };
@@ -84,7 +84,7 @@ public class ItemController : ControllerBase
         item.Name = request.Name;
         item.Description = request.Description;
         item.Price = request.Price;
-        item.Image = request.Image;
+        item.ImageUrl = request.ImageUrl;
         item.CategoryId = request.CategoryId;
         item.ExpirationDate = request.ExpirationDate;
 

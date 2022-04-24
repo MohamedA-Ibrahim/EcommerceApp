@@ -13,7 +13,7 @@ public class Item : AuditableEntity
 
     [Required] [Range(1, 10000)] public double Price { get; set; }
 
-    public byte[] Image { get; set; }
+    public string? ImageUrl { get; set; }
 
     [Display(Name = "Category")]
     [Required]

@@ -92,7 +92,8 @@ public class IdentityService : IIdentityService
     {
         var claimsPrincipal = GetPrincipalFromToken(token);
 
-        if (claimsPrincipal == null) return new AuthenticationResult {Errors = new[] {"Invalid Token"}};
+        if (claimsPrincipal == null) 
+            return new AuthenticationResult {Errors = new[] {"Invalid Token"}};
 
         //This part is optional to prevent refreshing
         //the token when it isn't expired.
@@ -127,7 +128,6 @@ public class IdentityService : IIdentityService
         storedRefreshToken.Used = true;
         _dataContext.RefreshTokens.Update(storedRefreshToken);
         await _dataContext.SaveChangesAsync();
-
 
         var user = await _userManager.FindByIdAsync(claimsPrincipal.Claims.Single(x => x.Type == "userId").Value);
         return await GenerateAuthenticationResultAsync(user);

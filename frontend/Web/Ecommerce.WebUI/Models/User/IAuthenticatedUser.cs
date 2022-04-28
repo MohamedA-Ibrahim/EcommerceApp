@@ -1,6 +1,6 @@
 ﻿namespace Ecommerce.WebUI.Models.User
 {
-    public interface ILoggedInUserModel
+    public interface IAuthenticatedUser
     {
         DateTime CreatedDate { get; set; }
         string EmailAddress { get; set; }

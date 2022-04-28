@@ -1,16 +1,16 @@
 {
   "dependencies": {
-    "mssql1": {
-      "secretStore": null,
-      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/ecommercedbserver1/databases/EcommerceDb",
-      "type": "mssql.azure",
-      "connectionId": "ConnectionStrings:RemoteConnection"
-    },
     "storage1": {
       "secretStore": null,
       "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Storage/storageAccounts/eimagestorage",
       "type": "storage.azure",
       "connectionId": "BlobStorageSettings:ConnectionString"
+    },
+    "mssql1": {
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/ecommercedbserver1/databases/EcommerceDb",
+      "type": "mssql.azure",
+      "connectionId": "ConnectionStrings:RemoteConnection"
     }
   }
 }

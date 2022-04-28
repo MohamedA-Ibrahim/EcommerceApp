@@ -15,7 +15,7 @@ namespace Ecommerce.WebUI.Api
             HttpResponseMessage response = await _apiHelper.ApiClient.PostAsync("images", GetFileFromForm(file));
             response.EnsureSuccessStatusCode();
 
-            var item = await response.Content.ReadAsAsync<string>();
+            var item = await response.Content.ReadAsStringAsync();
             return item;
         }
 

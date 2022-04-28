@@ -1,9 +1,9 @@
 ﻿using System.Text;
 using Application.Common.Interfaces;
+using Application.Settings;
 using Infrastructure.Identity;
 using Infrastructure.Persistence;
 using Infrastructure.Repository;
-using Infrastructure.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

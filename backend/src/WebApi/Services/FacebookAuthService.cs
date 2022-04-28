@@ -1,6 +1,6 @@
 ﻿using Application.Common.Interfaces;
 using Application.Common.Models;
-using Infrastructure.Settings;
+using Application.Settings;
 using Newtonsoft.Json;
 
 namespace WebApi.Services

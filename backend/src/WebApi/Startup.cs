@@ -1,8 +1,10 @@
 ﻿using System.Reflection;
 using Application.Common.Interfaces;
+using Application.Interfaces;
+using Application.Settings;
+using Azure.Storage.Blobs;
 using FluentValidation.AspNetCore;
 using Infrastructure;
-using Infrastructure.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
@@ -39,6 +41,12 @@ public class Startup
         services.AddSingleton(facebookAuthSettings);
         services.AddSingleton<IFacebookAuthService, FacebookAuthService>();
         services.AddHttpClient();
+
+        var blobStorageSettings = new BlobStorageSettings();
+        Configuration.Bind(nameof(blobStorageSettings), blobStorageSettings);
+        services.AddSingleton(x => new BlobServiceClient(blobStorageSettings.ConnectionString));
+        services.AddScoped<IFileStorageService, BlobStorageService>();
+
         services.AddSingleton<ICurrentUserService, CurrentUserService>();
 
         services.AddDatabaseDeveloperPageExceptionFilter();

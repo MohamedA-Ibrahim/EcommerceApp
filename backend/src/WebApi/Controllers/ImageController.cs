@@ -4,90 +4,42 @@ using System.Web;
 using Microsoft.AspNetCore.Http;
 using WebApi.Contracts.V1;
 using System.Net.Mime;
+using Application.Interfaces;
+using Application.Models;
+using WebApi.Contracts.V1.Requests;
+using WebApi.Validators;
 
 namespace WebApi.Controllers
 {
     [Produces("application/json")]
     public class ImageController : ControllerBase
     {
-        public static IWebHostEnvironment _webHostEnvironment;
-        public ImageController(IWebHostEnvironment webHostEnvironment)
+        private readonly IFileStorageService _fileStorageService;
+
+        public ImageController(IFileStorageService fileStorageService)
         {
-            _webHostEnvironment = webHostEnvironment;
-        }
-
-
-
-        [HttpPost(ApiRoutes.Images.Upload)]
-        public async Task<string> Upload([FromForm] IFormFile file)
-        {
-            try
-            {
-
-                if (file.Length <= 0)
-                    return "Not Uploaded.";
-
-                string fileName = Guid.NewGuid().ToString();
-                string extension = Path.GetExtension(file.FileName);
-                string wwwPath = _webHostEnvironment.WebRootPath;
-                string uploadsPath = Path.Combine(wwwPath, @"images\");
-
-                if (!Directory.Exists(uploadsPath))
-                {
-                    Directory.CreateDirectory(uploadsPath);
-                }
-
-                using (FileStream fileStream = System.IO.File.Create(uploadsPath + fileName + extension))
-                {
-                    file.CopyTo(fileStream);
-                    fileStream.Flush();
-                }
-
-                return @"\images\" + fileName + extension;
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
-        }
-
-
-        [HttpGet(ApiRoutes.Images.Get)]
-        public async Task<IActionResult> GetImageByName([FromRoute] string imageName)
-        {
-            string path = _webHostEnvironment.WebRootPath + "\\images\\";
-
-            var filePath = Path.Combine(path, imageName);
-
-            if (System.IO.File.Exists(filePath))
-            {
-                return File(await System.IO.File.ReadAllBytesAsync(filePath), "application/octet-stream", imageName);
-            }
-            return NotFound();
+            _fileStorageService = fileStorageService;
         }
 
         /// <summary>
-        /// Delete an image by its name
+        /// Upload an image to the server
         /// </summary>
-        /// <param name="imageName">The name of the image to delete</param>
-        /// <returns>Deleted <paramref name="imageName"/></returns>
-        [HttpDelete(ApiRoutes.Images.Delete)]
-        public async Task<IActionResult> Delete([FromRoute] string imageName)
+        /// <param name="file">The image to upload</param>
+        /// <response code="200">Returns the url of the uploaded image</response>
+        [Produces("text/plain")]
+        [HttpPost(ApiRoutes.Images.Upload)]
+        public async Task<string> Upload([FromForm] IFormFile file)
         {
-            string rootPath = _webHostEnvironment.WebRootPath + "\\images\\";
-
-            var imagePath = Path.Combine(rootPath, imageName);
-
-            if (System.IO.File.Exists(imagePath))
+            var image = new FileDto
             {
-                System.IO.File.Delete(imagePath);
+                Content = file.OpenReadStream(),
+                Name = file.FileName,
+                ContentType = file.ContentType
+            };
 
-                return Ok($"Deleted {imageName}");
-            }
-
-            return NotFound();
+            var imageUrl =  await _fileStorageService.UploadAsync(image);
+            return imageUrl;
         }
     }
-
 
 }

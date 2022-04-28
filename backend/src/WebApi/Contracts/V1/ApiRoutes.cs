@@ -27,8 +27,6 @@ public static class ApiRoutes
     public static class Images
     {
         public const string Upload = Base + "/images";
-        public const string Get = Base + "/images/{imageName}";
-        public const string Delete = Base + "/images/{imageName}";
     }
 
     public static class Identity

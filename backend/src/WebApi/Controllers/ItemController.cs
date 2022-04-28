@@ -51,7 +51,7 @@ public class ItemController : ControllerBase
     }
 
     [HttpPost(ApiRoutes.Items.Create)]
-    [Authorize(Roles = "Admin, User")]
+    [Authorize(Roles = "Admin")]
     public IActionResult Create([FromBody] CreateItemRequest request)
     {
         var item = new Item

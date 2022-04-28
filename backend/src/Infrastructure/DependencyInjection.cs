@@ -45,7 +45,8 @@ public static class DependencyInjection
             ValidateIssuer = false,
             ValidateAudience = false,
             RequireExpirationTime = false,
-            ValidateLifetime = true
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero
         };
 
         services.AddSingleton(tokenValidationParameters);
@@ -60,6 +61,7 @@ public static class DependencyInjection
             {
                 x.SaveToken = true;
                 x.TokenValidationParameters = tokenValidationParameters;
+                
             });
         return services;
     }

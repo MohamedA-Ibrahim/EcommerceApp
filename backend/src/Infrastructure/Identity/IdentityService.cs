@@ -9,6 +9,7 @@ using Application.Settings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Application.Utils;
 
 namespace Infrastructure.Identity;
 
@@ -18,12 +19,18 @@ public class IdentityService : IIdentityService
     private readonly JwtSettings _jwtSettings;
     private readonly TokenValidationParameters _tokenValidationParameters;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IFacebookAuthService _facebookAuthService;
     public IdentityService(
         UserManager<ApplicationUser> userManager,
-        JwtSettings jwtSettings, TokenValidationParameters tokenValidationParameters, ApplicationDbContext dataContext, IFacebookAuthService facebookAuthService)
+        RoleManager<IdentityRole> roleManager,
+        JwtSettings jwtSettings,
+        TokenValidationParameters tokenValidationParameters,
+        ApplicationDbContext dataContext,
+        IFacebookAuthService facebookAuthService)
     {
         _userManager = userManager;
+        _roleManager = roleManager;
         _jwtSettings = jwtSettings;
         _tokenValidationParameters = tokenValidationParameters;
         _dataContext = dataContext;
@@ -43,9 +50,12 @@ public class IdentityService : IIdentityService
             UserName = email
         };
 
-        var result = await _userManager.CreateAsync(newUser, password);
+        var userCreationResult = await _userManager.CreateAsync(newUser, password);
 
-        if (!result.Succeeded) return new AuthenticationResult {Errors = result.Errors.Select(e => e.Description)};
+        if (!userCreationResult.Succeeded)
+            return new AuthenticationResult {Errors = userCreationResult.Errors.Select(e => e.Description)};
+
+        await _userManager.AddToRolesAsync(newUser, new[] { "User" });
 
         return await GenerateAuthenticationResultAsync(newUser);
     }
@@ -70,29 +80,31 @@ public class IdentityService : IIdentityService
             ? await DeleteUserAsync(user)
             : new AuthenticationResult {Errors = new[] {"User not found"}};
     }
+
     public async Task<AuthenticationResult> DeleteUserAsync(ApplicationUser user)
     {
         var result = await _userManager.DeleteAsync(user);
 
         return new AuthenticationResult { Errors = result.Errors.Select(e => e.Description) };
     }
+
     public async Task<AuthenticationResult> RefreshTokenAsync(string token, string refreshToken)
     {
-        var validatedToken = GetPrincipalFromToken(token);
+        var claimsPrincipal = GetPrincipalFromToken(token);
 
-        if (validatedToken == null) return new AuthenticationResult {Errors = new[] {"Invalid Token"}};
+        if (claimsPrincipal == null) return new AuthenticationResult {Errors = new[] {"Invalid Token"}};
 
         //This part is optional to prevent refreshing
         //the token when it isn't expired.
-        var expiryDateUnix = long.Parse(validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
+        var expiryDateUnix = long.Parse(claimsPrincipal.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
 
         var expiryDateTimeUtc = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
             .AddSeconds(expiryDateUnix);
 
-        if (expiryDateTimeUtc > DateTime.UtcNow)
+        if (expiryDateTimeUtc > DateUtil.GetCurrentDate())
             return new AuthenticationResult {Errors = new[] {"This Token hasn't expired yet"}};
 
-        var jti = validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
+        var jti = claimsPrincipal.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
 
         var storedRefreshToken = await _dataContext.RefreshTokens.SingleOrDefaultAsync(x => x.Token == refreshToken);
 
@@ -100,7 +112,7 @@ public class IdentityService : IIdentityService
         if (storedRefreshToken == null)
             return new AuthenticationResult {Errors = new[] {"This refresh token doesn't exist"}};
 
-        if (DateTime.UtcNow > storedRefreshToken.ExpiryDate)
+        if (DateUtil.GetCurrentDate() > storedRefreshToken.ExpiryDate)
             return new AuthenticationResult {Errors = new[] {"This refresh token has expired"}};
 
         if (storedRefreshToken.Invalidated)
@@ -117,7 +129,7 @@ public class IdentityService : IIdentityService
         await _dataContext.SaveChangesAsync();
 
 
-        var user = await _userManager.FindByIdAsync(validatedToken.Claims.Single(x => x.Type == "userId").Value);
+        var user = await _userManager.FindByIdAsync(claimsPrincipal.Claims.Single(x => x.Type == "userId").Value);
         return await GenerateAuthenticationResultAsync(user);
     }
 
@@ -177,13 +189,32 @@ public class IdentityService : IIdentityService
             new("userId", user.Id)
         };
 
+        //Add user claims
         var userClaims = await _userManager.GetClaimsAsync(user);
         claims.AddRange(userClaims);
+
+        //Add user roles
+        var userRoles = await _userManager.GetRolesAsync(user);
+        foreach (var userRole in userRoles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, userRole));
+            var role = await _roleManager.FindByNameAsync(userRole);
+            if (role == null) continue;
+            var roleClaims = await _roleManager.GetClaimsAsync(role);
+
+            foreach (var roleClaim in roleClaims)
+            {
+                if (claims.Contains(roleClaim))
+                    continue;
+
+                claims.Add(roleClaim);
+            }
+        }
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.Now.Add(_jwtSettings.TokenLifetime),
+            Expires = DateUtil.GetCurrentDate().Add(_jwtSettings.TokenLifetime),
             SigningCredentials =
                 new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
@@ -194,8 +225,8 @@ public class IdentityService : IIdentityService
         {
             JwtId = token.Id,
             UserId = user.Id,
-            CreationDate = DateTime.UtcNow,
-            ExpiryDate = DateTime.UtcNow.AddMonths(6)
+            CreationDate = DateUtil.GetCurrentDate(),
+            ExpiryDate = DateUtil.GetCurrentDate().AddMonths(6)
         };
 
         await _dataContext.RefreshTokens.AddAsync(refreshToken);

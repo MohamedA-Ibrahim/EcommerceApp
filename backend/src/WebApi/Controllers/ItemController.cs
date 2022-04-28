@@ -51,7 +51,7 @@ public class ItemController : ControllerBase
     }
 
     [HttpPost(ApiRoutes.Items.Create)]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,User")]
     public IActionResult Create([FromBody] CreateItemRequest request)
     {
         var item = new Item
@@ -71,7 +71,7 @@ public class ItemController : ControllerBase
     }
 
     [HttpPut(ApiRoutes.Items.Update)]
-    [Authorize(Roles = "Admin, User")]
+    [Authorize(Roles = "Admin,User")]
     public async Task<IActionResult> Update([FromRoute] int itemId, [FromBody] UpdateItemRequest request)
     {
         var item = _unitOfWork.Item.GetFirstOrDefault(x => x.Id == itemId);
@@ -94,7 +94,7 @@ public class ItemController : ControllerBase
     }
 
     [HttpDelete(ApiRoutes.Items.Delete)]
-    [Authorize(Roles = "Admin, User")]
+    [Authorize(Roles = "Admin,User")]
     public async Task<IActionResult> Delete([FromRoute] int itemId)
     {
         var item = _unitOfWork.Item.GetFirstOrDefault(x => x.Id == itemId);

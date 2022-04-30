@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Application.Common.Models;
+using Application.Contracts.V1.Requests.Queries;
 using Application.Models;
 using Domain.Common;
 using Infrastructure.Persistence;
@@ -18,9 +19,9 @@ public class Repository<T> : IRepository<T> where T : AuditableEntity
         dbSet = _db.Set<T>();
     }
 
-    public void Add(T entity)
+    public async Task AddAsync(T entity)
     {
-        dbSet.Add(entity);
+        await dbSet.AddAsync(entity);
     }
 
     public void Remove(T entity)
@@ -33,24 +34,36 @@ public class Repository<T> : IRepository<T> where T : AuditableEntity
         dbSet.RemoveRange(entities);
     }
 
-    public Task<List<T>> GetAllAsync(PaginationQuery paginationFilter = null)
+    public Task<List<T>> GetAllAsync(Expression<Func<T, bool>> filter = null, PaginationQuery paginationFilter = null)
     {
+        var query = dbSet.AsQueryable();
+
+        if (filter != null)
+        {
+            query = query.Where(filter);
+        }
+
         if (paginationFilter == null)
         {
-            return dbSet.ToListAsync();
+            return query.ToListAsync();
         }
 
         var skip = (paginationFilter.PageNumber -1) * paginationFilter.PageSize;
-        return dbSet
+        return query
             .Skip(skip)
             .Take(paginationFilter.PageSize)
             .ToListAsync();
 
     }
 
-    public Task<List<T>> GetAllIncludingAsync(PaginationQuery paginationFilter = null, params Expression<Func<T, object>>[] includeProperties)
+    public Task<List<T>> GetAllIncludingAsync(Expression<Func<T, bool>> filter = null, PaginationQuery paginationFilter = null, params Expression<Func<T, object>>[] includeProperties)
     {
         var entities = IncludeProperties(includeProperties);
+
+        if (filter != null)
+        {
+            entities = entities.Where(filter);
+        }
 
         if (paginationFilter == null)
         {
@@ -62,7 +75,6 @@ public class Repository<T> : IRepository<T> where T : AuditableEntity
             .Skip(skip)
             .Take(paginationFilter.PageSize)
             .ToListAsync();
-
     }
 
     public Task<T> GetSingleAsync(int id)
@@ -82,6 +94,11 @@ public class Repository<T> : IRepository<T> where T : AuditableEntity
     }
 
 
+    /// <summary>
+    /// Include properties to include
+    /// Ex of input: x=> x.Tags
+    /// </summary>
+    /// <param name="includeProperties">The properties to include</param>
     private IQueryable<T> IncludeProperties(params Expression<Func<T, object>>[] includeProperties)
     {
         IQueryable<T> entities = dbSet;
@@ -90,6 +107,23 @@ public class Repository<T> : IRepository<T> where T : AuditableEntity
             entities = entities.Include(includeProperty);
         }
         return entities;
+    }
+
+    //TODO: Move out of generic repository
+    /// <summary>
+    /// Add filtering to the query
+    /// </summary>
+    /// <param name="filter">the object that contains the field to filter with</param>
+    /// <param name="queryable">The query to filter</param>
+    /// <returns></returns>
+    private static IQueryable<T> AddFiltersToQuery(GetAllCategoriesQuery filter, IQueryable<T> queryable)
+    {
+        if (!string.IsNullOrEmpty(filter?.UserId))
+        {
+            queryable = queryable.Where(x => x.CreatedBy == filter.UserId);
+        }
+
+        return queryable;
     }
 
 }

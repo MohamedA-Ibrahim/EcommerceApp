@@ -30,7 +30,7 @@ public class ItemController : ControllerBase
     [HttpGet(ApiRoutes.Items.GetAll)]
     public async Task<IActionResult> GetAllAsync()
     {
-        var items = await _unitOfWork.Item.GetAllIncludingAsync(null, x=> x.Category);
+        var items = await _unitOfWork.Item.GetAllIncludingAsync(null,null, x=> x.Category);
 
         return Ok(items);
     }
@@ -65,7 +65,7 @@ public class ItemController : ControllerBase
             ExpirationDate = request.ExpirationDate
         };
 
-        _unitOfWork.Item.Add(item);
+        await _unitOfWork.Item.AddAsync(item);
         await _unitOfWork.SaveAsync();
 
         return Ok(item);

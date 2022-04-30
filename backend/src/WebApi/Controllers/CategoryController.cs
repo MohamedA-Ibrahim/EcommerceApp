@@ -10,6 +10,8 @@ using Application.Contracts.V1;
 using Application.Contracts.V1.Requests;
 using Application.Contracts.V1.Responses;
 using Application.Contracts.V1.Responses.Wrappers;
+using Application.Helpers;
+using Application.Contracts.V1.Requests.Queries;
 
 namespace WebApi.Controllers;
 
@@ -33,7 +35,7 @@ public class CategoryController : Controller
     [HttpGet(ApiRoutes.Categories.GetAll)]
     public async Task<IActionResult> GetAll([FromQuery] PaginationQuery paginationFilter)
     {
-        var categories = await _unitOfWork.Category.GetAllAsync(paginationFilter);
+        var categories = await _unitOfWork.Category.GetAllAsync(null, paginationFilter);
         var categoryResponse = _mapper.Map<List<CategoryResponse>>(categories);
 
         if (paginationFilter == null || paginationFilter.PageNumber <1 || paginationFilter.PageSize < 1)
@@ -41,24 +43,7 @@ public class CategoryController : Controller
             return Ok(new PagedResponse<CategoryResponse>(categoryResponse));
         }
 
-        var nextPage = paginationFilter.PageNumber >= 1
-            ? _uriService
-            .GetAllCategoriesUri(new PaginationQuery(paginationFilter.PageNumber + 1, paginationFilter.PageSize)).ToString()
-            : null;
-
-        var previousPage = paginationFilter.PageNumber -1 >= 1
-    ? _uriService
-    .GetAllCategoriesUri(new PaginationQuery(paginationFilter.PageNumber - 1, paginationFilter.PageSize)).ToString()
-    : null;
-
-        var paginationResponse = new PagedResponse<CategoryResponse>
-        {
-            Data = categoryResponse,
-            PageNumber = paginationFilter.PageNumber >=1 ? paginationFilter.PageNumber : (int?)null,
-            PageSize = paginationFilter.PageSize >= 1 ? paginationFilter.PageSize : (int?)null,
-            NextPage = categoryResponse.Any() ? nextPage : null,
-            PreviousPage = previousPage
-        };
+        var paginationResponse = PaginationHelpers.CreatePaginatedResponse(_uriService, paginationFilter, categoryResponse);
         return Ok(paginationResponse);
     }
 
@@ -79,7 +64,7 @@ public class CategoryController : Controller
     {
         var category = new Category {Name = categoryRequest.Name};
 
-        _unitOfWork.Category.Add(category);
+        await _unitOfWork.Category.AddAsync(category);
         await _unitOfWork.SaveAsync();
 
         var locationUri = _uriService.GetCategoryUri(category.Id.ToString());

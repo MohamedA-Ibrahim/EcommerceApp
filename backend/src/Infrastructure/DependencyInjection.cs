@@ -19,8 +19,7 @@ public static class DependencyInjection
     {
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(
-                //configuration.GetConnectionString("DefaultConnection"),
-                configuration.GetConnectionString("RemoteConnection"),
+                configuration.GetConnectionString("DefaultConnection"),
                 b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
 
         services.AddScoped(provider => (IApplicationDbContext) provider.GetRequiredService<ApplicationDbContext>());

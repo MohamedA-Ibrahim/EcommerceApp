@@ -1,2 +1,1 @@
-frontend/Web/Ecommerce.WebUI/wwwroot/* linguist-vendored=true
-
+*.css linguist-vendored

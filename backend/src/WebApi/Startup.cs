@@ -123,7 +123,6 @@ public class Startup
             app.UseExceptionHandler("/Error");
         }
 
-        app.UseHttpsRedirection();
         app.UseStaticFiles();
         app.UseHsts();
 

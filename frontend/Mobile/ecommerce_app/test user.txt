@@ -1,0 +1,59 @@
+{
+  "email": "fff@exampel.com",
+  "password": "Fafa_123456789"
+}
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZmZAZXhhbXBlbC5jb20iLCJqdGkiOiIzMGU3MTYwOC05ZDQ1LTQxODktYWRjZi02OWRlNmMyOGMzNjEiLCJlbWFpbCI6ImZmZkBleGFtcGVsLmNvbSIsInVzZXJJZCI6ImU3ZTkxZmJhLWI3YWUtNDFlYi1iY2ZhLTcyMDU3YzAwZWVlMyIsIm5iZiI6MTY1MDgyMjYyNywiZXhwIjoxNjUwODIyOTI3LCJpYXQiOjE2NTA4MjI2Mjd9.UK2X8ULkOCN5rKYsN9Wy_kNgkAN5afn8Q788OkLaZgY",
+    "refreshToken": "9f81c594-ce43-42aa-a409-c83ff35647df"
+}  
+
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+{
+  "email": "ffff@exampel.com",
+  "password": "Fafa_0123456789"
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+{
+  "email": "ffaa@exampel.com",
+  "password": "Fafa_123456789"
+}
+
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZmFhQGV4YW1wZWwuY29tIiwianRpIjoiN2NkYThkN2ItNjdlOC00NWJkLWI3YWItYWRiMmVlYTJhMzZjIiwiZW1haWwiOiJmZmFhQGV4YW1wZWwuY29tIiwidXNlcklkIjoiZDU1MjQ3M2YtMmE4Mi00MjUxLTkzZDctNzQ5ZWYwNjkxZjZiIiwibmJmIjoxNjUwODI4MzMwLCJleHAiOjE2NTA4Mjg2MzAsImlhdCI6MTY1MDgyODMzMH0.cTPfnjgfJjaRN8SeFBuAzc-dpym90qk4Qpb5Eos-_-Q",
+    "refreshToken": "be34a983-c50e-4435-be22-7d775f6d6758"
+}
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+{
+  "email": "ffba@example.com",
+  "password": "Fafa_123456789"
+}
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+{
+  "email": "aaa@email.com",
+  "password": "Aaa_123456789"
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

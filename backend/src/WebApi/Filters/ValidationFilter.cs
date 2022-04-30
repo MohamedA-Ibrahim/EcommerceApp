@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using WebApi.Contracts.V1.Responses;
+using Application.Contracts.V1.Responses;
 
 namespace WebApi.Filters;
 

@@ -1,4 +1,4 @@
-﻿namespace WebApi.Contracts.V1.Requests;
+﻿namespace Application.Contracts.V1.Requests;
 
 public class UserLoginRequest
 {

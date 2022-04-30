@@ -2,11 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Web;
 using Microsoft.AspNetCore.Http;
-using WebApi.Contracts.V1;
+using Application.Contracts.V1;
 using System.Net.Mime;
 using Application.Interfaces;
 using Application.Models;
-using WebApi.Contracts.V1.Requests;
+using Application.Contracts.V1.Requests;
 using WebApi.Validators;
 
 namespace WebApi.Controllers
@@ -28,7 +28,7 @@ namespace WebApi.Controllers
         /// <response code="200">Returns the url of the uploaded image</response>
         [Produces("text/plain")]
         [HttpPost(ApiRoutes.Images.Upload)]
-        public async Task<string> Upload([FromForm] IFormFile file)
+        public async Task<string> UploadAsync([FromForm] IFormFile file)
         {
             var image = new FileDto
             {

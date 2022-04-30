@@ -16,8 +16,8 @@ public class UnitOfWork : IUnitOfWork
     public ICategoryRepository Category { get; }
     public IItemRepository Item { get; }
 
-    public void Save()
+    public async Task SaveAsync()
     {
-        _db.SaveChanges();
+       await _db.SaveChangesAsync();
     }
 }

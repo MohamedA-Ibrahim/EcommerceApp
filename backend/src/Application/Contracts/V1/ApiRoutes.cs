@@ -1,4 +1,4 @@
-﻿namespace WebApi.Contracts.V1;
+﻿namespace Application.Contracts.V1;
 
 public static class ApiRoutes
 {

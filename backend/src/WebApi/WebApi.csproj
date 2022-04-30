@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
-        <Nullable>enable</Nullable>
+        <Nullable>disable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>01a0aa59-1eea-4751-8216-2db95476fceb</UserSecretsId>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -10,6 +10,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="AutoMapper" Version="11.0.1" />
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
         <PackageReference Include="Azure.Storage.Blobs" Version="12.11.0" />
         <PackageReference Include="Azure.Storage.Files.Shares" Version="12.1.0" />
         <PackageReference Include="Azure.Storage.Queues" Version="12.2.0" />

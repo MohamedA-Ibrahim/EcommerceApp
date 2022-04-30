@@ -1,6 +1,6 @@
-﻿namespace WebApi.Contracts.V1.Requests;
+﻿namespace Application.Contracts.V1.Requests;
 
-public class CreateItemRequest
+public class UpdateItemRequest
 {
     public string Name { get; set; }
     public string Description { get; set; }

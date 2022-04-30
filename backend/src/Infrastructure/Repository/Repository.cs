@@ -1,4 +1,6 @@
 ﻿using System.Linq.Expressions;
+using Application.Common.Models;
+using Application.Models;
 using Domain.Common;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -21,28 +23,6 @@ public class Repository<T> : IRepository<T> where T : AuditableEntity
         dbSet.Add(entity);
     }
 
-    public IEnumerable<T> GetAll(string? includeProperties = null)
-    {
-        IQueryable<T> query = dbSet;
-        if (includeProperties != null)
-            foreach (var includeProp in includeProperties.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries))
-                query = query.Include(includeProp);
-
-        return query.ToList();
-    }
-
-    public T GetFirstOrDefault(Expression<Func<T, bool>> filter, string? includeProperties = null)
-    {
-        IQueryable<T> query = dbSet;
-        query = query.Where(filter);
-
-        if (includeProperties != null)
-            foreach (var includeProp in includeProperties.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries))
-                query = query.Include(includeProp);
-
-        return query.FirstOrDefault();
-    }
-
     public void Remove(T entity)
     {
         dbSet.Remove(entity);
@@ -52,4 +32,64 @@ public class Repository<T> : IRepository<T> where T : AuditableEntity
     {
         dbSet.RemoveRange(entities);
     }
+
+    public Task<List<T>> GetAllAsync(PaginationQuery paginationFilter = null)
+    {
+        if (paginationFilter == null)
+        {
+            return dbSet.ToListAsync();
+        }
+
+        var skip = (paginationFilter.PageNumber -1) * paginationFilter.PageSize;
+        return dbSet
+            .Skip(skip)
+            .Take(paginationFilter.PageSize)
+            .ToListAsync();
+
+    }
+
+    public Task<List<T>> GetAllIncludingAsync(PaginationQuery paginationFilter = null, params Expression<Func<T, object>>[] includeProperties)
+    {
+        var entities = IncludeProperties(includeProperties);
+
+        if (paginationFilter == null)
+        {
+            return entities.ToListAsync();
+        }
+
+        var skip = (paginationFilter.PageNumber - 1) * paginationFilter.PageSize;
+        return entities
+            .Skip(skip)
+            .Take(paginationFilter.PageSize)
+            .ToListAsync();
+
+    }
+
+    public Task<T> GetSingleAsync(int id)
+    {
+        return dbSet.FirstOrDefaultAsync(t => t.Id == id);
+    }
+
+    public Task<T> GetSingleIncludingAsync(int id, params Expression<Func<T, object>>[] includeProperties)
+    {
+        var entities = IncludeProperties(includeProperties);
+        return entities.FirstOrDefaultAsync(x => x.Id == id);
+    }
+
+    public Task<List<T>> FindByAsync(Expression<Func<T, bool>> predicate)
+    {
+        return dbSet.Where(predicate).ToListAsync();
+    }
+
+
+    private IQueryable<T> IncludeProperties(params Expression<Func<T, object>>[] includeProperties)
+    {
+        IQueryable<T> entities = dbSet;
+        foreach (var includeProperty in includeProperties)
+        {
+            entities = entities.Include(includeProperty);
+        }
+        return entities;
+    }
+
 }

@@ -35,6 +35,17 @@ public class Startup
             })
             .AddFluentValidation(mvcConfiguration=> mvcConfiguration.RegisterValidatorsFromAssemblyContaining<Startup>());
 
+        services.AddAutoMapper(typeof(Startup));
+
+        //Get the url of the api
+        services.AddSingleton<IUriService>(provider =>
+        {
+            var accessor = provider.GetRequiredService<IHttpContextAccessor>();
+            var request = accessor.HttpContext.Request;
+            var absoluteUri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent(), "/");
+            return new UriService(absoluteUri);
+        });
+
         //Get the facebook settings and register the DI
         var facebookAuthSettings = new FacebookAuthSettings();
         Configuration.Bind(nameof(FacebookAuthSettings), facebookAuthSettings);

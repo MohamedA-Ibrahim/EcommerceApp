@@ -1,8 +1,8 @@
 ﻿using Application.Common.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using WebApi.Contracts.V1;
-using WebApi.Contracts.V1.Requests;
-using WebApi.Contracts.V1.Responses;
+using Application.Contracts.V1;
+using Application.Contracts.V1.Requests;
+using Application.Contracts.V1.Responses;
 
 namespace WebApi.Controllers;
 

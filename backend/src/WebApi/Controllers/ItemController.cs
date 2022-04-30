@@ -4,8 +4,8 @@ using Domain.Entities;
 using Infrastructure.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WebApi.Contracts.V1;
-using WebApi.Contracts.V1.Requests;
+using Application.Contracts.V1;
+using Application.Contracts.V1.Requests;
 
 namespace WebApi.Controllers;
 
@@ -28,9 +28,9 @@ public class ItemController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet(ApiRoutes.Items.GetAll)]
-    public IActionResult GetAll()
+    public async Task<IActionResult> GetAllAsync()
     {
-        var items = _unitOfWork.Item.GetAll("Category");
+        var items = await _unitOfWork.Item.GetAllIncludingAsync(null, x=> x.Category);
 
         return Ok(items);
     }
@@ -41,18 +41,19 @@ public class ItemController : ControllerBase
     /// <param name="itemId">The id of the item</param>
     /// <returns></returns>
     [HttpGet(ApiRoutes.Items.Get)]
-    public IActionResult Get([FromRoute] int itemId)
+    public async Task<IActionResult> GetById([FromRoute] int itemId)
     {
-        var item = _unitOfWork.Item.GetFirstOrDefault(x => x.Id == itemId);
+        var item = await _unitOfWork.Item.GetSingleAsync(itemId);
 
-        if (item == null) return NotFound();
+        if (item == null)
+            return NotFound();
 
         return Ok(item);
     }
 
     [HttpPost(ApiRoutes.Items.Create)]
     [Authorize(Roles = "Admin,User")]
-    public IActionResult Create([FromBody] CreateItemRequest request)
+    public async Task<IActionResult> Create([FromBody] CreateItemRequest request)
     {
         var item = new Item
         {
@@ -65,7 +66,7 @@ public class ItemController : ControllerBase
         };
 
         _unitOfWork.Item.Add(item);
-        _unitOfWork.Save();
+        await _unitOfWork.SaveAsync();
 
         return Ok(item);
     }
@@ -74,7 +75,7 @@ public class ItemController : ControllerBase
     [Authorize(Roles = "Admin,User")]
     public async Task<IActionResult> Update([FromRoute] int itemId, [FromBody] UpdateItemRequest request)
     {
-        var item = _unitOfWork.Item.GetFirstOrDefault(x => x.Id == itemId);
+        var item = await _unitOfWork.Item.GetSingleAsync(itemId);
 
         if (item == null) return NotFound();
 
@@ -89,7 +90,7 @@ public class ItemController : ControllerBase
         item.ExpirationDate = request.ExpirationDate;
 
         _unitOfWork.Item.Update(item);
-        _unitOfWork.Save();
+        await _unitOfWork.SaveAsync();
         return Ok(item);
     }
 
@@ -97,7 +98,7 @@ public class ItemController : ControllerBase
     [Authorize(Roles = "Admin,User")]
     public async Task<IActionResult> Delete([FromRoute] int itemId)
     {
-        var item = _unitOfWork.Item.GetFirstOrDefault(x => x.Id == itemId);
+        var item = await _unitOfWork.Item.GetSingleAsync(itemId);
 
         if (item == null) return NotFound();
 
@@ -105,7 +106,7 @@ public class ItemController : ControllerBase
         if (!userOwnsItem) return BadRequest(new {error = "You don't own this item"});
 
         _unitOfWork.Item.Remove(item);
-        _unitOfWork.Save();
+        await _unitOfWork.SaveAsync();
 
         return NoContent();
     }

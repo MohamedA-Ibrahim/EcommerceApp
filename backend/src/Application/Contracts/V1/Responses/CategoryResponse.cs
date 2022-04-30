@@ -1,6 +1,6 @@
-﻿namespace WebApi.Contracts.V1.Responses
+﻿namespace Application.Contracts.V1.Responses
 {
-    public class CategoryResposne
+    public class CategoryResponse
     {
         public int Id { get; set; }
 

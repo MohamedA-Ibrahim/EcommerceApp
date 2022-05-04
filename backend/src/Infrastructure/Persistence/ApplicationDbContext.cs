@@ -76,6 +76,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Item> Items { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<AttributeType> AttributeTypes { get; set; }
+    public DbSet<AttributeValue> AttributeValues { get; set; }
 
     #endregion
 }

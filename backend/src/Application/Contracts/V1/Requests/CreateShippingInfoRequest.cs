@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.V1.Requests
 {
-    public class CreateOrderRequest
+    public class CreateShippingInfoRequest
     {
-        public double OrderTotal { get; set; }
-        public int ItemId { get; set; }
         public string PhoneNumber { get; set; }
 
         public string StreetAddress { get; set; }
@@ -20,6 +18,6 @@ namespace Application.Contracts.V1.Requests
 
         public string PostalCode { get; set; }
 
-        public string UserName { get; set; }
+        public string RecieverName { get; set; }
     }
 }

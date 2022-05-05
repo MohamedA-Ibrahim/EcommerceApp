@@ -11,6 +11,9 @@ using Application.Contracts.V1.Requests;
 using Application.Contracts.V1.Responses;
 using Application.Contracts.V1.Responses.Wrappers;
 using Application.Helpers;
+using Application.Enums;
+using Application.Utils;
+using Application.Common.Interfaces;
 
 namespace WebApi.Controllers
 {
@@ -23,15 +26,21 @@ namespace WebApi.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IUriService _uriService;
+        private readonly ICurrentUserService _currentUserService;
 
-        public OrderController(IUnitOfWork unitOfWork, IMapper mapper, IUriService uriService)
+        public OrderController(IUnitOfWork unitOfWork, IMapper mapper, IUriService uriService, ICurrentUserService currentUserService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _uriService = uriService;
+            _currentUserService = currentUserService;
         }
 
-
+        /// <summary>
+        /// Get user orders
+        /// </summary>
+        /// <param name="paginationFilter"></param>
+        /// <returns></returns>
         [HttpGet(ApiRoutes.Orders.GetUserOrders)]
         public async Task<IActionResult> GetUserOrders([FromQuery] PaginationFilter paginationFilter)
         {
@@ -49,6 +58,11 @@ namespace WebApi.Controllers
             return Ok(paginationResponse);
         }
 
+        /// <summary>
+        /// Get order by Id
+        /// </summary>
+        /// <param name="categoryId"></param>
+        /// <returns></returns>
         [HttpGet(ApiRoutes.Orders.Get)]
         public async Task<IActionResult> Get([FromRoute] int categoryId)
         {
@@ -60,16 +74,42 @@ namespace WebApi.Controllers
             return Ok(new Response<CategoryResponse>(_mapper.Map<CategoryResponse>(category)));
         }
 
-        [HttpPost(ApiRoutes.Orders.Create)]
-        public async Task<IActionResult> Create([FromBody] CreateCategoryRequest categoryRequest)
-        {
-            var category = new Category { Name = categoryRequest.Name };
+        /// <summary>
+        /// Create an order when purchasing
+        /// </summary>
+        /// <param name="orderRequest"></param>
+        /// <returns></returns>
 
-            await _unitOfWork.Category.AddAsync(category);
+        [HttpPost(ApiRoutes.Orders.Create)]
+        public async Task<IActionResult> CreateOrder([FromBody] CreateOrderRequest orderRequest)
+        {
+            var order = new Order 
+            {
+                OrderStatus = OrderStatus.StatusPending,
+                PaymentStatus = OrderStatus.PaymentStatusPending,
+                OrderDate = DateUtil.GetCurrentDate(),
+                BuyerId = _currentUserService.UserId,
+                PhoneNumber = orderRequest.PhoneNumber,
+                StreetAddress = orderRequest.StreetAddress,
+                City = orderRequest.City,
+                State = orderRequest.State,
+                PostalCode  = orderRequest.PostalCode,
+                RecieverName = orderRequest.UserName,
+            };
+
+            OrderDetail orderDetail = new OrderDetail
+            {
+                Order = order,
+                ItemId = orderRequest.ItemId,
+                OrderId = order.Id,
+                OrderTotal = orderRequest.OrderTotal,
+                Count = 1
+            };
+
+            await _unitOfWork.OrderDetail.AddAsync(orderDetail);
             await _unitOfWork.SaveAsync();
 
-            var locationUri = _uriService.GetCategoryUri(category.Id.ToString());
-            return Created(locationUri, new Response<CategoryResponse>(_mapper.Map<CategoryResponse>(category)));
+            return Ok(order);
         }
 
         [HttpPut(ApiRoutes.Orders.Update)]

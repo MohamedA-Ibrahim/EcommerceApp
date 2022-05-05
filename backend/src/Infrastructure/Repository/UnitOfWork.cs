@@ -11,10 +11,16 @@ public class UnitOfWork : IUnitOfWork
         _db = db;
         Category = new CategoryRepository(_db);
         Item = new ItemRepository(_db);
+        Order = new OrderRepository(_db);
+        OrderDetail = new OrderDetailRepository(_db);
+        ShippingInfo = new ShippingInfoRepository(_db);
     }
 
     public ICategoryRepository Category { get; }
     public IItemRepository Item { get; }
+    public IOrderDetailRepository OrderDetail { get; }
+    public IOrderRepository Order { get; }
+    public IShippingInfoRepository ShippingInfo { get; }
 
     public async Task SaveAsync()
     {

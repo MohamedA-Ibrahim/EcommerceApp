@@ -8,25 +8,11 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class Order : AuditableEntity
+    public class ShippingInfo : AuditableEntity
     {
-        public string BuyerId { get; set; }
-
         [Required]
-        public DateTime OrderDate { get; set; }
+        public int UserId { get; set; }
 
-        public DateTime ShippingDate { get; set; }
-        public string? OrderStatus { get; set; }
-        public string? PaymentStatus { get; set; }
-
-        //tracking number for shipping
-        public string? TrackingNumber { get; set; }
-       
-        //For integration with stripe 
-        public string? SessionId { get; set; }
-        public string? PaymentIntentId { get; set; }
-
-        //User shipping info
         [Required]
         public string PhoneNumber { get; set; }
 
@@ -37,13 +23,12 @@ namespace Domain.Entities
         public string City { get; set; }
 
         [Required]
-        public string State { get;set;}
+        public string State { get; set; }
 
         [Required]
         public string PostalCode { get; set; }
 
         [Required]
         public string RecieverName { get; set; }
-
     }
 }

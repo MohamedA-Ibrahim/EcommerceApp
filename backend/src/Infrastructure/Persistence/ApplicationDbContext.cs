@@ -77,6 +77,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Category> Categories { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
     public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderDetail> OrderDetails { get; set; }
+    public DbSet<ShippingInfo> ShippingInfos { get; set; }
     public DbSet<AttributeType> AttributeTypes { get; set; }
     public DbSet<AttributeValue> AttributeValues { get; set; }
 

@@ -19,7 +19,7 @@ namespace WebApi.Services
             return new Uri(_baseUri + ApiRoutes.Categories.Get.Replace("{categoryId}", categoryId));
         }
 
-        public Uri GetAllCategoriesUri(PaginationQuery pagination = null)
+        public Uri GetPageUri(PaginationFilter pagination = null)
         {
             var uri = new Uri(_baseUri);
 

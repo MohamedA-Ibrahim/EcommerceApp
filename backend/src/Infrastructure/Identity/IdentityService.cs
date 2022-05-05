@@ -15,12 +15,19 @@ namespace Infrastructure.Identity;
 
 public class IdentityService : IIdentityService
 {
+    #region Injected Fields
+
     private readonly ApplicationDbContext _dataContext;
     private readonly JwtSettings _jwtSettings;
     private readonly TokenValidationParameters _tokenValidationParameters;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IFacebookAuthService _facebookAuthService;
+
+    #endregion
+
+    #region Constructor
+
     public IdentityService(
         UserManager<ApplicationUser> userManager,
         RoleManager<IdentityRole> roleManager,
@@ -37,7 +44,9 @@ public class IdentityService : IIdentityService
         _facebookAuthService = facebookAuthService;
     }
 
-    public async Task<AuthenticationResult> RegisterAsync(string email, string password)
+    #endregion
+
+    public async Task<AuthenticationResult> RegisterAsync(string email, string password, string phone ,string profileName)
     {
         var existingUser = await _userManager.FindByEmailAsync(email);
 
@@ -47,7 +56,9 @@ public class IdentityService : IIdentityService
         var newUser = new ApplicationUser
         {
             Email = email,
-            UserName = email
+            UserName = email,
+            PhoneNumber = phone,
+            ProfileName = profileName
         };
 
         var userCreationResult = await _userManager.CreateAsync(newUser, password);
@@ -60,16 +71,76 @@ public class IdentityService : IIdentityService
         return await GenerateAuthenticationResultAsync(newUser);
     }
 
+    /// <summary>
+    /// Logs user into the system
+    /// Note that an error message shouldn't be descriptive for security purposes
+    /// but it is kept for now
+    /// </summary>
+    /// <param name="email"></param>
+    /// <param name="password"></param>
+    /// <returns></returns>
     public async Task<AuthenticationResult> LoginAsync(string email, string password)
     {
         var user = await _userManager.FindByEmailAsync(email);
 
-        if (user == null) return new AuthenticationResult {Errors = new[] {"User doesn't exist"}};
+        if (user == null)
+            return new AuthenticationResult {Errors = new[] {"User doesn't exist"}};
+
         var userHasValidPassword = await _userManager.CheckPasswordAsync(user, password);
 
-        if (!userHasValidPassword) return new AuthenticationResult {Errors = new[] {"Invalid Password"}};
+        if (!userHasValidPassword)
+            return new AuthenticationResult {Errors = new[] {"Invalid Password"}};
 
         return await GenerateAuthenticationResultAsync(user);
+    }
+
+    /// <summary>
+    /// Logs user using facebook or registers him if he is not registerd
+    /// TODO: Add phone number and profile name to info
+    /// </summary>
+    /// <param name="accessToken"></param>
+    /// <returns></returns>
+    public async Task<AuthenticationResult> LoginWithFacebookAsync(string accessToken)
+    {
+        var validatedTokenResult = await _facebookAuthService.ValidateAccessTokenAsync(accessToken);
+        if (!validatedTokenResult.Data.IsValid)
+        {
+            return new AuthenticationResult
+            {
+                Errors = new[] { "Invalid Facebook token" }
+            };
+        }
+
+        var userInfo = await _facebookAuthService.GetUserInfoAsync(accessToken);
+
+        var user = await _userManager.FindByEmailAsync(userInfo.Email);
+
+        //User is already registered with email/facebook
+        if (user != null)
+        {
+            return await GenerateAuthenticationResultAsync(user);
+        }
+
+        var newUser = new ApplicationUser
+        {
+            Id = Guid.NewGuid().ToString(),
+            Email = userInfo.Email,
+            UserName = userInfo.Email
+        };
+
+        var createdResult = await _userManager.CreateAsync(newUser);
+        if (!createdResult.Succeeded)
+        {
+            return new AuthenticationResult
+            {
+                //Error is vague in purpose
+                Errors = new[] { "Something went wrong" }
+            };
+        }
+
+        await _userManager.AddToRolesAsync(newUser, new[] { "User" });
+
+        return await GenerateAuthenticationResultAsync(newUser);
     }
 
     public async Task<AuthenticationResult> DeleteUserAsync(string userId)
@@ -133,49 +204,15 @@ public class IdentityService : IIdentityService
         return await GenerateAuthenticationResultAsync(user);
     }
 
-    public async Task<AuthenticationResult> LoginWithFacebookAsync(string accessToken)
-    {
-        var validatedTokenResult = await _facebookAuthService.ValidateAccessTokenAsync(accessToken);
-        if (!validatedTokenResult.Data.IsValid)
-        {
-            return new AuthenticationResult
-            {
-                Errors = new[] { "Invalid Facebook token" }
-            };
-        }
-
-        var userInfo = await _facebookAuthService.GetUserInfoAsync(accessToken);
-
-        var user = await _userManager.FindByEmailAsync(userInfo.Email);
-
-        //User is already registered with email/facebook
-        if (user != null)
-        {
-            return await GenerateAuthenticationResultAsync(user);
-        }
-
-        var identityUser = new ApplicationUser
-        {
-            Id = Guid.NewGuid().ToString(),
-            Email = userInfo.Email,
-            UserName = userInfo.Email,
-        };
-
-        var createdResult = await _userManager.CreateAsync(identityUser);
-        if (!createdResult.Succeeded)
-        {
-            return new AuthenticationResult
-            {
-                //Error is vague in purpose
-                Errors = new[] { "Something went wrong" }
-            };
-        }
-
-        return await GenerateAuthenticationResultAsync(identityUser);
-    }
 
     #region Token Helpers
 
+    /// <summary>
+    /// Generate token after user logs into the system
+    /// it contains user info, claims and roles
+    /// </summary>
+    /// <param name="user">User info</param>
+    /// <returns></returns>
     private async Task<AuthenticationResult> GenerateAuthenticationResultAsync(ApplicationUser user)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
@@ -186,7 +223,9 @@ public class IdentityService : IIdentityService
             new(JwtRegisteredClaimNames.Sub, user.Email),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new(JwtRegisteredClaimNames.Email, user.Email),
-            new("userId", user.Id)
+            new("userId", user.Id),
+            new("phone", user.PhoneNumber),
+            new("profileName", user.ProfileName)
         };
 
         //Add user claims

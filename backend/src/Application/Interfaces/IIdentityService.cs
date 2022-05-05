@@ -4,7 +4,7 @@ namespace Application.Common.Interfaces;
 
 public interface IIdentityService
 {
-    Task<AuthenticationResult> RegisterAsync(string email, string password);
+    Task<AuthenticationResult> RegisterAsync(string email, string password, string phone, string profileName);
     Task<AuthenticationResult> LoginAsync(string email, string password);
     Task<AuthenticationResult> DeleteUserAsync(string userId);
     Task<AuthenticationResult> RefreshTokenAsync(string token, string refreshToken);

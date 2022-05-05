@@ -18,6 +18,7 @@ public static class ApiRoutes
     public static class Items
     {
         public const string GetAll = Base + "/items";
+        public const string GetUserItems = Base + "/user/items";
         public const string Update = Base + "/items/{itemId}";
         public const string Delete = Base + "/items/{itemId}";
         public const string Get = Base + "/items/{itemId}";
@@ -37,5 +38,13 @@ public static class ApiRoutes
         public const string Refresh = Base + "/identity/refresh";
         public const string FacebookAuth = Base + "/identity/auth/fb";
 
+    }
+
+    public static class Orders
+    {
+        public const string GetUserOrders = Base + "/user/orders";
+        public const string Update = Base + "/orders/{orderId}";
+        public const string Get = Base + "/orders/{orderId}";
+        public const string Create = Base + "/orders";
     }
 }

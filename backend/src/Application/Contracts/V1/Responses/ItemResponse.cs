@@ -2,7 +2,7 @@
 {
     public class ItemResponse
     {
-        public int Id{get;set; }
+        public int Id {get;set; }
         public string Name { get; set; }
 
         public string Description { get; set; }
@@ -13,5 +13,7 @@
         public CategoryResponse Category { get; set; }
 
         public DateTime? ExpirationDate { get; set; }
+
+        public bool Sold { get; set; }
     }
 }

@@ -9,7 +9,7 @@ namespace Application.Contracts.V1.Requests.Queries
     /// <summary>
     /// Used for filtering
     /// </summary>
-    public class GetAllCategoriesQuery
+    public class GetAllCategoriesFilter
     {
         //Put the field that you want to filter by
         public string UserId { get; set; }

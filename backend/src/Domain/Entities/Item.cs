@@ -26,4 +26,6 @@ public class Item : AuditableEntity
     public Category Category { get; set; }
 
     public DateTime? ExpirationDate { get; set; }
+
+    public bool Sold { get; set; } = false;
 }

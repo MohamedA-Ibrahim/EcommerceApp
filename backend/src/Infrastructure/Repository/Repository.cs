@@ -34,7 +34,12 @@ public class Repository<T> : IRepository<T> where T : AuditableEntity
         dbSet.RemoveRange(entities);
     }
 
-    public Task<List<T>> GetAllAsync(Expression<Func<T, bool>> filter = null, PaginationQuery paginationFilter = null)
+    public async Task<int> CountAsync()
+    {
+        return await dbSet.CountAsync();
+    }
+
+    public Task<List<T>> GetAllAsync(Expression<Func<T, bool>> filter = null, PaginationFilter paginationFilter = null)
     {
         var query = dbSet.AsQueryable();
 
@@ -56,7 +61,7 @@ public class Repository<T> : IRepository<T> where T : AuditableEntity
 
     }
 
-    public Task<List<T>> GetAllIncludingAsync(Expression<Func<T, bool>> filter = null, PaginationQuery paginationFilter = null, params Expression<Func<T, object>>[] includeProperties)
+    public Task<List<T>> GetAllIncludingAsync(Expression<Func<T, bool>> filter = null, PaginationFilter paginationFilter = null, params Expression<Func<T, object>>[] includeProperties)
     {
         var entities = IncludeProperties(includeProperties);
 
@@ -88,11 +93,6 @@ public class Repository<T> : IRepository<T> where T : AuditableEntity
         return entities.FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public Task<List<T>> FindByAsync(Expression<Func<T, bool>> predicate)
-    {
-        return dbSet.Where(predicate).ToListAsync();
-    }
-
 
     /// <summary>
     /// Include properties to include
@@ -109,21 +109,6 @@ public class Repository<T> : IRepository<T> where T : AuditableEntity
         return entities;
     }
 
-    //TODO: Move out of generic repository
-    /// <summary>
-    /// Add filtering to the query
-    /// </summary>
-    /// <param name="filter">the object that contains the field to filter with</param>
-    /// <param name="queryable">The query to filter</param>
-    /// <returns></returns>
-    private static IQueryable<T> AddFiltersToQuery(GetAllCategoriesQuery filter, IQueryable<T> queryable)
-    {
-        if (!string.IsNullOrEmpty(filter?.UserId))
-        {
-            queryable = queryable.Where(x => x.CreatedBy == filter.UserId);
-        }
 
-        return queryable;
-    }
 
 }

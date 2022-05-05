@@ -10,10 +10,8 @@ public class Category : AuditableEntity
     public string Name { get; set; }
 
     [Required]
-    [MaxLength(50)]
     public string Description { get; set; }
 
     [Required]
-    [MaxLength(50)]
     public string ImageUrl { get; set; }
 }

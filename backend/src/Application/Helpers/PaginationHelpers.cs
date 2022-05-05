@@ -11,28 +11,40 @@ namespace Application.Helpers
 {
     public class PaginationHelpers
     {
-        public static PagedResponse<T> CreatePaginatedResponse<T>(IUriService uriService, PaginationQuery paginationFilter, List<T> response)
+        public static PagedResponse<T> CreatePaginatedResponse<T>(List<T> data,  PaginationFilter paginationFilter, int totalRecords, IUriService uriService)
         {
-            var nextPage = paginationFilter.PageNumber >= 1
-                ? uriService
-                .GetAllCategoriesUri(new PaginationQuery(paginationFilter.PageNumber + 1, paginationFilter.PageSize)).ToString()
-                : null;
-
-            var previousPage = paginationFilter.PageNumber - 1 >= 1
-                ? uriService
-                .GetAllCategoriesUri(new PaginationQuery(paginationFilter.PageNumber - 1, paginationFilter.PageSize)).ToString()
-                : null;
-
-            var paginationResponse = new PagedResponse<T>
+            //Create a pagination response
+            var response = new PagedResponse<T>
             {
-                Data = response,
+                Data = data,
                 PageNumber = paginationFilter.PageNumber >= 1 ? paginationFilter.PageNumber : (int?)null,
-                PageSize = paginationFilter.PageSize >= 1 ? paginationFilter.PageSize : (int?)null,
-                NextPage = response.Any() ? nextPage : null,
-                PreviousPage = previousPage
+                PageSize = paginationFilter.PageSize >= 1 ? paginationFilter.PageSize : (int?)null
             };
 
-            return paginationResponse;
+            //Get total pages
+            var totalPages = ((double)totalRecords / (double)paginationFilter.PageSize);
+            int roundedTotalPages = Convert.ToInt32(Math.Ceiling(totalPages));
+
+            //Get next and previous page urls
+            var nextPage = paginationFilter.PageNumber >= 1 && paginationFilter.PageNumber < roundedTotalPages
+                ? uriService
+                .GetPageUri(new PaginationFilter(paginationFilter.PageNumber + 1, paginationFilter.PageSize)).ToString()
+                : null;
+
+            var previousPage = paginationFilter.PageNumber - 1 >= 1 && paginationFilter.PageNumber <= roundedTotalPages
+                ? uriService
+                .GetPageUri(new PaginationFilter(paginationFilter.PageNumber - 1, paginationFilter.PageSize)).ToString()
+                : null;
+
+            response.NextPage = data.Any() ? nextPage : null;
+            response.PreviousPage = previousPage;
+            response.FirstPage = uriService.GetPageUri(new PaginationFilter(1, paginationFilter.PageSize)).ToString();
+            response.LastPage = uriService.GetPageUri(new PaginationFilter(roundedTotalPages, paginationFilter.PageSize)).ToString();
+            response.TotalPages = roundedTotalPages;
+            response.TotalRecords = totalRecords;
+
+
+            return response;
         }
     }
 }

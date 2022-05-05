@@ -10,6 +10,6 @@ namespace Application.Interfaces
     public interface IUriService
     {
         Uri GetCategoryUri(string categoryId);
-        Uri GetAllCategoriesUri(PaginationQuery pagination = null);
+        Uri GetPageUri(PaginationFilter pagination = null);
     }
 }

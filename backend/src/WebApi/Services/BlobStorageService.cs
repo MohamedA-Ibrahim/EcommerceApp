@@ -22,7 +22,7 @@ namespace WebApi.Services
                 return null;
             }
 
-            var containerClient = _blobServiceClient.GetBlobContainerClient("uploads");
+            var containerClient = _blobServiceClient.GetBlobContainerClient("images");
             var blobClient = containerClient.GetBlobClient(file.GetPathWithFileName());
             await blobClient.UploadAsync(file.Content, new BlobHttpHeaders { ContentType = file.ContentType});
         return blobClient.Uri.ToString();

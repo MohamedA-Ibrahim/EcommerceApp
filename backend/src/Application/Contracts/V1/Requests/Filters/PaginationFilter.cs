@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace Application.Models
 {
-    public class PaginationQuery
+    public class PaginationFilter
     {
-        public PaginationQuery()
+        public PaginationFilter()
         {
             PageNumber = 1;
             PageSize = 10;
         }
 
-        public PaginationQuery(int pageNumber, int pageSize)
+        public PaginationFilter(int pageNumber, int pageSize)
         {
             PageNumber = pageNumber < 1 ? 1 : pageNumber;
             PageSize = pageSize > 10 ? 10 : pageSize;

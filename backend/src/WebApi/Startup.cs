@@ -125,7 +125,7 @@ public class Startup
 
         app.UseStaticFiles();
         app.UseHsts();
-        app.UseHttpsRedirection();
+        //app.UseHttpsRedirection();
 
         var swaggerOptions = new SwaggerSettings();
         Configuration.GetSection(nameof(SwaggerSettings)).Bind(swaggerOptions);

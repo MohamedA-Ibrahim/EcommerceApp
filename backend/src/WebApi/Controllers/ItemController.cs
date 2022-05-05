@@ -58,6 +58,7 @@ public class ItemController : ControllerBase
     ///  Get items posted by user
     /// </summary>
     /// <returns></returns>
+    [Authorize(Roles = "Admin,User")]
     [HttpGet(ApiRoutes.Items.GetUserItems)]
     public async Task<IActionResult> GetUserItemsAsync([FromQuery] PaginationFilter paginationFilter)
     {
@@ -115,10 +116,16 @@ public class ItemController : ControllerBase
         await _unitOfWork.SaveAsync();
 
 
-        var locationUri = _uriService.GetCategoryUri(item.Id.ToString());
+        var locationUri = _uriService.GetItemUri(item.Id.ToString());
         return Created(locationUri, new Response<ItemResponse>(_mapper.Map<ItemResponse>(item)));
     }
 
+    /// <summary>
+    /// Update an item
+    /// </summary>
+    /// <param name="itemId">The id of the item to update</param>
+    /// <param name="request">The updated info</param>
+    /// <returns></returns>
     [HttpPut(ApiRoutes.Items.Update)]
     [Authorize(Roles = "Admin,User")]
     public async Task<IActionResult> Update([FromRoute] int itemId, [FromBody] UpdateItemRequest request)
@@ -146,6 +153,12 @@ public class ItemController : ControllerBase
 
         return Ok(new Response<ItemResponse>(_mapper.Map<ItemResponse>(item)));
     }
+
+    /// <summary>
+    /// Delete an item
+    /// </summary>
+    /// <param name="itemId">The id of the item to delete</param>
+    /// <returns></returns>
 
     [HttpDelete(ApiRoutes.Items.Delete)]
     [Authorize(Roles = "Admin,User")]

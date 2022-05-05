@@ -22,7 +22,7 @@ namespace Domain.Entities
         //tracking number for shipping
         public string? TrackingNumber { get; set; }
        
-        //For integration with stripe 
+        //For integration with paymob 
         public string? SessionId { get; set; }
         public string? PaymentIntentId { get; set; }
 

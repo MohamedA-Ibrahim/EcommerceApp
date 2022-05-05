@@ -43,19 +43,9 @@ namespace WebApi.Controllers
         /// <returns></returns>
         [HttpGet(ApiRoutes.Orders.GetUserOrders)]
         public async Task<IActionResult> GetUserOrders([FromQuery] PaginationFilter paginationFilter)
-        {
-            var categories = await _unitOfWork.Category.GetAllAsync(null, paginationFilter);
-            var categoryResponse = _mapper.Map<List<CategoryResponse>>(categories);
-
-            if (paginationFilter == null || paginationFilter.PageNumber < 1 || paginationFilter.PageSize < 1)
-            {
-                return Ok(new PagedResponse<CategoryResponse>(categoryResponse));
-            }
-
-            var totalRecords = await _unitOfWork.Category.CountAsync();
-
-            var paginationResponse = PaginationHelpers.CreatePaginatedResponse(categoryResponse, paginationFilter, totalRecords, _uriService);
-            return Ok(paginationResponse);
+        {        
+            //TODO: Implement
+            return Ok("Not implemented yet");
         }
 
         /// <summary>
@@ -66,12 +56,8 @@ namespace WebApi.Controllers
         [HttpGet(ApiRoutes.Orders.Get)]
         public async Task<IActionResult> Get([FromRoute] int categoryId)
         {
-            var category = await _unitOfWork.Category.GetSingleAsync(categoryId);
-
-            if (category == null)
-                return NotFound();
-
-            return Ok(new Response<CategoryResponse>(_mapper.Map<CategoryResponse>(category)));
+            //TODO: Implement
+            return Ok("Not implemented yet");
         }
 
         /// <summary>
@@ -110,22 +96,6 @@ namespace WebApi.Controllers
             await _unitOfWork.SaveAsync();
 
             return Ok(order);
-        }
-
-        [HttpPut(ApiRoutes.Orders.Update)]
-        public async Task<IActionResult> Update([FromRoute] int categoryId, [FromBody] UpdateCategoryRequest request)
-        {
-            var category = await _unitOfWork.Category.GetSingleAsync(categoryId);
-
-            if (category == null)
-                return NotFound();
-
-            category.Name = request.Name;
-
-            _unitOfWork.Category.Update(category);
-            await _unitOfWork.SaveAsync();
-
-            return Ok(new Response<CategoryResponse>(_mapper.Map<CategoryResponse>(category)));
         }
     }
 }

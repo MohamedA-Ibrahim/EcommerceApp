@@ -6,12 +6,17 @@ networks:
 
 services:
   webapi:
-    image: ${DOCKER_REGISTRY-}webapi
+    image: ecommerceapi
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
     build:
       context: .
       dockerfile: WebApi/Dockerfile
     ports:
-        - "7000:80"
+      - "5000:80"
+    volumes:
+      - ~/.aspnet/https:/https:ro
     depends_on:
         - sqldb
     networks:

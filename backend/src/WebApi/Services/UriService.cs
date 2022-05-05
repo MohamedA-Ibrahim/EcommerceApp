@@ -14,16 +14,11 @@ namespace WebApi.Services
             _baseUri = baseUri;
         }
 
-        public Uri GetCategoryUri(string categoryId)
-        {
-            return new Uri(_baseUri + ApiRoutes.Categories.Get.Replace("{categoryId}", categoryId));
-        }
-
         public Uri GetPageUri(PaginationFilter pagination = null)
         {
             var uri = new Uri(_baseUri);
 
-            if(pagination == null)
+            if (pagination == null)
             {
                 return uri;
             }
@@ -31,8 +26,20 @@ namespace WebApi.Services
             var modifiedUri = QueryHelpers.AddQueryString(uri.ToString(), "pageNumber", pagination.PageNumber.ToString());
 
             modifiedUri = QueryHelpers.AddQueryString(modifiedUri, "pageSize", pagination.PageSize.ToString());
-            
+
             return new Uri(modifiedUri);
         }
+
+        public Uri GetCategoryUri(string categoryId)
+        {
+            return new Uri(_baseUri + ApiRoutes.Categories.Get.Replace("{categoryId}", categoryId));
+        }
+
+        public Uri GetItemUri(string itemId)
+        {
+            return new Uri(_baseUri + ApiRoutes.Items.Get.Replace("{itemId}", itemId));
+        }
+
+
     }
 }

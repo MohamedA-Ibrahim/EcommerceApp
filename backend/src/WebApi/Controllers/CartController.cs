@@ -6,12 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Application.Contracts.V1;
 using Application.Contracts.V1.Requests;
-using Application.Models;
 using AutoMapper;
-using Application.Interfaces;
 using Application.Contracts.V1.Responses;
-using Application.Contracts.V1.Responses.Wrappers;
-using Application.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace WebApi.Controllers;
@@ -67,7 +63,7 @@ public class CartController : ControllerBase
     [HttpDelete(ApiRoutes.Cart.Delete)]
     public async Task<IActionResult> RemoveItemFromCart([FromRoute] int cartId)
     {
-        var cart = await _unitOfWork.Cart.GetSingleAsync(cartId);
+        var cart = await _unitOfWork.Cart.GetFirstOrDefaultAsync(cartId);
 
         if (cart == null) 
             return NotFound();

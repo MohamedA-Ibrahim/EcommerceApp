@@ -1,14 +1,10 @@
-﻿using Domain.Common;
-using System;
-using System.Collections.Generic;
+﻿
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Domain.Entities
+
+namespace Application.Contracts.V1.Requests
 {
-    public class UserAddress : AuditableEntity
+    public class UpsertUserAddressRequest
     {
         [Required]
         [MaxLength(15)]

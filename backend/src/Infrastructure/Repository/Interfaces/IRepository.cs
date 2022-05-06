@@ -13,7 +13,10 @@ public interface IRepository<T> where T : AuditableEntity
     Task<int> CountAsync();
     Task<List<T>> GetAllAsync(Expression<Func<T, bool>> filter = null, PaginationFilter paginationFilter = null);
     Task<List<T>> GetAllIncludingAsync(Expression<Func<T, bool>> filter = null, PaginationFilter paginationFilter = null, params Expression<Func<T, object>>[] includeProperties);
-    Task<T> GetSingleAsync(int id);
-    Task<T> GetSingleIncludingAsync(int id, params Expression<Func<T, object>>[] includeProperties);
+    Task<T> GetFirstOrDefaultAsync(int id);
+    Task<T> GetFirstOrDefaultIncludingAsync(int id, params Expression<Func<T, object>>[] includeProperties);
+
+    Task<T> FindByAsync(Expression<Func<T, bool>> predicate);
+
 
 }

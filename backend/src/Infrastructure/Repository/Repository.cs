@@ -82,17 +82,21 @@ public class Repository<T> : IRepository<T> where T : AuditableEntity
             .ToListAsync();
     }
 
-    public Task<T> GetSingleAsync(int id)
+    public Task<T> GetFirstOrDefaultAsync(int id)
     {
         return dbSet.FirstOrDefaultAsync(t => t.Id == id);
     }
 
-    public Task<T> GetSingleIncludingAsync(int id, params Expression<Func<T, object>>[] includeProperties)
+    public Task<T> GetFirstOrDefaultIncludingAsync(int id, params Expression<Func<T, object>>[] includeProperties)
     {
         var entities = IncludeProperties(includeProperties);
         return entities.FirstOrDefaultAsync(x => x.Id == id);
     }
 
+    public Task<T> FindByAsync(Expression<Func<T, bool>> predicate)
+    {
+        return dbSet.FirstOrDefaultAsync(predicate);
+    }
 
     /// <summary>
     /// Include properties to include

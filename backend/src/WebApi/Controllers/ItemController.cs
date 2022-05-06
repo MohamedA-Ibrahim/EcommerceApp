@@ -85,7 +85,7 @@ public class ItemController : ControllerBase
     [HttpGet(ApiRoutes.Items.Get)]
     public async Task<IActionResult> GetById([FromRoute] int itemId)
     {
-        var item = await _unitOfWork.Item.GetSingleAsync(itemId);
+        var item = await _unitOfWork.Item.GetFirstOrDefaultAsync(itemId);
 
         if (item == null)
             return NotFound();
@@ -130,7 +130,7 @@ public class ItemController : ControllerBase
     [Authorize(Roles = "Admin,User")]
     public async Task<IActionResult> Update([FromRoute] int itemId, [FromBody] UpdateItemRequest request)
     {
-        var item = await _unitOfWork.Item.GetSingleAsync(itemId);
+        var item = await _unitOfWork.Item.GetFirstOrDefaultAsync(itemId);
 
         if (item == null) 
             return NotFound();
@@ -164,7 +164,7 @@ public class ItemController : ControllerBase
     [Authorize(Roles = "Admin,User")]
     public async Task<IActionResult> Delete([FromRoute] int itemId)
     {
-        var item = await _unitOfWork.Item.GetSingleAsync(itemId);
+        var item = await _unitOfWork.Item.GetFirstOrDefaultAsync(itemId);
 
         if (item == null) return NotFound();
 

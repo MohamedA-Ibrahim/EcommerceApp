@@ -37,15 +37,22 @@ public static class ApiRoutes
         public const string Delete = Base + "/identity/delete";
         public const string Refresh = Base + "/identity/refresh";
         public const string FacebookAuth = Base + "/identity/auth/fb";
+    }
+
+    public static class UserAddress
+    {
+        public const string GetUserAddress = Base + "/user/address";
+        public const string Upsert = Base + "/user/address";
+        public const string Delete = Base + "/user/address";
 
     }
 
     public static class Orders
     {
         public const string GetUserOrders = Base + "/user/orders";
-        public const string Update = Base + "/orders/{orderId}";
-        public const string Get = Base + "/orders/{orderId}";
-        public const string Create = Base + "/orders";
+        public const string Update = Base + "/user/orders/{orderId}";
+        public const string Get = Base + "/user/orders/{orderId}";
+        public const string Create = Base + "/user/orders";
     }
 
     public static class AttributeTypes

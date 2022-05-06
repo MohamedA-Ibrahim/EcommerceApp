@@ -78,7 +78,7 @@ public class AttributeTypeController : ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Update([FromRoute] int attributeTypeId, [FromBody] UpdateAttributeTypeRequest request)
     {
-        var attributeType = await _unitOfWork.AttributeType.GetSingleAsync(attributeTypeId);
+        var attributeType = await _unitOfWork.AttributeType.GetFirstOrDefaultAsync(attributeTypeId);
 
         if (attributeType == null) 
             return NotFound();
@@ -100,7 +100,7 @@ public class AttributeTypeController : ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete([FromRoute] int attributeTypeId)
     {
-        var attributeType = await _unitOfWork.AttributeType.GetSingleAsync(attributeTypeId);
+        var attributeType = await _unitOfWork.AttributeType.GetFirstOrDefaultAsync(attributeTypeId);
 
         if (attributeType == null) 
             return NotFound();

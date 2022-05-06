@@ -61,7 +61,7 @@ public class CategoryController : Controller
     [HttpGet(ApiRoutes.Categories.Get)]
     public async Task<IActionResult> Get([FromRoute] int categoryId)
     {
-        var category = await _unitOfWork.Category.GetSingleAsync(categoryId);
+        var category = await _unitOfWork.Category.GetFirstOrDefaultAsync(categoryId);
 
         if (category == null) 
             return NotFound();
@@ -97,7 +97,7 @@ public class CategoryController : Controller
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Update([FromRoute] int categoryId, [FromBody] UpdateCategoryRequest request)
     {
-        var category = await _unitOfWork.Category.GetSingleAsync(categoryId);
+        var category = await _unitOfWork.Category.GetFirstOrDefaultAsync(categoryId);
 
         if (category == null) 
             return NotFound();
@@ -121,7 +121,7 @@ public class CategoryController : Controller
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete([FromRoute] int categoryId)
     {
-        var category = await _unitOfWork.Category.GetSingleAsync(categoryId);
+        var category = await _unitOfWork.Category.GetFirstOrDefaultAsync(categoryId);
 
         if (category == null) return NotFound();
 

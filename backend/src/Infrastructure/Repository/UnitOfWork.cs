@@ -13,17 +13,18 @@ public class UnitOfWork : IUnitOfWork
         Item = new ItemRepository(_db);
         Order = new OrderRepository(_db);
         OrderDetail = new OrderDetailRepository(_db);
-        ShippingInfo = new ShippingInfoRepository(_db);
+        UserAdress = new UserAddressRepository(_db);
         AttributeType = new AttributeTypeRepository(_db);
+        Cart = new CartRepository(_db);
     }
 
     public ICategoryRepository Category { get; }
     public IItemRepository Item { get; }
     public IOrderDetailRepository OrderDetail { get; }
     public IOrderRepository Order { get; }
-    public IShippingInfoRepository ShippingInfo { get; }
+    public IUserAddressRepository UserAdress { get; }
     public IAttributeTypeRepository AttributeType { get; }
-
+    public ICartRepository Cart { get; }
     public async Task SaveAsync()
     {
        await _db.SaveChangesAsync();

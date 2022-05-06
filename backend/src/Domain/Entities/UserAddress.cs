@@ -8,11 +8,8 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class ShippingInfo : AuditableEntity
+    public class UserAddress : AuditableEntity
     {
-        [Required]
-        public int UserId { get; set; }
-
         [Required]
         public string PhoneNumber { get; set; }
 

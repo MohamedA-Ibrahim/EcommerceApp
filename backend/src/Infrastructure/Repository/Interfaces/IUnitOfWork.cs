@@ -6,7 +6,8 @@ public interface IUnitOfWork
     IItemRepository Item { get; }
     IOrderDetailRepository OrderDetail { get; }
     IOrderRepository Order { get; }
-    IShippingInfoRepository ShippingInfo { get; }
+    IUserAddressRepository UserAdress { get; }
     IAttributeTypeRepository AttributeType { get; }
+    ICartRepository Cart { get; }
     Task SaveAsync();
 }

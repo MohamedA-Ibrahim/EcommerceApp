@@ -1,6 +1,6 @@
 ﻿namespace WebApi.Controllers
 {
-    public class ShippingInfoController
+    public class UserAddressController
     {
     }
 }

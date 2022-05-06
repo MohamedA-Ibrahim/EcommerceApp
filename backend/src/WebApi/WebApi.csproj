@@ -7,7 +7,7 @@
         <UserSecretsId>01a0aa59-1eea-4751-8216-2db95476fceb</UserSecretsId>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <DebugType>none</DebugType>
-        <DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
+        <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <DockerfileContext>..\..</DockerfileContext>
     </PropertyGroup>
@@ -15,17 +15,17 @@
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="11.0.1" />
         <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
-        <PackageReference Include="Azure.Storage.Blobs" Version="12.11.0" />
-        <PackageReference Include="Azure.Storage.Files.Shares" Version="12.1.0" />
-        <PackageReference Include="Azure.Storage.Queues" Version="12.2.0" />
-        <PackageReference Include="FluentValidation.AspNetCore" Version="10.4.0" />
+        <PackageReference Include="Azure.Storage.Blobs" Version="12.12.0" />
+        <PackageReference Include="Azure.Storage.Files.Shares" Version="12.10.0" />
+        <PackageReference Include="Azure.Storage.Queues" Version="12.10.0" />
+        <PackageReference Include="FluentValidation.AspNetCore" Version="11.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.4" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.4">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.Azure" Version="1.0.0" />
-        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
+        <PackageReference Include="Microsoft.Extensions.Azure" Version="1.1.1" />
+        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.15.1" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.1" />
         <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.2" />
     </ItemGroup>
@@ -33,10 +33,6 @@
     <ItemGroup>
         <ProjectReference Include="..\Application\Application.csproj" />
         <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <Folder Include="wwwroot\images\" />
     </ItemGroup>
 
 </Project>

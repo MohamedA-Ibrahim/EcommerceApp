@@ -47,4 +47,12 @@ public static class ApiRoutes
         public const string Get = Base + "/orders/{orderId}";
         public const string Create = Base + "/orders";
     }
+
+    public static class AttributeTypes
+    {
+        public const string GetByCategoryId = Base + "/attributeTypes/{categoryId}";
+        public const string Create = Base + "/attributeTypes";
+        public const string Update = Base + "/attributeTypes/{attributeTypeId}";
+        public const string Delete = Base + "/attributeTypes/{attributeTypeId}";
+    }
 }

@@ -10,6 +10,7 @@ namespace WebApi.Mapping
         {
             CreateMap<Item, ItemResponse>();
             CreateMap<Category, CategoryResponse>();
+            CreateMap<AttributeType, AttributeTypeResponse>();
         }
     }
 }

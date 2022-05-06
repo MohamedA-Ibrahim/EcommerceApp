@@ -7,6 +7,6 @@ public interface IUnitOfWork
     IOrderDetailRepository OrderDetail { get; }
     IOrderRepository Order { get; }
     IShippingInfoRepository ShippingInfo { get; }
-
+    IAttributeTypeRepository AttributeType { get; }
     Task SaveAsync();
 }

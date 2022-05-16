@@ -63,10 +63,4 @@ public static class ApiRoutes
         public const string Delete = Base + "/attributeTypes/{attributeTypeId}";
     }
 
-    public static class Cart
-    {
-        public const string GetAll = Base + "/cart";
-        public const string Add = Base + "/cart";
-        public const string Delete = Base + "/cart/{cartId}";
-    }
 }

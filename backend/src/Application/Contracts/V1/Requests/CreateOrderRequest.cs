@@ -9,7 +9,9 @@ namespace Application.Contracts.V1.Requests
     public class CreateOrderRequest
     {
         public double OrderTotal { get; set; }
+
         public int ItemId { get; set; }
+
         public string PhoneNumber { get; set; }
 
         public string StreetAddress { get; set; }

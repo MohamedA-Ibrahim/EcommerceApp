@@ -42,22 +42,17 @@ namespace WebApi.Controllers
         /// <param name="paginationFilter"></param>
         /// <returns></returns>
         [HttpGet(ApiRoutes.Orders.GetUserOrders)]
-        public async Task<IActionResult> GetUserOrders([FromQuery] PaginationFilter paginationFilter)
+        public async Task<IActionResult> GetUserOrders()
         {        
-            //TODO: Implement
-            return Ok("Not implemented yet");
+            var orders = _unitOfWork.Order.GetAllAsync(x=> x.CreatedBy == _currentUserService.UserId, null);
+            return Ok(orders);
         }
 
-        /// <summary>
-        /// Get order by Id
-        /// </summary>
-        /// <param name="categoryId"></param>
-        /// <returns></returns>
         [HttpGet(ApiRoutes.Orders.Get)]
-        public async Task<IActionResult> Get([FromRoute] int categoryId)
+        public async Task<IActionResult> Get([FromRoute] int orderId)
         {
-            //TODO: Implement
-            return Ok("Not implemented yet");
+            var order = _unitOfWork.Order.GetFirstOrDefaultAsync(orderId);
+            return Ok(order);
         }
 
         /// <summary>
@@ -71,6 +66,7 @@ namespace WebApi.Controllers
         {
             var order = new Order 
             {
+                ItemId = orderRequest.ItemId,
                 OrderStatus = OrderStatus.StatusPending,
                 PaymentStatus = OrderStatus.PaymentStatusPending,
                 OrderDate = DateUtil.GetCurrentDate(),
@@ -83,16 +79,8 @@ namespace WebApi.Controllers
                 RecieverName = orderRequest.UserName,
             };
 
-            OrderDetail orderDetail = new OrderDetail
-            {
-                Order = order,
-                ItemId = orderRequest.ItemId,
-                OrderId = order.Id,
-                OrderTotal = orderRequest.OrderTotal,
-                Count = 1
-            };
 
-            await _unitOfWork.OrderDetail.AddAsync(orderDetail);
+            await _unitOfWork.Order.AddAsync(order);
             await _unitOfWork.SaveAsync();
 
             return Ok(order);

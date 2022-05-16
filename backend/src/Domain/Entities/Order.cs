@@ -11,9 +11,15 @@ namespace Domain.Entities
     public class Order : AuditableEntity
     {
         public string BuyerId { get; set; }
-
+        public string SellerId { get; set; }
         [Required]
         public DateTime OrderDate { get; set; }
+
+        [Required]
+        public int ItemId { get; set; }
+
+        public Item Item { get; set; }
+        public double OrderTotal { get; set; }
 
         public DateTime ShippingDate { get; set; }
         public string? OrderStatus { get; set; }

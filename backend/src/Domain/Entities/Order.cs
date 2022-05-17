@@ -1,17 +1,23 @@
 ﻿using Domain.Common;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities
 {
     public class Order : AuditableEntity
     {
         public string BuyerId { get; set; }
+
+        [Required]
         public string SellerId { get; set; }
+
+        [ForeignKey(nameof(SellerId))]
+        public ApplicationUser Seller { get; set; }
+
+        [ForeignKey(nameof(BuyerId))]
+        public ApplicationUser Buyer { get; set; }
+
+
         [Required]
         public DateTime OrderDate { get; set; }
 
@@ -19,9 +25,8 @@ namespace Domain.Entities
         public int ItemId { get; set; }
 
         public Item Item { get; set; }
-        public double OrderTotal { get; set; }
 
-        public DateTime ShippingDate { get; set; }
+        public DateTime? ShippingDate { get; set; }
         public string? OrderStatus { get; set; }
         public string? PaymentStatus { get; set; }
 
@@ -30,7 +35,6 @@ namespace Domain.Entities
        
         //For integration with paymob 
         public string? SessionId { get; set; }
-        public string? PaymentIntentId { get; set; }
 
         //User shipping info
         [Required]

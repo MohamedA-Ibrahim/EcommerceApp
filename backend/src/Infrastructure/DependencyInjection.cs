@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using Application.Common.Interfaces;
 using Application.Settings;
+using Domain.Entities;
 using Infrastructure.Identity;
 using Infrastructure.Persistence;
 using Infrastructure.Repository;

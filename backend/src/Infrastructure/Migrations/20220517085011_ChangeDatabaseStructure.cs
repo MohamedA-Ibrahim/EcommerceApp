@@ -20,6 +20,26 @@ namespace Infrastructure.Migrations
                 table: "Orders");
 
             migrationBuilder.AlterColumn<string>(
+                name: "LastModifiedBy",
+                table: "UserAddresses",
+                type: "nvarchar(max)",
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(50)",
+                oldMaxLength: 50,
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "CreatedBy",
+                table: "UserAddresses",
+                type: "nvarchar(450)",
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(50)",
+                oldMaxLength: 50,
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
                 name: "UserId",
                 table: "RefreshTokens",
                 type: "nvarchar(450)",
@@ -35,6 +55,26 @@ namespace Infrastructure.Migrations
                 nullable: true,
                 oldClrType: typeof(DateTime),
                 oldType: "datetime2");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "LastModifiedBy",
+                table: "Orders",
+                type: "nvarchar(max)",
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(50)",
+                oldMaxLength: 50,
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "CreatedBy",
+                table: "Orders",
+                type: "nvarchar(450)",
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(50)",
+                oldMaxLength: 50,
+                oldNullable: true);
 
             migrationBuilder.AlterColumn<string>(
                 name: "BuyerId",
@@ -58,6 +98,86 @@ namespace Infrastructure.Migrations
                 type: "nvarchar(450)",
                 nullable: false,
                 defaultValue: "");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "LastModifiedBy",
+                table: "Items",
+                type: "nvarchar(max)",
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(50)",
+                oldMaxLength: 50,
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "CreatedBy",
+                table: "Items",
+                type: "nvarchar(450)",
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(50)",
+                oldMaxLength: 50,
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "LastModifiedBy",
+                table: "Categories",
+                type: "nvarchar(max)",
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(50)",
+                oldMaxLength: 50,
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "CreatedBy",
+                table: "Categories",
+                type: "nvarchar(450)",
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(50)",
+                oldMaxLength: 50,
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "LastModifiedBy",
+                table: "AttributeValues",
+                type: "nvarchar(max)",
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(50)",
+                oldMaxLength: 50,
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "CreatedBy",
+                table: "AttributeValues",
+                type: "nvarchar(450)",
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(50)",
+                oldMaxLength: 50,
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "LastModifiedBy",
+                table: "AttributeTypes",
+                type: "nvarchar(max)",
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(50)",
+                oldMaxLength: 50,
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "CreatedBy",
+                table: "AttributeTypes",
+                type: "nvarchar(450)",
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(50)",
+                oldMaxLength: 50,
+                oldNullable: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserAddresses_CreatedBy",
@@ -273,6 +393,26 @@ namespace Infrastructure.Migrations
                 table: "Orders");
 
             migrationBuilder.AlterColumn<string>(
+                name: "LastModifiedBy",
+                table: "UserAddresses",
+                type: "nvarchar(50)",
+                maxLength: 50,
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)",
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "CreatedBy",
+                table: "UserAddresses",
+                type: "nvarchar(50)",
+                maxLength: 50,
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(450)",
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
                 name: "UserId",
                 table: "RefreshTokens",
                 type: "nvarchar(max)",
@@ -292,6 +432,26 @@ namespace Infrastructure.Migrations
                 oldNullable: true);
 
             migrationBuilder.AlterColumn<string>(
+                name: "LastModifiedBy",
+                table: "Orders",
+                type: "nvarchar(50)",
+                maxLength: 50,
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)",
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "CreatedBy",
+                table: "Orders",
+                type: "nvarchar(50)",
+                maxLength: 50,
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(450)",
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
                 name: "BuyerId",
                 table: "Orders",
                 type: "nvarchar(max)",
@@ -305,6 +465,86 @@ namespace Infrastructure.Migrations
                 table: "Orders",
                 type: "nvarchar(max)",
                 nullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "LastModifiedBy",
+                table: "Items",
+                type: "nvarchar(50)",
+                maxLength: 50,
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)",
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "CreatedBy",
+                table: "Items",
+                type: "nvarchar(50)",
+                maxLength: 50,
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(450)",
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "LastModifiedBy",
+                table: "Categories",
+                type: "nvarchar(50)",
+                maxLength: 50,
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)",
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "CreatedBy",
+                table: "Categories",
+                type: "nvarchar(50)",
+                maxLength: 50,
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(450)",
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "LastModifiedBy",
+                table: "AttributeValues",
+                type: "nvarchar(50)",
+                maxLength: 50,
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)",
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "CreatedBy",
+                table: "AttributeValues",
+                type: "nvarchar(50)",
+                maxLength: 50,
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(450)",
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "LastModifiedBy",
+                table: "AttributeTypes",
+                type: "nvarchar(50)",
+                maxLength: 50,
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)",
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "CreatedBy",
+                table: "AttributeTypes",
+                type: "nvarchar(50)",
+                maxLength: 50,
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(450)",
+                oldNullable: true);
 
             migrationBuilder.CreateTable(
                 name: "Carts",

@@ -34,13 +34,13 @@ public class ItemController : ControllerBase
     }
 
     /// <summary>
-    ///  Get All Items
+    ///  Get items for sale
     /// </summary>
     /// <returns></returns>
     [HttpGet(ApiRoutes.Items.GetAll)]
     public async Task<IActionResult> GetAllAsync([FromQuery] PaginationFilter paginationFilter)
     {
-        var items = await _unitOfWork.Item.GetAllIncludingAsync(null , paginationFilter, x=> x.Category);
+        var items = await _unitOfWork.Item.GetAllIncludingAsync(x=> !x.Sold , paginationFilter, x=> x.Category, u=> u.ApplicationUser);
         var itemResponse = _mapper.Map<List<ItemResponse>>(items);
 
         if (paginationFilter == null || paginationFilter.PageNumber < 1 || paginationFilter.PageSize < 1)

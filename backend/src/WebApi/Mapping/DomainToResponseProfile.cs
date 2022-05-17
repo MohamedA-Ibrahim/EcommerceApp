@@ -12,6 +12,7 @@ namespace WebApi.Mapping
             CreateMap<Category, CategoryResponse>();
             CreateMap<AttributeType, AttributeTypeResponse>();
             CreateMap<UserAddress, UserAddressResponse>();
+            CreateMap<ApplicationUser, ApplicationUserResponse>();
         }
     }
 }

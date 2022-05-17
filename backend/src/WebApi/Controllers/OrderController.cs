@@ -3,14 +3,11 @@ using Application.Models;
 using AutoMapper;
 using Domain.Entities;
 using Infrastructure.Repository;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using Application.Contracts.V1;
 using Application.Contracts.V1.Requests;
 using Application.Contracts.V1.Responses;
-using Application.Contracts.V1.Responses.Wrappers;
-using Application.Helpers;
 using Application.Enums;
 using Application.Utils;
 using Application.Common.Interfaces;
@@ -36,17 +33,25 @@ namespace WebApi.Controllers
             _currentUserService = currentUserService;
         }
 
-        /// <summary>
-        /// Get user orders
-        /// </summary>
-        /// <param name="paginationFilter"></param>
-        /// <returns></returns>
-        [HttpGet(ApiRoutes.Orders.GetUserOrders)]
-        public async Task<IActionResult> GetUserOrders()
-        {        
-            var orders = _unitOfWork.Order.GetAllAsync(x=> x.CreatedBy == _currentUserService.UserId, null);
-            return Ok(orders);
+ 
+        [HttpGet(ApiRoutes.Orders.GetSellerOrders)]
+        public async Task<IActionResult> GetSellerOrders()
+        {
+            var orders = _unitOfWork.Order.GetAllAsync(x => x.SellerId == _currentUserService.UserId);
+            var orderResponse = _mapper.Map<List<SellerOrderResponse>>(orders);
+
+            return Ok(orderResponse);
         }
+
+        [HttpGet(ApiRoutes.Orders.GetBuyerOrders)]
+        public async Task<IActionResult> GetBuyerOrders()
+        {
+            var orders = _unitOfWork.Order.GetAllAsync(x => x.BuyerId == _currentUserService.UserId);
+            var orderResponse = _mapper.Map<List<BuyerOrderResponse>>(orders);
+
+            return Ok(orderResponse);
+        }
+
 
         [HttpGet(ApiRoutes.Orders.Get)]
         public async Task<IActionResult> Get([FromRoute] int orderId)
@@ -76,7 +81,7 @@ namespace WebApi.Controllers
                 City = orderRequest.City,
                 State = orderRequest.State,
                 PostalCode  = orderRequest.PostalCode,
-                RecieverName = orderRequest.UserName,
+                RecieverName = orderRequest.RecieverName,
             };
 
 

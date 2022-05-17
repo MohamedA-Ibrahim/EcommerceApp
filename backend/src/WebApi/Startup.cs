@@ -10,6 +10,7 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using WebApi.Filters;
 using WebApi.Services;
+using X.Paymob.CashIn;
 
 namespace WebApi;
 
@@ -101,6 +102,14 @@ public class Startup
             x.IncludeXmlComments(xmlPath);
         });
         services.AddSwaggerExamplesFromAssemblyOf<Startup>();
+
+        //Payment Integration
+        services.AddPaymobCashIn(config => 
+        {
+            config.ApiKey = "Api Key";
+            config.Hmac = "Hmac secret";
+        });
+
 
         services.AddRazorPages();
         services.AddControllers();

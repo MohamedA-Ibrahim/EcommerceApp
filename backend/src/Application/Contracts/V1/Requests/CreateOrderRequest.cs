@@ -8,9 +8,8 @@ namespace Application.Contracts.V1.Requests
 {
     public class CreateOrderRequest
     {
-        public double OrderTotal { get; set; }
-
         public int ItemId { get; set; }
+        public int SellerId { get; set; }
 
         public string PhoneNumber { get; set; }
 
@@ -22,6 +21,6 @@ namespace Application.Contracts.V1.Requests
 
         public string PostalCode { get; set; }
 
-        public string UserName { get; set; }
+        public string RecieverName { get; set; }
     }
 }

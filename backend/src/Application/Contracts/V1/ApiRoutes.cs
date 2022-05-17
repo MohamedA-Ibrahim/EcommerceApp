@@ -49,7 +49,9 @@ public static class ApiRoutes
 
     public static class Orders
     {
-        public const string GetUserOrders = Base + "/user/orders";
+        public const string GetSellerOrders = Base + "/user/soldOrders";
+        public const string GetBuyerOrders = Base + "/user/boughtOrders";
+
         public const string Update = Base + "/user/orders/{orderId}";
         public const string Get = Base + "/user/orders/{orderId}";
         public const string Create = Base + "/user/orders";

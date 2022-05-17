@@ -1,10 +1,17 @@
-﻿namespace Application.Contracts.V1.Responses
+﻿using Domain.Entities;
+using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
+
+namespace Application.Contracts.V1.Responses
 {
     public class ItemResponse
     {
         public int Id {get;set; }
-        public string Name { get; set; }
 
+        //seller
+        public ApplicationUserResponse ApplicationUser { get;set;}
+
+        public string Name { get; set; }
         public string Description { get; set; }
         public double Price { get; set; }
 

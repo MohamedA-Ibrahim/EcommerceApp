@@ -66,7 +66,7 @@ public class CategoryController : Controller
         if (category == null) 
             return NotFound();
 
-        return Ok(new Response<CategoryResponse>(_mapper.Map<CategoryResponse>(category)));
+        return Ok(_mapper.Map<CategoryResponse>(category));
     }
 
     /// <summary>
@@ -84,7 +84,7 @@ public class CategoryController : Controller
         await _unitOfWork.SaveAsync();
 
         var locationUri = _uriService.GetCategoryUri(category.Id.ToString());
-        return Created(locationUri, new Response<CategoryResponse>(_mapper.Map<CategoryResponse>(category)));
+        return Ok(_mapper.Map<CategoryResponse>(category));
     }
 
     /// <summary>
@@ -109,7 +109,7 @@ public class CategoryController : Controller
         _unitOfWork.Category.Update(category);
         await _unitOfWork.SaveAsync();
 
-        return Ok(new Response<CategoryResponse>(_mapper.Map<CategoryResponse>(category)));
+        return Ok(_mapper.Map<CategoryResponse>(category));
     }
 
     /// <summary>

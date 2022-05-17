@@ -114,8 +114,7 @@ public class ItemController : ControllerBase
 
         await _unitOfWork.Item.AddAsync(item);
         await _unitOfWork.SaveAsync();
-        var locationUri = _uriService.GetItemUri(item.Id.ToString());
-        return Created(locationUri, new Response<ItemResponse>(_mapper.Map<ItemResponse>(item)));
+        return Ok(_mapper.Map<ItemResponse>(item));
     }
 
     /// <summary>
@@ -149,7 +148,7 @@ public class ItemController : ControllerBase
         _unitOfWork.Item.Update(item);
         await _unitOfWork.SaveAsync();
 
-        return Ok(new Response<ItemResponse>(_mapper.Map<ItemResponse>(item)));
+        return Ok(_mapper.Map<ItemResponse>(item));
     }
 
     /// <summary>

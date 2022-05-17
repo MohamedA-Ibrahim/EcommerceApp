@@ -19,12 +19,10 @@ public class AttributeTypeController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
-    private readonly IUriService _uriService;
 
-    public AttributeTypeController(IUnitOfWork unitOfWork,  IUriService uriService, IMapper mapper)
+    public AttributeTypeController(IUnitOfWork unitOfWork, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
-        _uriService = uriService;
         _mapper = mapper;
     }
 
@@ -61,8 +59,7 @@ public class AttributeTypeController : ControllerBase
         await _unitOfWork.AttributeType.AddAsync(attributeType);
         await _unitOfWork.SaveAsync();
 
-        var locationUri = _uriService.GetItemUri(attributeType.Id.ToString());
-        return Created(locationUri, new Response<AttributeType>(_mapper.Map<AttributeType>(attributeType)));
+        return Ok(_mapper.Map<AttributeType>(attributeType));
     }
 
     /// <summary>
@@ -85,7 +82,7 @@ public class AttributeTypeController : ControllerBase
         _unitOfWork.AttributeType.Update(attributeType);
         await _unitOfWork.SaveAsync();
 
-        return Ok(new Response<AttributeType>(_mapper.Map<AttributeType>(attributeType)));
+        return Ok(_mapper.Map<AttributeType>(attributeType));
     }
 
     /// <summary>

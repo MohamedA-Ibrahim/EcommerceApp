@@ -38,7 +38,7 @@ public class ItemController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet(ApiRoutes.Items.GetAll)]
-    public async Task<IActionResult> GetAllAsync([FromQuery] PaginationFilter paginationFilter)
+    public async Task<IActionResult> GetForSaleAsync([FromQuery] PaginationFilter paginationFilter)
     {
         var items = await _unitOfWork.Item.GetAllIncludingAsync(x=> !x.Sold , paginationFilter, x=> x.Category, u=> u.ApplicationUser);
         var itemResponse = _mapper.Map<List<ItemResponse>>(items);
@@ -60,7 +60,7 @@ public class ItemController : ControllerBase
     /// <returns></returns>
     [Authorize(Roles = "Admin,User")]
     [HttpGet(ApiRoutes.Items.GetUserItems)]
-    public async Task<IActionResult> GetUserItemsAsync([FromQuery] PaginationFilter paginationFilter)
+    public async Task<IActionResult> GetPostedByUserAsync([FromQuery] PaginationFilter paginationFilter)
     {
         var items = await _unitOfWork.Item.GetAllIncludingAsync(x => x.CreatedBy == _currentUserService.UserId, paginationFilter, x => x.Category);
         var itemResponse = _mapper.Map<List<ItemResponse>>(items);
@@ -114,8 +114,6 @@ public class ItemController : ControllerBase
 
         await _unitOfWork.Item.AddAsync(item);
         await _unitOfWork.SaveAsync();
-
-
         var locationUri = _uriService.GetItemUri(item.Id.ToString());
         return Created(locationUri, new Response<ItemResponse>(_mapper.Map<ItemResponse>(item)));
     }

@@ -8,11 +8,14 @@ namespace WebApi.Mapping
     {
         public DomainToResponseProfile()
         {
+            CreateMap<AttributeValue, AttributeValueResponse>();
+            CreateMap<AttributeType, AttributeTypeResponse>();
             CreateMap<Item, ItemResponse>();
             CreateMap<Category, CategoryResponse>();
-            CreateMap<AttributeType, AttributeTypeResponse>();
             CreateMap<UserAddress, UserAddressResponse>();
             CreateMap<ApplicationUser, ApplicationUserResponse>();
+
+
         }
     }
 }

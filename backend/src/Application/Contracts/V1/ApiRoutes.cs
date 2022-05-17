@@ -65,4 +65,11 @@ public static class ApiRoutes
         public const string Delete = Base + "/attributeTypes/{attributeTypeId}";
     }
 
+    public static class AttributeValues
+    {
+        public const string Create = Base + "/attributeValues";
+        public const string GetByItemId = Base + "/attributeValues/{itemId}";
+
+    }
+
 }

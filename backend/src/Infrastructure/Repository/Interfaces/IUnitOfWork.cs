@@ -7,5 +7,7 @@ public interface IUnitOfWork
     IOrderRepository Order { get; }
     IUserAddressRepository UserAddress { get; }
     IAttributeTypeRepository AttributeType { get; }
+    IAttributeValueRepository AttributeValue { get; }
+
     Task SaveAsync();
 }

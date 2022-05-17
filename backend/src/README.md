@@ -13,4 +13,6 @@ Currently it has four projects:
 - Run "WebApi" project
 
 ## Screenshots
-![Screenshot 2022-03-31 183211](https://user-images.githubusercontent.com/39552203/161105796-37bb6c5e-12b6-40a5-b0b2-9b8b607a663d.png)
+![Api Endpoints 1](https://user-images.githubusercontent.com/39552203/168916680-6e80dc73-e201-46b0-bfe8-b6fc08882056.jpg)
+![Api Endpoints 2](https://user-images.githubusercontent.com/39552203/168916697-f03811a6-fe08-450a-879b-08f265709d33.jpg)
+![Database Design](https://user-images.githubusercontent.com/39552203/168916721-b0b09661-5200-4e78-a018-3e371df36cef.png)

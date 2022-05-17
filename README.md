@@ -22,5 +22,5 @@ To run the frontend web
 - build and run the front end project when 
 
 ## Demo
-* [Api](https://ecommerceapiservice.azurewebsites.net/swagger/index.html)
-* [WebUI (WIP)](https://ecommercewebui.azurewebsites.net/)
+* [Api](https://ecommeapi.azurewebsites.net/swagger/index.html)
+* [WebUI (WIP)](https://ecommerceview.azurewebsites.net/)

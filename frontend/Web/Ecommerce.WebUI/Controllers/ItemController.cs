@@ -25,7 +25,7 @@ namespace Ecommerce.WebUI.Controllers
 
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
              return View();  
         }
@@ -88,8 +88,12 @@ namespace Ecommerce.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var items = await _itemEndpoint.GetAll();
-            return Json(new {data = items});
+            //var items = await _itemEndpoint.GetAll();
+            //return Json(new {data = items});
+            //TODO: Implement pagination
+            var pagedItems = await _itemEndpoint.GetAll();
+            return Json(new { data = pagedItems.Data });
+
         }
 
         [HttpDelete]

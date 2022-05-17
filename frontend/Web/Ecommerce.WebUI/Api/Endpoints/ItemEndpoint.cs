@@ -1,4 +1,5 @@
 ﻿using Ecommerce.WebUI.Models;
+using Ecommerce.WebUI.Models.Wrappers;
 using System.Linq.Expressions;
 using System.Net;
 
@@ -13,13 +14,13 @@ namespace Ecommerce.WebUI.Api
             _apiHelper = apiHelper;
         }
 
-        public async Task<IEnumerable<Item>> GetAll()
+        public async Task<PagedResponse<Item>> GetAll()
         {
             using (HttpResponseMessage response = await _apiHelper.ApiClient.GetAsync("items"))
             {
                 if (response.IsSuccessStatusCode)
                 {
-                    var result = await response.Content.ReadAsAsync<List<Item>>();
+                    var result = await response.Content.ReadAsAsync<PagedResponse<Item>>();
                     return result;
                 }
                 else

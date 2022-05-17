@@ -1,8 +1,7 @@
-﻿@model IEnumerable<Ecommerce.WebUI.Models.Item>
-
+﻿@model Ecommerce.WebUI.Models.Wrappers.PagedResponse<Item>
 
 <div class="row pb-3">
-    @foreach(var item in Model)
+    @foreach(var item in Model.Data)
     {
         <div class="col-lg-3 col-md-6">
             <div class="row p-2">

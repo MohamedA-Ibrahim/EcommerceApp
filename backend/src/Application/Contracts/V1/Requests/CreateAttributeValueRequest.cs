@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.V1.Requests
 {
-    public class CreateAttributeValueRequest
+    public class UpdateAttributeValueRequest
     {
-        public int ItemId { get; set; }
-        public int AttributeTypeId { get; set; }
-        public string AttributeValue { get; set; }
+        public int Id { get; set; }
+        public string Value { get; set; }
 
     }
 }

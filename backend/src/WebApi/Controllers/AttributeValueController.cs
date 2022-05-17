@@ -1,17 +1,14 @@
 ﻿using System.Net.Mime;
-using Application.Common.Interfaces;
 using Domain.Entities;
 using Infrastructure.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Application.Contracts.V1;
 using Application.Contracts.V1.Requests;
-using Application.Models;
 using AutoMapper;
 using Application.Interfaces;
 using Application.Contracts.V1.Responses;
-using Application.Contracts.V1.Responses.Wrappers;
-using Application.Helpers;
+
 
 namespace WebApi.Controllers;
 
@@ -62,6 +59,23 @@ public class AttributeValueController : ControllerBase
         var itemAttributesResponse = _mapper.Map<List<AttributeValueResponse>>(itemAttributes);
 
         return Ok(itemAttributesResponse);
+    }
+
+    [HttpPut(ApiRoutes.AttributeValues.Update)]
+    [Authorize(Roles = "Admin,User")]
+    public async Task<IActionResult> Update([FromRoute] int attributeValueId, UpdateAttributeValueRequest request)
+    {
+        var attributeValue = await _unitOfWork.AttributeValue.GetFirstOrDefaultAsync(attributeValueId);
+
+        if (attributeValue == null)
+            return NotFound();
+
+        attributeValue.Value = request.Value;
+
+        _unitOfWork.AttributeValue.Update(attributeValue);
+        await _unitOfWork.SaveAsync();
+
+        return Ok(attributeValue);
     }
 
 }

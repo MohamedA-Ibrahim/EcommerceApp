@@ -1,17 +1,14 @@
 ﻿using System.Net.Mime;
-using Application.Common.Interfaces;
 using Domain.Entities;
 using Infrastructure.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Application.Contracts.V1;
 using Application.Contracts.V1.Requests;
-using Application.Models;
 using AutoMapper;
 using Application.Interfaces;
 using Application.Contracts.V1.Responses;
-using Application.Contracts.V1.Responses.Wrappers;
-using Application.Helpers;
+
 
 namespace WebApi.Controllers;
 

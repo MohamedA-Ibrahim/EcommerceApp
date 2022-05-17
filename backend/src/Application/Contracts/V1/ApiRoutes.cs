@@ -68,6 +68,7 @@ public static class ApiRoutes
     public static class AttributeValues
     {
         public const string Create = Base + "/attributeValues";
+        public const string Update = Base + "/attributeValues/{attributeValueId}";
         public const string GetByItemId = Base + "/attributeValues/{itemId}";
 
     }

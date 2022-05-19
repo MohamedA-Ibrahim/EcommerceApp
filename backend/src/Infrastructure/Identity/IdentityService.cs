@@ -5,32 +5,48 @@ using Application.Common.Interfaces;
 using Application.Common.Models;
 using Domain.Entities;
 using Infrastructure.Persistence;
-using Infrastructure.Settings;
+using Application.Settings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Application.Utils;
 
 namespace Infrastructure.Identity;
 
 public class IdentityService : IIdentityService
 {
+    #region Injected Fields
+
     private readonly ApplicationDbContext _dataContext;
     private readonly JwtSettings _jwtSettings;
     private readonly TokenValidationParameters _tokenValidationParameters;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IFacebookAuthService _facebookAuthService;
+
+    #endregion
+
+    #region Constructor
+
     public IdentityService(
         UserManager<ApplicationUser> userManager,
-        JwtSettings jwtSettings, TokenValidationParameters tokenValidationParameters, ApplicationDbContext dataContext, IFacebookAuthService facebookAuthService)
+        RoleManager<IdentityRole> roleManager,
+        JwtSettings jwtSettings,
+        TokenValidationParameters tokenValidationParameters,
+        ApplicationDbContext dataContext,
+        IFacebookAuthService facebookAuthService)
     {
         _userManager = userManager;
+        _roleManager = roleManager;
         _jwtSettings = jwtSettings;
         _tokenValidationParameters = tokenValidationParameters;
         _dataContext = dataContext;
         _facebookAuthService = facebookAuthService;
     }
 
-    public async Task<AuthenticationResult> RegisterAsync(string email, string password)
+    #endregion
+
+    public async Task<AuthenticationResult> RegisterAsync(string email, string password, string phone ,string profileName)
     {
         var existingUser = await _userManager.FindByEmailAsync(email);
 
@@ -40,87 +56,50 @@ public class IdentityService : IIdentityService
         var newUser = new ApplicationUser
         {
             Email = email,
-            UserName = email
+            UserName = email,
+            PhoneNumber = phone,
+            ProfileName = profileName
         };
 
-        var result = await _userManager.CreateAsync(newUser, password);
+        var userCreationResult = await _userManager.CreateAsync(newUser, password);
 
-        if (!result.Succeeded) return new AuthenticationResult {Errors = result.Errors.Select(e => e.Description)};
+        if (!userCreationResult.Succeeded)
+            return new AuthenticationResult {Errors = userCreationResult.Errors.Select(e => e.Description)};
+
+        await _userManager.AddToRolesAsync(newUser, new[] { "User" });
 
         return await GenerateAuthenticationResultAsync(newUser);
     }
 
+    /// <summary>
+    /// Logs user into the system
+    /// Note that an error message shouldn't be descriptive for security purposes
+    /// but it is kept for now
+    /// </summary>
+    /// <param name="email"></param>
+    /// <param name="password"></param>
+    /// <returns></returns>
     public async Task<AuthenticationResult> LoginAsync(string email, string password)
     {
         var user = await _userManager.FindByEmailAsync(email);
 
-        if (user == null) return new AuthenticationResult {Errors = new[] {"User doesn't exist"}};
+        if (user == null)
+            return new AuthenticationResult {Errors = new[] {"User doesn't exist"}};
+
         var userHasValidPassword = await _userManager.CheckPasswordAsync(user, password);
 
-        if (!userHasValidPassword) return new AuthenticationResult {Errors = new[] {"Invalid Password"}};
+        if (!userHasValidPassword)
+            return new AuthenticationResult {Errors = new[] {"Invalid Password"}};
 
         return await GenerateAuthenticationResultAsync(user);
     }
 
-    public async Task<AuthenticationResult> DeleteUserAsync(string userId)
-    {
-        var user = _userManager.Users.SingleOrDefault(u => u.Id == userId);
-
-        return user != null
-            ? await DeleteUserAsync(user)
-            : new AuthenticationResult {Errors = new[] {"User not found"}};
-    }
-    public async Task<AuthenticationResult> DeleteUserAsync(ApplicationUser user)
-    {
-        var result = await _userManager.DeleteAsync(user);
-
-        return new AuthenticationResult { Errors = result.Errors.Select(e => e.Description) };
-    }
-    public async Task<AuthenticationResult> RefreshTokenAsync(string token, string refreshToken)
-    {
-        var validatedToken = GetPrincipalFromToken(token);
-
-        if (validatedToken == null) return new AuthenticationResult {Errors = new[] {"Invalid Token"}};
-
-        //This part is optional to prevent refreshing
-        //the token when it isn't expired.
-        var expiryDateUnix = long.Parse(validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
-
-        var expiryDateTimeUtc = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-            .AddSeconds(expiryDateUnix);
-
-        if (expiryDateTimeUtc > DateTime.UtcNow)
-            return new AuthenticationResult {Errors = new[] {"This Token hasn't expired yet"}};
-
-        var jti = validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
-
-        var storedRefreshToken = await _dataContext.RefreshTokens.SingleOrDefaultAsync(x => x.Token == refreshToken);
-
-        //Some Validations
-        if (storedRefreshToken == null)
-            return new AuthenticationResult {Errors = new[] {"This refresh token doesn't exist"}};
-
-        if (DateTime.UtcNow > storedRefreshToken.ExpiryDate)
-            return new AuthenticationResult {Errors = new[] {"This refresh token has expired"}};
-
-        if (storedRefreshToken.Invalidated)
-            return new AuthenticationResult {Errors = new[] {"This refresh token has been invalidted"}};
-
-        if (storedRefreshToken.Used)
-            return new AuthenticationResult {Errors = new[] {"This refresh token has been used"}};
-        if (storedRefreshToken.JwtId != jti)
-            return new AuthenticationResult {Errors = new[] {"This refresh token doesn't match this JWT"}};
-
-        //update the refresh token used status in database
-        storedRefreshToken.Used = true;
-        _dataContext.RefreshTokens.Update(storedRefreshToken);
-        await _dataContext.SaveChangesAsync();
-
-
-        var user = await _userManager.FindByIdAsync(validatedToken.Claims.Single(x => x.Type == "userId").Value);
-        return await GenerateAuthenticationResultAsync(user);
-    }
-
+    /// <summary>
+    /// Logs user using facebook or registers him if he is not registerd
+    /// TODO: Add phone number and profile name to info
+    /// </summary>
+    /// <param name="accessToken"></param>
+    /// <returns></returns>
     public async Task<AuthenticationResult> LoginWithFacebookAsync(string accessToken)
     {
         var validatedTokenResult = await _facebookAuthService.ValidateAccessTokenAsync(accessToken);
@@ -142,14 +121,14 @@ public class IdentityService : IIdentityService
             return await GenerateAuthenticationResultAsync(user);
         }
 
-        var identityUser = new ApplicationUser
+        var newUser = new ApplicationUser
         {
             Id = Guid.NewGuid().ToString(),
             Email = userInfo.Email,
-            UserName = userInfo.Email,
+            UserName = userInfo.Email
         };
 
-        var createdResult = await _userManager.CreateAsync(identityUser);
+        var createdResult = await _userManager.CreateAsync(newUser);
         if (!createdResult.Succeeded)
         {
             return new AuthenticationResult
@@ -159,11 +138,81 @@ public class IdentityService : IIdentityService
             };
         }
 
-        return await GenerateAuthenticationResultAsync(identityUser);
+        await _userManager.AddToRolesAsync(newUser, new[] { "User" });
+
+        return await GenerateAuthenticationResultAsync(newUser);
     }
+
+    public async Task<AuthenticationResult> DeleteUserAsync(string userId)
+    {
+        var user = _userManager.Users.SingleOrDefault(u => u.Id == userId);
+
+        return user != null
+            ? await DeleteUserAsync(user)
+            : new AuthenticationResult {Errors = new[] {"User not found"}};
+    }
+
+    public async Task<AuthenticationResult> DeleteUserAsync(ApplicationUser user)
+    {
+        var result = await _userManager.DeleteAsync(user);
+
+        return new AuthenticationResult { Errors = result.Errors.Select(e => e.Description) };
+    }
+
+    public async Task<AuthenticationResult> RefreshTokenAsync(string token, string refreshToken)
+    {
+        var claimsPrincipal = GetPrincipalFromToken(token);
+
+        if (claimsPrincipal == null) 
+            return new AuthenticationResult {Errors = new[] {"Invalid Token"}};
+
+        //This part is optional to prevent refreshing
+        //the token when it isn't expired.
+        var expiryDateUnix = long.Parse(claimsPrincipal.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
+
+        var expiryDateTimeUtc = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+            .AddSeconds(expiryDateUnix);
+
+        if (expiryDateTimeUtc > DateUtil.GetCurrentDate())
+            return new AuthenticationResult {Errors = new[] {"This Token hasn't expired yet"}};
+
+        var jti = claimsPrincipal.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
+
+        var storedRefreshToken = await _dataContext.RefreshTokens.SingleOrDefaultAsync(x => x.Token == refreshToken);
+
+        //Some Validations
+        if (storedRefreshToken == null)
+            return new AuthenticationResult {Errors = new[] {"This refresh token doesn't exist"}};
+
+        if (DateUtil.GetCurrentDate() > storedRefreshToken.ExpiryDate)
+            return new AuthenticationResult {Errors = new[] {"This refresh token has expired"}};
+
+        if (storedRefreshToken.Invalidated)
+            return new AuthenticationResult {Errors = new[] {"This refresh token has been invalidted"}};
+
+        if (storedRefreshToken.Used)
+            return new AuthenticationResult {Errors = new[] {"This refresh token has been used"}};
+        if (storedRefreshToken.JwtId != jti)
+            return new AuthenticationResult {Errors = new[] {"This refresh token doesn't match this JWT"}};
+
+        //update the refresh token used status in database
+        storedRefreshToken.Used = true;
+        _dataContext.RefreshTokens.Update(storedRefreshToken);
+        await _dataContext.SaveChangesAsync();
+
+        var user = await _userManager.FindByIdAsync(claimsPrincipal.Claims.Single(x => x.Type == "userId").Value);
+        return await GenerateAuthenticationResultAsync(user);
+    }
+
 
     #region Token Helpers
 
+    /// <summary>
+    /// Generate token after user logs into the system
+    /// it contains user info, claims and roles
+    /// </summary>
+    /// <param name="user">User info</param>
+    /// <returns></returns>
     private async Task<AuthenticationResult> GenerateAuthenticationResultAsync(ApplicationUser user)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
@@ -174,16 +223,37 @@ public class IdentityService : IIdentityService
             new(JwtRegisteredClaimNames.Sub, user.Email),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new(JwtRegisteredClaimNames.Email, user.Email),
-            new("userId", user.Id)
+            new("userId", user.Id),
+            new("phone", user.PhoneNumber),
+            new("profileName", user.ProfileName)
         };
 
+        //Add user claims
         var userClaims = await _userManager.GetClaimsAsync(user);
         claims.AddRange(userClaims);
+
+        //Add user roles
+        var userRoles = await _userManager.GetRolesAsync(user);
+        foreach (var userRole in userRoles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, userRole));
+            var role = await _roleManager.FindByNameAsync(userRole);
+            if (role == null) continue;
+            var roleClaims = await _roleManager.GetClaimsAsync(role);
+
+            foreach (var roleClaim in roleClaims)
+            {
+                if (claims.Contains(roleClaim))
+                    continue;
+
+                claims.Add(roleClaim);
+            }
+        }
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.Now.Add(_jwtSettings.TokenLifetime),
+            Expires = DateUtil.GetCurrentDate().Add(_jwtSettings.TokenLifetime),
             SigningCredentials =
                 new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
@@ -194,8 +264,8 @@ public class IdentityService : IIdentityService
         {
             JwtId = token.Id,
             UserId = user.Id,
-            CreationDate = DateTime.UtcNow,
-            ExpiryDate = DateTime.UtcNow.AddMonths(6)
+            CreationDate = DateUtil.GetCurrentDate(),
+            ExpiryDate = DateUtil.GetCurrentDate().AddMonths(6)
         };
 
         await _dataContext.RefreshTokens.AddAsync(refreshToken);

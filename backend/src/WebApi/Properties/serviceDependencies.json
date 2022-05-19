@@ -1,8 +1,12 @@
 {
   "dependencies": {
+    "storage1": {
+      "type": "storage",
+      "connectionId": "BlobStorageSettings:ConnectionString"
+    },
     "mssql1": {
       "type": "mssql",
-      "connectionId": "ConnectionStrings:RemoteConnection"
+      "connectionId": "ConnectionStrings:DefaultConnection"
     }
   }
 }

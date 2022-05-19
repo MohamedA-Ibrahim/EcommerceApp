@@ -6,18 +6,20 @@ namespace Ecommerce.WebUI.Models
     public class Item
     {
         public int Id { get; set; }
+
         [Required]
+        [MaxLength(300)]
         public string Name { get; set; }
 
         [Required]
         public string Description { get; set; }
 
         [Required]
-        [Range(1, 10000)]
+        [Range(1, 100000)]
         public double Price { get; set; }
 
         [ValidateNever]
-        public byte[] Image { get; set; }
+        public string ImageUrl { get; set; }
 
         [Required]
         public int CategoryId { get; set; }
@@ -26,5 +28,10 @@ namespace Ecommerce.WebUI.Models
         public Category Category { get; set; }
 
         public DateTime? ExpirationDate { get; set; }
+
+        public bool Sold { get; set; } = false;
+
+        public string CreatedBy { get; set; }
+
     }
 }

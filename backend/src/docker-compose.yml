@@ -1,0 +1,32 @@
+version: '3.5'
+
+networks:
+  localdev:
+    name: localdev
+
+services:
+  webapi:
+    image: ecommerceapi
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    build:
+      context: .
+      dockerfile: WebApi/Dockerfile
+    ports:
+      - "5000:80"
+    depends_on:
+        - sqldb
+    networks:
+        - localdev
+
+  sqldb:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: sqldb
+    environment:
+        - ACCEPT_EULA=Y
+        - SA_PASSWORD=Mohamed@123
+    ports:
+        - "1433:1433"
+    networks:
+        - localdev

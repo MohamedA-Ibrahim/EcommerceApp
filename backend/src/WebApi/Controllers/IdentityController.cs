@@ -1,8 +1,8 @@
 ﻿using Application.Common.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using WebApi.Contracts.V1;
-using WebApi.Contracts.V1.Requests;
-using WebApi.Contracts.V1.Responses;
+using Application.Contracts.V1;
+using Application.Contracts.V1.Requests;
+using Application.Contracts.V1.Responses;
 
 namespace WebApi.Controllers;
 
@@ -23,13 +23,8 @@ public class IdentityController : Controller
     [HttpPost(ApiRoutes.Identity.Register)]
     public async Task<IActionResult> RegisterAsync([FromBody] UserRegistrationRequest request)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(new AuthFailedResponse
-            {
-                Errors = ModelState.Values.SelectMany(x => x.Errors.Select(y => y.ErrorMessage))
-            });
-
-        var authResponse = await _identityService.RegisterAsync(request.Email, request.Password);
+        var authResponse = await _identityService.RegisterAsync(request.Email, request.Password, request.Phone, request.ProfileName);
+        
         if (!authResponse.Success)
             return BadRequest(new AuthFailedResponse
             {

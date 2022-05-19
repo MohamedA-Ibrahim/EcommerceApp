@@ -1,13 +1,16 @@
 ﻿using System.Reflection;
 using Application.Common.Interfaces;
+using Application.Interfaces;
+using Application.Settings;
+using Azure.Storage.Blobs;
 using FluentValidation.AspNetCore;
 using Infrastructure;
-using Infrastructure.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using WebApi.Filters;
 using WebApi.Services;
+using X.Paymob.CashIn;
 
 namespace WebApi;
 
@@ -33,12 +36,30 @@ public class Startup
             })
             .AddFluentValidation(mvcConfiguration=> mvcConfiguration.RegisterValidatorsFromAssemblyContaining<Startup>());
 
+        services.AddAutoMapper(typeof(Startup));
+
+        //Get the url of the api
+        services.AddScoped<IUriService>(provider =>
+        {
+            var accessor = provider.GetRequiredService<IHttpContextAccessor>();
+            var request = accessor.HttpContext.Request;
+            //var absoluteUri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent(), "/");
+            var absoluteUri = $"{request.Scheme}://{request.Host.ToUriComponent()}{request.Path}";
+            return new UriService(absoluteUri);
+        });
+
         //Get the facebook settings and register the DI
         var facebookAuthSettings = new FacebookAuthSettings();
         Configuration.Bind(nameof(FacebookAuthSettings), facebookAuthSettings);
         services.AddSingleton(facebookAuthSettings);
         services.AddSingleton<IFacebookAuthService, FacebookAuthService>();
         services.AddHttpClient();
+
+        var blobStorageSettings = new BlobStorageSettings();
+        Configuration.Bind(nameof(blobStorageSettings), blobStorageSettings);
+        services.AddSingleton(x => new BlobServiceClient(blobStorageSettings.ConnectionString));
+        services.AddScoped<IFileStorageService, BlobStorageService>();
+
         services.AddSingleton<ICurrentUserService, CurrentUserService>();
 
         services.AddDatabaseDeveloperPageExceptionFilter();
@@ -82,6 +103,14 @@ public class Startup
         });
         services.AddSwaggerExamplesFromAssemblyOf<Startup>();
 
+        //Payment Integration
+        services.AddPaymobCashIn(config => 
+        {
+            config.ApiKey = "Api Key";
+            config.Hmac = "Hmac secret";
+        });
+
+
         services.AddRazorPages();
         services.AddControllers();
 
@@ -103,9 +132,9 @@ public class Startup
             app.UseExceptionHandler("/Error");
         }
 
-        app.UseHttpsRedirection();
         app.UseStaticFiles();
-        app.UseHsts();
+        //app.UseHsts();
+        //app.UseHttpsRedirection();
 
         var swaggerOptions = new SwaggerSettings();
         Configuration.GetSection(nameof(SwaggerSettings)).Bind(swaggerOptions);

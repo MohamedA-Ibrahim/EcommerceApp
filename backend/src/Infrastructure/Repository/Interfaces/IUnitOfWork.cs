@@ -4,5 +4,10 @@ public interface IUnitOfWork
 {
     ICategoryRepository Category { get; }
     IItemRepository Item { get; }
-    void Save();
+    IOrderRepository Order { get; }
+    IUserAddressRepository UserAddress { get; }
+    IAttributeTypeRepository AttributeType { get; }
+    IAttributeValueRepository AttributeValue { get; }
+
+    Task SaveAsync();
 }

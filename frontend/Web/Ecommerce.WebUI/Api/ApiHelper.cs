@@ -6,12 +6,12 @@ namespace Ecommerce.WebUI.Api
     public class ApiHelper : IApiHelper
     {        
         private HttpClient _apiClient;
-        private ILoggedInUserModel _loggedInUser;
+        private IAuthenticatedUser _authenticatedUser;
 
-        public ApiHelper(ILoggedInUserModel loggedInUser)
+        public ApiHelper(IAuthenticatedUser authenticatedUser)
         {
             InitializeClient();
-            _loggedInUser = loggedInUser;
+            _authenticatedUser = authenticatedUser;
         }
         public HttpClient ApiClient
         {
@@ -24,7 +24,7 @@ namespace Ecommerce.WebUI.Api
         private void InitializeClient()
         {
             //string serverUrl = "https://localhost:7243/api/v1/";
-            string serverUrl = "https://ecommerceapiservice.azurewebsites.net/api/v1/";
+            string serverUrl = "https://ecommeapi.azurewebsites.net/api/v1/";
 
             _apiClient = new HttpClient();
             _apiClient.BaseAddress = new Uri(serverUrl);
@@ -42,7 +42,7 @@ namespace Ecommerce.WebUI.Api
 
             });
 
-            using (HttpResponseMessage response = await _apiClient.PostAsync("/Token", data))
+            using (HttpResponseMessage response = await _apiClient.PostAsync("/identity", data))
             {
                 if (response.IsSuccessStatusCode)
                 {
@@ -60,20 +60,20 @@ namespace Ecommerce.WebUI.Api
         {
             _apiClient.DefaultRequestHeaders.Clear();
             _apiClient.DefaultRequestHeaders.Accept.Clear();
-            _apiClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("cpplication/json"));
+            _apiClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             _apiClient.DefaultRequestHeaders.Add("Autorization", $"Bearer { token}");
 
-            using (HttpResponseMessage response = await _apiClient.GetAsync("User"))
+            using (HttpResponseMessage response = await _apiClient.GetAsync("Identity"))
             {
                 if (response.IsSuccessStatusCode)
                 {
-                    var result = await response.Content.ReadAsAsync<LoggedInUserModel>();
-                    _loggedInUser.CreatedDate = result.CreatedDate;
-                    _loggedInUser.EmailAddress = result.EmailAddress;
-                    _loggedInUser.FirstName = result.FirstName;
-                    _loggedInUser.Id = result.Id;
-                    _loggedInUser.LastName = result.LastName;
-                    _loggedInUser.Token = token;
+                    var result = await response.Content.ReadAsAsync<AuthenticatedUser>();
+                    _authenticatedUser.CreatedDate = result.CreatedDate;
+                    _authenticatedUser.EmailAddress = result.EmailAddress;
+                    _authenticatedUser.FirstName = result.FirstName;
+                    _authenticatedUser.Id = result.Id;
+                    _authenticatedUser.LastName = result.LastName;
+                    _authenticatedUser.Token = token;
                 }
                 else
                 {

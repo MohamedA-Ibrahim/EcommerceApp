@@ -1,15 +1,18 @@
 using Ecommerce.WebUI.Api;
 using Ecommerce.WebUI.Models.User;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddLocalization(o => o.ResourcesPath = "Languages");
 builder.Services.AddControllersWithViews();
-builder.Services.AddSingleton<ILoggedInUserModel, LoggedInUserModel>();
+builder.Services.AddSingleton<IAuthenticatedUser, AuthenticatedUser>();
 builder.Services.AddSingleton<IApiHelper, ApiHelper>();
 builder.Services.AddScoped<ICategoryEndpoint, CategoryEndpoint>();
 builder.Services.AddScoped<IItemEndpoint, ItemEndpoint>();
+builder.Services.AddScoped<IImageEndpoint, ImageEndpoint>();
+
 
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 
@@ -28,7 +31,8 @@ app.UseStaticFiles();
 app.MapRazorPages();
 app.UseDefaultFiles();
 app.UseRouting();
-app.UseAuthorization();
+app.UseAuthentication();
+
 
 app.MapControllerRoute(
     name: "default",

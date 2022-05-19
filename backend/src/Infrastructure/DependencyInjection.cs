@@ -1,9 +1,10 @@
 ﻿using System.Text;
 using Application.Common.Interfaces;
+using Application.Settings;
+using Domain.Entities;
 using Infrastructure.Identity;
 using Infrastructure.Persistence;
 using Infrastructure.Repository;
-using Infrastructure.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -19,8 +20,7 @@ public static class DependencyInjection
     {
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(
-                //configuration.GetConnectionString("DefaultConnection"),
-                configuration.GetConnectionString("RemoteConnection"),
+                configuration.GetConnectionString("DefaultConnection"),
                 b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
 
         services.AddScoped(provider => (IApplicationDbContext) provider.GetRequiredService<ApplicationDbContext>());
@@ -45,7 +45,8 @@ public static class DependencyInjection
             ValidateIssuer = false,
             ValidateAudience = false,
             RequireExpirationTime = false,
-            ValidateLifetime = true
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero
         };
 
         services.AddSingleton(tokenValidationParameters);
@@ -60,6 +61,7 @@ public static class DependencyInjection
             {
                 x.SaveToken = true;
                 x.TokenValidationParameters = tokenValidationParameters;
+                
             });
         return services;
     }

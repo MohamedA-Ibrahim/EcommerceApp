@@ -1,4 +1,7 @@
 ﻿using System.Linq.Expressions;
+using Application.Common.Models;
+using Application.Contracts.V1.Requests.Queries;
+using Application.Models;
 using Domain.Common;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -16,31 +19,9 @@ public class Repository<T> : IRepository<T> where T : AuditableEntity
         dbSet = _db.Set<T>();
     }
 
-    public void Add(T entity)
+    public async Task AddAsync(T entity)
     {
-        dbSet.Add(entity);
-    }
-
-    public IEnumerable<T> GetAll(string? includeProperties = null)
-    {
-        IQueryable<T> query = dbSet;
-        if (includeProperties != null)
-            foreach (var includeProp in includeProperties.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries))
-                query = query.Include(includeProp);
-
-        return query.ToList();
-    }
-
-    public T GetFirstOrDefault(Expression<Func<T, bool>> filter, string? includeProperties = null)
-    {
-        IQueryable<T> query = dbSet;
-        query = query.Where(filter);
-
-        if (includeProperties != null)
-            foreach (var includeProp in includeProperties.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries))
-                query = query.Include(includeProp);
-
-        return query.FirstOrDefault();
+        await dbSet.AddAsync(entity);
     }
 
     public void Remove(T entity)
@@ -52,4 +33,86 @@ public class Repository<T> : IRepository<T> where T : AuditableEntity
     {
         dbSet.RemoveRange(entities);
     }
+
+    public async Task<int> CountAsync()
+    {
+        return await dbSet.CountAsync();
+    }
+
+    public Task<List<T>> GetAllAsync(Expression<Func<T, bool>> filter = null, PaginationFilter paginationFilter = null)
+    {
+        var query = dbSet.AsQueryable();
+
+        if (filter != null)
+        {
+            query = query.Where(filter);
+        }
+
+        if (paginationFilter == null)
+        {
+            return query.ToListAsync();
+        }
+
+        var skip = (paginationFilter.PageNumber -1) * paginationFilter.PageSize;
+        return query
+            .Skip(skip)
+            .Take(paginationFilter.PageSize)
+            .ToListAsync();
+
+    }
+
+    public Task<List<T>> GetAllIncludingAsync(Expression<Func<T, bool>> filter = null, PaginationFilter paginationFilter = null, params Expression<Func<T, object>>[] includeProperties)
+    {
+        var entities = IncludeProperties(includeProperties);
+
+        if (filter != null)
+        {
+            entities = entities.Where(filter);
+        }
+
+        if (paginationFilter == null)
+        {
+            return entities.ToListAsync();
+        }
+
+        var skip = (paginationFilter.PageNumber - 1) * paginationFilter.PageSize;
+        return entities
+            .Skip(skip)
+            .Take(paginationFilter.PageSize)
+            .ToListAsync();
+    }
+
+    public Task<T> GetFirstOrDefaultAsync(int id)
+    {
+        return dbSet.FirstOrDefaultAsync(t => t.Id == id);
+    }
+
+    public Task<T> GetFirstOrDefaultIncludingAsync(int id, params Expression<Func<T, object>>[] includeProperties)
+    {
+        var entities = IncludeProperties(includeProperties);
+        return entities.FirstOrDefaultAsync(x => x.Id == id);
+    }
+
+    public Task<T> FindByAsync(Expression<Func<T, bool>> predicate)
+    {
+        return dbSet.FirstOrDefaultAsync(predicate);
+    }
+
+    /// <summary>
+    /// Include properties to include
+    /// Ex of input: x=> x.Tags
+    /// </summary>
+    /// <param name="includeProperties">The properties to include</param>
+    private IQueryable<T> IncludeProperties(params Expression<Func<T, object>>[] includeProperties)
+    {
+        IQueryable<T> entities = dbSet;
+        foreach (var includeProperty in includeProperties)
+        {
+            entities = entities.Include(includeProperty);
+        }
+        return entities;
+    }
+
+
+
 }

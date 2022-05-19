@@ -5,16 +5,20 @@ namespace Domain.Entities;
 
 public class Item : AuditableEntity
 {
-    public int Id { get; set; }
 
-    [Required] public string Name { get; set; }
+    [Required]
+    [MaxLength(300)]
+    public string Name { get; set; }
 
+    [Required]
     public string Description { get; set; }
 
-    [Required] [Range(1, 10000)] 
+    [Required] 
+    [Range(1, 100000)] 
     public double Price { get; set; }
 
-    public byte[] Image { get; set; }
+    [Required]
+    public string ImageUrl { get; set; }
 
     [Display(Name = "Category")]
     [Required]
@@ -23,4 +27,6 @@ public class Item : AuditableEntity
     public Category Category { get; set; }
 
     public DateTime? ExpirationDate { get; set; }
+
+    public bool Sold { get; set; } = false;
 }

@@ -11,7 +11,8 @@ public class Item : AuditableEntity
 
     public string Description { get; set; }
 
-    [Required] [Range(1, 10000)] public double Price { get; set; }
+    [Required] [Range(1, 10000)] 
+    public double Price { get; set; }
 
     public byte[] Image { get; set; }
 

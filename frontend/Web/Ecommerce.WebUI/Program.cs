@@ -4,6 +4,7 @@ using Ecommerce.WebUI.Models.User;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddLocalization(o => o.ResourcesPath = "Languages");
 builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<ILoggedInUserModel, LoggedInUserModel>();
 builder.Services.AddSingleton<IApiHelper, ApiHelper>();

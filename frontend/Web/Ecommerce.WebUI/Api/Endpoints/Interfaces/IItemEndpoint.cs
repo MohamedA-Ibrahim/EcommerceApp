@@ -1,4 +1,5 @@
-﻿using Ecommerce.WebUI.Models;
+﻿using Domain.Entities;
+using Ecommerce.WebUI.Models;
 using Ecommerce.WebUI.Models.Wrappers;
 using System.Linq.Expressions;
 using System.Net;

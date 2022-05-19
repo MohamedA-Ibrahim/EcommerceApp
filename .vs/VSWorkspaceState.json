@@ -1,0 +1,11 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\frontend",
+    "\\frontend\\Web",
+    "\\frontend\\Web\\Ecommerce.WebUI",
+    "\\frontend\\Web\\Ecommerce.WebUI\\ViewModels"
+  ],
+  "SelectedNode": "\\frontend\\Web\\Ecommerce.WebUI\\ViewModels\\RegisterVM.cs",
+  "PreviewInSolutionExplorer": false
+}

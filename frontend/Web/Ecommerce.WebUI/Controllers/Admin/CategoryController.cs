@@ -1,4 +1,5 @@
-﻿using Ecommerce.WebUI.Api;
+﻿using Domain.Entities;
+using Ecommerce.WebUI.Api;
 using Ecommerce.WebUI.Models;
 using Microsoft.AspNetCore.Mvc;
 

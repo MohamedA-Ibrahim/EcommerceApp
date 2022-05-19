@@ -1,4 +1,5 @@
-﻿using Ecommerce.WebUI.Models;
+﻿using Domain.Entities;
+using Ecommerce.WebUI.Models;
 using System.Net;
 
 namespace Ecommerce.WebUI.Api

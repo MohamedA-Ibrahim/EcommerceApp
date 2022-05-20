@@ -177,13 +177,19 @@ namespace WebApi.Controllers
             if (!userOwnsOrder)
                 return BadRequest(new { error = "You are not the seller of this order" });
 
+            if (order.OrderStatus == OrderStatus.StatusShipped)
+                return BadRequest(new { error = "The order has already been shipped." });
+
+            if (order.PaymentStatus != OrderStatus.PaymentStatusApproved)
+                return BadRequest(new { error = "The order is still not paid!" });
+
             order.OrderStatus = OrderStatus.StatusShipped;
             order.ShippingDate = DateUtil.GetCurrentDate();
 
             _unitOfWork.Order.Update(order);
             await _unitOfWork.SaveAsync();
 
-            await SendOrderShippedEmail(order.Buyer.Email, order.Item.Name);
+            //await SendOrderShippedEmail(order.Buyer.Email, order.Item.Name);
 
             return Ok("Order shipped status updated successfully");
         }

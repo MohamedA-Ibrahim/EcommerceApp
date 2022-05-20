@@ -12,6 +12,7 @@ using Application.Interfaces;
 using Application.Contracts.V1.Responses;
 using Application.Contracts.V1.Responses.Wrappers;
 using Application.Helpers;
+using Application.Contracts.V1.Requests.Queries;
 
 namespace WebApi.Controllers;
 
@@ -34,13 +35,19 @@ public class ItemController : ControllerBase
     }
 
     /// <summary>
-    ///  Get items for sale
+    /// Get items for sale
     /// </summary>
-    /// <returns></returns>
+    /// <param name="itemName">Search items by item name (optional)</param>
     [HttpGet(ApiRoutes.Items.GetAll)]
-    public async Task<IActionResult> GetForSaleAsync([FromQuery] PaginationFilter paginationFilter)
+    public async Task<IActionResult> GetForSaleAsync([FromQuery] string itemName, [FromQuery] PaginationFilter paginationFilter)
     {
-        var items = await _unitOfWork.Item.GetAllIncludingAsync(x=> !x.Sold , paginationFilter, x=> x.Category, u=> u.ApplicationUser);
+        List<Item> items;
+
+        if(itemName != null)
+            items = await _unitOfWork.Item.GetAllIncludingAsync(x => !x.Sold && x.Name.Contains(itemName), paginationFilter, x => x.Category, u => u.ApplicationUser);       
+        else
+            items = await _unitOfWork.Item.GetAllIncludingAsync(x=> !x.Sold , paginationFilter, x=> x.Category, u=> u.ApplicationUser);
+        
         var itemResponse = _mapper.Map<List<ItemResponse>>(items);
 
         if (paginationFilter == null || paginationFilter.PageNumber < 1 || paginationFilter.PageSize < 1)

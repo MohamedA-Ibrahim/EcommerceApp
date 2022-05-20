@@ -7,11 +7,10 @@ using System.Threading.Tasks;
 namespace Application.Contracts.V1.Requests.Queries
 {
     /// <summary>
-    /// Used for filtering
+    /// A query for filtering items
     /// </summary>
-    public class GetAllCategoriesFilter
+    public class GetAllItemsFilter
     {
-        //Put the field that you want to filter by
-        public string UserId { get; set; }
+        public string Name { get; set; }
     }
 }

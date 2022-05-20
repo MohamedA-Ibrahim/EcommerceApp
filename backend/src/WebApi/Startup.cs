@@ -61,7 +61,7 @@ public class Startup
         services.AddScoped<IFileStorageService, BlobStorageService>();
 
         services.AddSingleton<ICurrentUserService, CurrentUserService>();
-
+        services.AddSingleton<IEmailService, EmailService>();
         services.AddDatabaseDeveloperPageExceptionFilter();
         services.AddHttpContextAccessor();
 

@@ -23,18 +23,18 @@ namespace WebApi.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly IUriService _uriService;
+        private readonly IEmailService _emailService;
         private readonly ICurrentUserService _currentUserService;
 
-        public OrderController(IUnitOfWork unitOfWork, IMapper mapper, IUriService uriService, ICurrentUserService currentUserService)
+        public OrderController(IUnitOfWork unitOfWork, IMapper mapper, ICurrentUserService currentUserService, IEmailService emailService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _uriService = uriService;
             _currentUserService = currentUserService;
+            _emailService = emailService;
         }
 
- 
+
         /// <summary>
         /// Get orders sold be the logged in user
         /// </summary>
@@ -162,15 +162,15 @@ namespace WebApi.Controllers
         }
 
         /// <summary>
-        /// Update the status of order to Shipped and set the shipping date to current date
+        /// Update the status of order to Shipped, set the shipping date and send an email to the buyer
         /// </summary>
         /// <param name="orderId">The id of the order</param>
 
         [HttpPut(ApiRoutes.Orders.ShipOrder)]
         public async Task<IActionResult> ShipOrder([FromRoute] int orderId)
         {
-            var order = await _unitOfWork.Order.GetFirstOrDefaultAsync(orderId);
-            if(order == null)
+            var order = await _unitOfWork.Order.GetFirstOrDefaultIncludingAsync(orderId, x => x.ApplicationUser, x=> x.Item);
+            if (order == null)
                 return NotFound();
 
             var userOwnsOrder = await _unitOfWork.Order.UserIsOrderSellerAsync(orderId, _currentUserService.UserId);
@@ -182,6 +182,8 @@ namespace WebApi.Controllers
 
             _unitOfWork.Order.Update(order);
             await _unitOfWork.SaveAsync();
+
+            await SendOrderShippedEmail(order.Buyer.Email, order.Item.Name);
 
             return Ok("Order shipped status updated successfully");
         }
@@ -212,6 +214,12 @@ namespace WebApi.Controllers
             await _unitOfWork.SaveAsync();
 
             return Ok("Order cancelled successfully");
+        }
+
+
+        private async Task SendOrderShippedEmail(string email, string itemName)
+        {
+            await _emailService.SendEmailAsync(email, "Your order has been shipped", $"<p>This email is to confirm that your order {itemName} has been shipped!</p>");
         }
 
     }

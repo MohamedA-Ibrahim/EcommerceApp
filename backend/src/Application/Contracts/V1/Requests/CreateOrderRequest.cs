@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Application.Contracts.V1.Requests
+﻿namespace Application.Contracts.V1.Requests
 {
     public class CreateOrderRequest
     {
         public int ItemId { get; set; }
-        public int SellerId { get; set; }
+        public string SellerId { get; set; }
 
         public string PhoneNumber { get; set; }
 

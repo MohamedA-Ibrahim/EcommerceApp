@@ -51,10 +51,14 @@ public static class ApiRoutes
     {
         public const string GetSellerOrders = Base + "/user/soldOrders";
         public const string GetBuyerOrders = Base + "/user/boughtOrders";
-
-        public const string Update = Base + "/user/orders/{orderId}";
         public const string Get = Base + "/user/orders/{orderId}";
         public const string Create = Base + "/user/orders";
+
+        public const string StartProcessing = Base + "/user/orders/startProcessing/{orderId}";
+        public const string UpdatePayment = Base + "/user/orders/updatePayment/{orderId}";
+        public const string ShipOrder = Base + "/user/orders/ship/{orderId}";
+        public const string CancelOrder = Base + "/user/orders/cancel/{orderId}";
+
     }
 
     public static class AttributeTypes

@@ -10,12 +10,15 @@ namespace WebApi.Mapping
         {
             CreateMap<AttributeValue, AttributeValueResponse>();
             CreateMap<AttributeType, AttributeTypeResponse>();
-            CreateMap<Item, ItemResponse>();
+            CreateMap<Item, ItemResponse>()
+                     .ForMember(dest => dest.Seller, opt => opt.MapFrom(src => src.ApplicationUser));
+
             CreateMap<Category, CategoryResponse>();
             CreateMap<UserAddress, UserAddressResponse>();
             CreateMap<ApplicationUser, ApplicationUserResponse>();
-
-
+            CreateMap<Order, OrderResponse>()
+                      .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Item.Name));
+            ;
         }
     }
 }

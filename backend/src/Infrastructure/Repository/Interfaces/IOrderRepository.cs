@@ -5,5 +5,8 @@ namespace Infrastructure.Repository;
 public interface IOrderRepository : IRepository<Order>
 {
     void Update(Order order);
-    void UpdateStatus(int id, string Orderstatus, string? paymentStatus = null);
+    Task UpdateStatusAsync(int id, string Orderstatus, string? paymentStatus = null);
+    Task<bool> UserIsOrderSellerAsync(int orderId, string userId);
+    Task<bool> UserIsOrderSellerOrBuyerAsync(int orderId, string userId);
+
 }

@@ -27,14 +27,10 @@ namespace Domain.Entities
         public Item Item { get; set; }
 
         public DateTime? ShippingDate { get; set; }
+        public DateTime? PaymentDate { get; set; }
+
         public string? OrderStatus { get; set; }
         public string? PaymentStatus { get; set; }
-
-        //tracking number for shipping
-        public string? TrackingNumber { get; set; }
-       
-        //For integration with paymob 
-        public string? SessionId { get; set; }
 
         //User shipping info
         [Required]

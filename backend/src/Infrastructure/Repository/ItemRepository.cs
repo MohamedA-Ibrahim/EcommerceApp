@@ -15,7 +15,7 @@ public class ItemRepository : Repository<Item>, IItemRepository
 
     public void Update(Item item)
     {
-        var itemFromDb = _db.Items.FirstOrDefault(i => i.Id == item.Id);
+        var itemFromDb =  _db.Items.Find(item.Id);
         if (itemFromDb == null)
             return;
 
@@ -29,13 +29,24 @@ public class ItemRepository : Repository<Item>, IItemRepository
             itemFromDb.ImageUrl = item.ImageUrl;
     }
 
-    public async Task<bool> UserOwnsItemAsync(int itemId, string? userId)
+    public void UpdateSoldStatus(int itemId, bool isSold)
     {
-        var item = await _db.Items.AsNoTracking().SingleOrDefaultAsync(x => x.Id == itemId);
+        var item =  _db.Items.Find(itemId);
+        if (item == null)
+            return;
 
-        if (item == null) return false;
+        item.Sold = isSold;
+    }
 
-        if (item.CreatedBy != userId) return false;
+    public async Task<bool> UserOwnsItemAsync(int itemId, string userId)
+    {
+        var item = await _db.Items.FindAsync(itemId);
+
+        if (item == null) 
+            return false;
+
+        if (item.CreatedBy != userId) 
+            return false;
 
         return true;
     }

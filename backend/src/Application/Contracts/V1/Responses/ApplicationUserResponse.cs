@@ -10,5 +10,8 @@ namespace Application.Contracts.V1.Responses
     {
         public string Id { get; set; }
         public string UserName { get; set; }
+        public string ProfileName { get; set; }
+        public string PhoneNumber { get;set;}
+
     }
 }

@@ -1,5 +1,4 @@
-﻿using Domain.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,15 +6,23 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.V1.Responses
 {
-    public class SellerOrderResponse
+    public class OrderResponse
     {
-        public int Id { get; set; }
-        public Item Item { get; set; }
+        public int Id { get;set;}
+
+        public ApplicationUserResponse Buyer { get;set;}
+        public ApplicationUserResponse Seller { get; set; }
+
         public DateTime OrderDate { get; set; }
+
+        public int ItemId { get; set; }
+        public string ItemName { get; set; }
+
         public DateTime? ShippingDate { get; set; }
+        public DateTime? PaymentDate { get; set; }
+
         public string? OrderStatus { get; set; }
         public string? PaymentStatus { get; set; }
-
 
         //User shipping info
         public string PhoneNumber { get; set; }

@@ -75,29 +75,6 @@ class LoginScreen extends StatelessWidget
                       ),
                       SizedBox(height: 15,),
                       conditionBuilder(context, (state is AppLoadingState)),
-                      MaterialButton(
-                        onPressed: ()
-                        {
-                          cubit.facebookLogin_loginScreen();
-                        },
-                        child: Container(
-                          height: 40,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                  "Login with",
-                              ),
-                              SizedBox(width: 15,),
-                              Image(
-                                image: AssetImage("assets/images/facebook.png"),
-                                width: 30,
-                                height: 30,
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [

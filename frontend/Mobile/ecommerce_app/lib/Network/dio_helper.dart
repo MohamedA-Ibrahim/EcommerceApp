@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:ecommerce_app/main.dart';
 import 'package:ecommerce_app/share/cash_helper.dart';
+import 'package:ecommerce_app/share/share_api.dart';
 
 class DioHelper
 {
@@ -17,13 +18,15 @@ class DioHelper
     ));
   }
 
-  Future<Response> post_registNewUser(String email, String password) async
+  Future<Response> post_registNewUser(String email, String password, String phone, String profileName) async
   {
     return await dio.post(
-      "https://ecommerceapiservice.azurewebsites.net/api/v1/identity/register",
+      post_RegisterUser,
       data: {
         "email": email,
-        "password": password
+        "password": password,
+        "phone": phone,
+        "profileName": profileName
       }
     );
   }
@@ -31,7 +34,7 @@ class DioHelper
   Future<Response> post_login(String email, String password) async
   {
     return await dio.post(
-      "https://ecommerceapiservice.azurewebsites.net/api/v1/identity/login",
+      post_LoginUser,
       data: {
         "email": email,
         "password": password
@@ -41,20 +44,22 @@ class DioHelper
 
   Future<Response> get_category() async
   {
-    return await dio.get("https://ecommerceapiservice.azurewebsites.net/api/v1/categories");
+    return await dio.get(get_GetAllCategories);
   }
 
   Future<Response> get_item() async
   {
-    return await dio.get("https://ecommerceapiservice.azurewebsites.net/api/v1/items");
+    return await dio.get(get_GetAllItems);
   }
 
-  Future<Response> post_category(String name) async
+  Future<Response> post_category(String name, String description, String imageUrl) async
   {
     return await dio.post(
-      "https://ecommerceapiservice.azurewebsites.net/api/v1/categories",
+      post_CreateaCategory,
       data: {
-        "name": name
+        "name": name,
+        "description": description,
+        "imageUrl": imageUrl
       },
       options: Options(
         headers: {
@@ -64,17 +69,16 @@ class DioHelper
     );
   }
 
-  Future<Response> post_item(String name, String description, int price, String imageUrl, int categoryId, String expirationDate) async
+  Future<Response> post_item(String name, String description, int price, String imageUrl, int categoryId) async
   {
     return await dio.post(
-      "https://ecommerceapiservice.azurewebsites.net/api/v1/items",
+      post_Item,
       data: {
         "name": name,
         "description": description,
         "price": price,
         "imageUrl": imageUrl,
-        "categoryId": categoryId,
-        "expirationDate": expirationDate
+        "categoryId": categoryId
       },
       options: Options(
         headers: {

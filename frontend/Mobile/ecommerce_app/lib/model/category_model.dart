@@ -4,24 +4,21 @@ class CategoryModel
 {
   int? id;
   String? name;
-  String? created;
   String? createdBy;
-  String? lastModified;
-  int? lastModifiedBy;
+  String? description;
+  String? imageUrl;
 
   CategoryModel.fromJson(Map<String, dynamic> json)
   {
     id = json["id"];
-    //Log.v("parse id");
+    Log.v("parse id");
     name = json["name"];
-    //Log.v("parse name");
-    created = json["created"];
-    //Log.v("parse created");
+    Log.v("parse name");
+    description = json["description"];
+    Log.v("parse created");
     createdBy = json["createdBy"];
-    //Log.v("parse createdby");
-    lastModified = json["lastModified"];
-    //Log.v("parse lastModified");
-    lastModifiedBy = json["lastModifiedBy"];
-    //Log.v("parse lastModifiedBy");
+    Log.v("parse createdby");
+    imageUrl = json["imageUrl"];
+    Log.v("parse imageUrl");
   }
 }

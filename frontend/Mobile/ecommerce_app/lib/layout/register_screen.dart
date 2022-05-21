@@ -11,6 +11,8 @@ class RegisterScreen extends StatelessWidget
 {
   TextEditingController textEmailController = TextEditingController();
   TextEditingController textPasswordController = TextEditingController();
+  TextEditingController textPhoneController = TextEditingController();
+  TextEditingController textProfileNameController = TextEditingController();
   GlobalKey<FormState> formKey = GlobalKey();
   @override
   Widget build(BuildContext context)
@@ -26,45 +28,72 @@ class RegisterScreen extends StatelessWidget
           ),
           body: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Form(
-              key: formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    "Create New User",
-                    style: Theme.of(context).textTheme.headline5,
-                  ),
-                  SizedBox(height: 15,),
-                  defaultFormField(
-                      controller: textEmailController,
-                      type: TextInputType.emailAddress,
-                      validate: (value){
-                        if(value == null || value.isEmpty)
+            child: SingleChildScrollView(
+              child: Form(
+                key: formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Create New User",
+                      style: Theme.of(context).textTheme.headline5,
+                    ),
+                    SizedBox(height: 15,),
+                    defaultFormField(
+                        controller: textEmailController,
+                        type: TextInputType.emailAddress,
+                        validate: (value){
+                          if(value == null || value.isEmpty)
+                            {
+                              return "Enter your email";
+                            }
+                        },
+                        label: "Email",
+                        prefix: Icons.email_outlined
+                    ),
+                    SizedBox(height: 15,),
+                    defaultFormField(
+                        controller: textPasswordController,
+                        type: TextInputType.text,
+                        validate: (value){
+                          if(value == null || value.isEmpty)
+                            {
+                              return "Enter your password";
+                            }
+                        },
+                        label: "Password",
+                        prefix: Icons.lock_clock_outlined
+                    ),
+                    SizedBox(height: 15,),
+                    defaultFormField(
+                        controller: textPhoneController,
+                        type: TextInputType.phone,
+                        validate: (value){
+                          if(value == null || value.isEmpty)
                           {
-                            return "Enter your email";
+                            return "Enter your Phone";
                           }
-                      },
-                      label: "Email",
-                      prefix: Icons.email_outlined
-                  ),
-                  SizedBox(height: 15,),
-                  defaultFormField(
-                      controller: textPasswordController,
-                      type: TextInputType.text,
-                      validate: (value){
-                        if(value == null || value.isEmpty)
+                        },
+                        label: "Phone",
+                        prefix: Icons.phone
+                    ),
+                    SizedBox(height: 15,),
+                    defaultFormField(
+                        controller: textProfileNameController,
+                        type: TextInputType.text,
+                        validate: (value){
+                          if(value == null || value.isEmpty)
                           {
-                            return "Enter your password";
+                            return "Enter your Name";
                           }
-                      },
-                      label: "Password",
-                      prefix: Icons.lock_clock_outlined
-                  ),
-                  SizedBox(height: 15,),
-                  conditionBuilder(context, (state is AppLoadingState))
-                ],
+                        },
+                        label: "Name",
+                    ),
+                    SizedBox(height: 15,),
+                    conditionBuilder(context, (state is AppLoadingState))
+                  ],
+                ),
               ),
             ),
           )
@@ -89,7 +118,9 @@ class RegisterScreen extends StatelessWidget
             {
               String email = textEmailController.text.toString();
               String password = textPasswordController.text.toString();
-              cubit.register_registerScreen(context, email, password);
+              String phone = textPhoneController.text.toString();
+              String profileName = textProfileNameController.text.toString();
+              cubit.register_registerScreen(context, email, password, phone, profileName);
             }
         },
         child: Container(

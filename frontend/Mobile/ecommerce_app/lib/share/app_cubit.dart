@@ -1,7 +1,4 @@
-
-
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:ecommerce_app/Network/dio_helper.dart';
 import 'package:ecommerce_app/layout/home_screen.dart';
@@ -12,6 +9,7 @@ import 'package:ecommerce_app/model/user_model.dart';
 import 'package:ecommerce_app/module/items_module.dart';
 import 'package:ecommerce_app/share/app_state.dart';
 import 'package:ecommerce_app/share/cash_helper.dart';
+import 'package:ecommerce_app/share/share_api.dart';
 import 'package:ecommerce_app/testing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,22 +23,22 @@ import '../module/categoru_module.dart';
 
 class AppCubit extends Cubit<AppStates>
 {
-  //for Login Screen
+  //variabel for Login Screen
   bool isPassword_loginScreen = true;
   TextEditingController textEmailController_loginScreen = TextEditingController();
   TextEditingController textPasswordController_loginScreen = TextEditingController();
 
-  // for Home Screen
+  //variabel for Home Screen
   Widget body_homeScreen = ItemModule();
   int currentIndexBottomNavigationBar_homeScreen = 0;
   bool isOpneBottomSheat_homeScreen = false;
   GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
 
-  //for Item Module
+  //variabel for Item Module
   List<ItemModel> items = [];
   bool isfinish_itemsModule = false;
 
-  //for Category Module
+  //variabel for Category Module
   List<CategoryModel> categories = [];
   bool isfinish_categoryModule = false;
 
@@ -62,6 +60,14 @@ class AppCubit extends Cubit<AppStates>
   CategoryModel? categoryForItem_addItemScreen;
   DateTime? expirationDate_addItemScreen;
 
+  //variabel for add Category Screen
+  File? imageCategory_addCategoryScreen;
+  List<String> categoryAttributes_addCategoryScreen = [];
+
+  //variabel for Category Details
+  CategoryModel? categorty_categoryDetails;
+  List<String> attributeType_categoryDetails = [];
+
   AppCubit() : super(AppInitState());
 
   static AppCubit get(BuildContext context) => BlocProvider.of(context);
@@ -73,36 +79,11 @@ class AppCubit extends Cubit<AppStates>
     emit(AppChangeState());
   }
 
-  void register_registerScreen(BuildContext context, String email, String password)
+  void register_registerScreen(BuildContext context, String email, String password, String phone, String profileName)
   {
-    //   "email": "ffba@example.com",
-    // "password": "Fafa_123456789"
-    // emit(AppLoadingState());
-    // printDebug("Start POST");
-    // Dio dio = Dio(BaseOptions(
-    //   contentType: Headers.jsonContentType,
-    //   responseType: ResponseType.json,
-    //   validateStatus: (_)=>true,));
-    // dio.post(
-    //   "https://ecommerceapiservice.azurewebsites.net/api/v1/identity/register",
-    //   data: {
-    //     "email": email,
-    //     "password": password
-    //   }
-    // ).then((value)
-    // {
-    //   printDebug("success Post");
-    //   printDebug(value.data.toString());
-    //   emit(AppChangeState());
-    // }).catchError((error)
-    // {
-    //   printDebug("Catch Error");
-    //   printDebug(error.toString());
-    //   emit(AppChangeState());
-    // });
     emit(AppLoadingState());
     printDebug("Start post new register");
-    dio.post_registNewUser(email, password).then((value)
+    dio.post_registNewUser(email, password, phone, profileName).then((value)
     {
       printDebug("Success post new register");
       if(value.statusCode == 400)
@@ -133,15 +114,17 @@ class AppCubit extends Cubit<AppStates>
     dio.post_login(email, password).then((value)
     {
       printDebug("Success login");
+      Log.v(value.statusCode.toString());
       if(value.statusCode == 400)
         {
           Fluttertoast.showToast(
             msg: value.data["errors"],
             toastLength: Toast.LENGTH_LONG
           );
+          Log.w(value.data.toString());
           emit(AppChangeState());
         }
-      else
+      else if(value.statusCode == 200)
         {
           if(email == "admin@gmail.com")
             {
@@ -157,6 +140,7 @@ class AppCubit extends Cubit<AppStates>
           CacheHelper.saveToken(user!.token!);
           Log.v(user!.token!);
           CacheHelper.saveRefreshToken(user!.refreshToken!);
+          Log.v(user!.refreshToken!);
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => HomeScreen()),
@@ -177,47 +161,6 @@ class AppCubit extends Cubit<AppStates>
     });
   }
 
-  void facebookLogin_loginScreen()
-  {
-    printDebug("Strart Login with facebook");
-
-    FacebookAuth.i.login().then((value)
-    {
-      printDebug("Success Login");
-      if(value.status == LoginStatus.success)
-        {
-          printDebug("Seccess LoginStatus.success");
-        }
-      else if(value.status == LoginStatus.cancelled)
-        {
-          printDebug("Seccess LoginStatus.cancelled");
-        }
-      else if(value.status == LoginStatus.failed)
-        {
-          printDebug("Seccess LoginStatus.failed");
-        }
-    }).catchError((error){
-      printDebug("CatchError loginFacebook");
-      printDebug(error.toString());
-    });
-    // FacebookLogin().logIn(["email"]).then((value)
-    // {
-    //   printDebug("Sucess login");
-    //   if(value.status == FacebookLoginStatus.loggedIn)
-    //     {
-    //       printDebug("msg FacebookLoginStatus.loggedIn");
-    //       printDebug(value.accessToken.toString());
-    //     }
-    //   else if(value.status == FacebookLoginStatus.error)
-    //     {
-    //       printDebug("msg FacebookLoginStatus.error");
-    //     }
-    // }).catchError((error)
-    // {
-    //   printDebug("Catch Error");
-    //   printDebug(error.toString());
-    // });
-  }
 ///////////////////////////////////////////////////////////////////////////////////////////
 
   //function for homeScreen
@@ -248,9 +191,10 @@ class AppCubit extends Cubit<AppStates>
       if(value.statusCode == 200)
         {
           isfinish_itemsModule = true;
-          for(int i = 0; i < value.data.length; i++)
+          items.clear();
+          for(int i = 0; i < value.data["data"].length; i++)
           {
-            items.add(ItemModel.fromJson(value.data[i]));
+            items.add(ItemModel.fromJson(value.data["data"][i]));
           }
           printDebug("Success parsing");
           //printDebug(items[0].name!);
@@ -278,10 +222,13 @@ class AppCubit extends Cubit<AppStates>
       printDebug("Success get data categoy");
       if(value.statusCode == 200)
         {
+          Log.v("getCategoriesData_categoryModule Status code 200");
+          //Log.v(value.data["data"].toString());
           isfinish_categoryModule = true;
-          for(int i = 0; i < value.data.length; i++)
+          categories.clear();
+          for(int i = 0; i < value.data["data"].length; i++)
           {
-            categories.add(CategoryModel.fromJson(value.data[i]));
+            categories.add(CategoryModel.fromJson(value.data["data"][i]));
           }
         }
       else
@@ -300,11 +247,11 @@ class AppCubit extends Cubit<AppStates>
 
 ////////////////////////////////////////////////////////////////////////////////////////
   //function for add Catrgory Screen
-  void postNewCategory_addCategoryScreen(String name, BuildContext context)
+  void postNewCategory_addCategoryScreen(String name, String descreption, String imageUrl, BuildContext context)
   {
     emit(AppLoadingState());
     Log.v("Start Post Category");
-    dio.post_category(name).then((value)
+    dio.post_category(name, descreption, imageUrl).then((value)
     {
       Log.v("Success Post Category");
       if(value.statusCode == 200)
@@ -313,6 +260,43 @@ class AppCubit extends Cubit<AppStates>
           Log.v(value.data.toString());
           getCategoriesData_categoryModule();
           Fluttertoast.showToast(msg: "Success Create Category", toastLength: Toast.LENGTH_LONG);
+          for(int i = 0; i < categoryAttributes_addCategoryScreen.length; i++)
+            {
+              Dio().post(
+                post_AttributeType,
+                data: {
+                  "categoryId": value.data["id"],
+                  "name": categoryAttributes_addCategoryScreen[i]
+                },
+                options: Options(
+                  headers: {
+                    "Authorization": "bearer ${CacheHelper.getToken()}"
+                  },
+                  contentType: Headers.jsonContentType,
+                  responseType: ResponseType.json,
+                  validateStatus: (_) => true,
+                ),
+              ).then((value2)
+              {
+                if(value2.statusCode == 200)
+                  {
+                    Log.v("success post attribute");
+                  }
+                else
+                  {
+                    Log.w("post attribute faild");
+                    Log.w(value2.statusCode.toString());
+                    Log.w(value2.data.toString());
+                  }
+              }).catchError((e)
+              {
+                Log.e("can not post attribute");
+                Log.catchE(e);
+              });
+            }
+          Navigator.pop(context);
+          imageCategory_addCategoryScreen = null;
+          categoryAttributes_addCategoryScreen.clear();
         }
       else
         {
@@ -337,7 +321,7 @@ class AppCubit extends Cubit<AppStates>
 
     for(int i = 0; i < items.length; i++)
       {
-        if(items[i].categoryId! == id)
+        if(items[i].category!.id! == id)
           {
             itemsByCategoryId.add(items[i]);
           }
@@ -351,21 +335,20 @@ class AppCubit extends Cubit<AppStates>
   }
 
   //function for Add Item Screem
-  void postNewItem_addItemScreen(String name, String description, int price, String imageUrl, int categoryId, DateTime expirationDate)
+  void postNewItem_addItemScreen(String name, String description, int price, String imageUrl, int categoryId)
   {
     Log.v(CacheHelper.getToken()!);
     Log.v(imageUrl);
     emit(AppLoadingState());
     Log.v("start Post Item");
     Dio().post(
-      "https://ecommerceapiservice.azurewebsites.net/api/v1/items",
+      post_Item,
       data: {
         "name": name,
         "description": description,
         "price": price,
         "imageUrl": imageUrl,
-        "categoryId": categoryId,
-        "expirationDate": "2022-04-29T02:12:46.483Z"
+        "categoryId": categoryId
       },
       options: Options(
         validateStatus: (_)=>true,
@@ -408,9 +391,38 @@ class AppCubit extends Cubit<AppStates>
       "file": await MultipartFile.fromFile(image.path,)
     });
     return await Dio().post(
-      "https://ecommerceapiservice.azurewebsites.net/api/v1/images",
+      post_Image,
       data: formData
     );
+  }
+
+  //function for Category Details
+  void getAttributeType_categoryDetails()
+  {
+    attributeType_categoryDetails.clear();
+    Dio().get(
+      "$get_AttributeType${categorty_categoryDetails!.id}"
+    ).then((value)
+    {
+      if(value.statusCode == 200)
+        {
+          Log.v("Success get attribute");
+          for(int i = 0; i < value.data.length; i++)
+            {
+              attributeType_categoryDetails.add(value.data[i]["name"]);
+            }
+          emit(AppChangeState());
+        }
+      else
+        {
+          Log.w("Faild get Attribute");
+          Log.v(value.statusCode.toString());
+          Log.v(value.data.toString());
+        }
+    }).catchError((e)
+    {
+      Log.catchE(e);
+    });
   }
 
 }

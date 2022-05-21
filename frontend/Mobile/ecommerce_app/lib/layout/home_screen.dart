@@ -1,10 +1,15 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:ecommerce_app/layout/add_item_screen.dart';
 import 'package:ecommerce_app/layout/login_screen.dart';
 import 'package:ecommerce_app/share/app_cubit.dart';
 import 'package:ecommerce_app/share/app_state.dart';
 import 'package:ecommerce_app/share/cash_helper.dart';
+import 'package:ecommerce_app/testing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 import 'add_category_screen.dart';
 
@@ -36,7 +41,7 @@ class HomeScreen extends StatelessWidget
                   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LoginScreen()), (route) => false);
                 },
                 icon: Icon(Icons.logout),
-              )
+              ),
             ],
           ),
           body: cubit.body_homeScreen,
@@ -71,8 +76,10 @@ class HomeScreen extends StatelessWidget
           floatingActionButton: FloatingActionButton(
             onPressed: ()
             {
-              bool? isAdmin = CacheHelper.isAdmin();
-              if(isAdmin!)
+              String token = CacheHelper.getToken()!;
+              Map<String, dynamic> jsonToken = JwtDecoder.decode(token);
+              String role = jsonToken["role"];
+              if(role == "Admin")
                 {
                   if(cubit.isOpneBottomSheat_homeScreen)
                     {
@@ -111,34 +118,6 @@ class HomeScreen extends StatelessWidget
                         cubit.isOpneBottomSheat_homeScreen = false;
                       });
                     }
-
-
-                  // showModalBottomSheet(context: context, builder: (context)
-                  // {
-                  //   return SafeArea(
-                  //     child: Wrap(
-                  //       children: [
-                  //         ListTile(
-                  //           title: Text("Item"),
-                  //           leading: Icon(Icons.menu_sharp),
-                  //           onTap: ()
-                  //           {
-                  //             Navigator.push(context, MaterialPageRoute(builder: (context) => AddItemScreen()));
-                  //           },
-                  //         ),
-                  //         ListTile(
-                  //           title: Text("Category"),
-                  //           leading: Icon(Icons.category_rounded),
-                  //           onTap: ()
-                  //           {
-                  //             Navigator.push(context, MaterialPageRoute(builder: (context) => AddCategoryScreen())).then((value) => Navigator.pop(context));
-                  //           },
-                  //         )
-                  //       ],
-                  //     ),
-                  //   );
-                  // });
-
                 }
               else
                 {

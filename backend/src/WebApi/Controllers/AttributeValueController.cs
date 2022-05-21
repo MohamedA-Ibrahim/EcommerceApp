@@ -28,10 +28,24 @@ public class AttributeValueController : ControllerBase
         _mapper = mapper;
     }
 
+    /// <summary>
+    /// Add attribute values for an item (removes old attributes for an item before adding)
+    /// </summary>
+    /// <param name="requestAttributes"></param>
+    /// <returns></returns>
     [HttpPost(ApiRoutes.AttributeValues.Create)]
     [Authorize(Roles = "Admin,User")]
     public async Task<IActionResult> Create([FromBody] List<CreateAttributeValueRequest> requestAttributes)
     {
+        //TODO: change the itemId in the request to FromRoute
+        //Delete any old existing attribute values for an item
+        var oldAttributes = await _unitOfWork.AttributeValue.GetAllAsync(x=> x.ItemId == requestAttributes.FirstOrDefault().ItemId);
+        if(oldAttributes.Count != 0)
+        {
+            _unitOfWork.AttributeValue.RemoveRange(oldAttributes);
+            await _unitOfWork.SaveAsync();
+        }
+
         List<AttributeValue> attributeValues = new();
 
         foreach (var attribute in requestAttributes)

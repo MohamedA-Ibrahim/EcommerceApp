@@ -35,11 +35,10 @@ public class AttributeValueController : ControllerBase
     /// <returns></returns>
     [HttpPost(ApiRoutes.AttributeValues.Create)]
     [Authorize(Roles = "Admin,User")]
-    public async Task<IActionResult> Create([FromBody] List<CreateAttributeValueRequest> requestAttributes)
+    public async Task<IActionResult> Create([FromRoute]int itemId, [FromBody] List<CreateAttributeValueRequest> requestAttributes)
     {
-        //TODO: change the itemId in the request to FromRoute
         //Delete any old existing attribute values for an item
-        var oldAttributes = await _unitOfWork.AttributeValue.GetAllAsync(x => x.ItemId == requestAttributes.FirstOrDefault().ItemId);
+        var oldAttributes = await _unitOfWork.AttributeValue.GetAllAsync(x => x.ItemId == itemId);
         if (oldAttributes.Count != 0)
         {
             _unitOfWork.AttributeValue.RemoveRange(oldAttributes);
@@ -52,7 +51,7 @@ public class AttributeValueController : ControllerBase
         {
             var attributeValue = new AttributeValue
             {
-                ItemId = attribute.ItemId,
+                ItemId = itemId,
                 AttributeTypeId = attribute.AttributeTypeId,
                 Value = attribute.AttributeValue
             };
@@ -63,7 +62,7 @@ public class AttributeValueController : ControllerBase
         await _unitOfWork.AttributeValue.AddRangeAsync(attributeValues);
         await _unitOfWork.SaveAsync();
 
-        return Ok(attributeValues);
+        return Ok(_mapper.Map<List<AttributeValueResponse>>(attributeValues));
     }
 
     [HttpGet(ApiRoutes.AttributeValues.GetByItemId)]
@@ -89,7 +88,8 @@ public class AttributeValueController : ControllerBase
         _unitOfWork.AttributeValue.Update(attributeValue);
         await _unitOfWork.SaveAsync();
 
-        return Ok(attributeValue);
+        
+        return Ok(_mapper.Map<AttributeValueResponse>(attributeValue));
     }
 
 }

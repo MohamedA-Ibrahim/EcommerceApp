@@ -84,16 +84,18 @@ namespace WebApi.Controllers
             if (userOwnsItem)
                 return BadRequest(new { error = "You can't buy your own item!" });
 
+            var sellerId = (await _unitOfWork.Item.GetFirstOrDefaultAsync(orderRequest.ItemId)).CreatedBy;
+
             var order = new Order
             {
                 ItemId = orderRequest.ItemId,
-                SellerId = orderRequest.SellerId,
                 PhoneNumber = orderRequest.PhoneNumber,
                 StreetAddress = orderRequest.StreetAddress,
                 City = orderRequest.City,
                 State = orderRequest.State,
                 PostalCode = orderRequest.PostalCode,
                 RecieverName = orderRequest.RecieverName,
+                SellerId = sellerId,
                 BuyerId = _currentUserService.UserId,
                 OrderDate = DateUtil.GetCurrentDate(),
                 OrderStatus = OrderStatus.StatusPending,
@@ -132,15 +134,15 @@ namespace WebApi.Controllers
 
             await _unitOfWork.SaveAsync();
 
-            return Ok("Order status updated successfully");
+            return Ok("Order status set to processing");
         }
 
         /// <summary>
         /// Update the status of order and payment to Approved and update item status to sold
         /// </summary>
         /// <param name="orderId">The id of the order</param>
-        [HttpPut(ApiRoutes.Orders.UpdatePayment)]
-        public async Task<IActionResult> UpdatePaymentStatus([FromRoute] int orderId)
+        [HttpPut(ApiRoutes.Orders.ConfirmPayment)]
+        public async Task<IActionResult> ConfirmPayment([FromRoute] int orderId)
         {
             var order = await _unitOfWork.Order.GetFirstOrDefaultAsync(orderId);
             if (order == null)
@@ -158,7 +160,7 @@ namespace WebApi.Controllers
 
             await _unitOfWork.SaveAsync();
 
-            return Ok("Order status updated successfully");
+            return Ok("Order payment status updated successfully");
         }
 
         /// <summary>

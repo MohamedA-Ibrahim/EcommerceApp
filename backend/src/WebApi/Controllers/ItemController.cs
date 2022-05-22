@@ -96,7 +96,7 @@ public class ItemController : ControllerBase
         if (item == null)
             return NotFound();
 
-        return Ok(item);
+        return Ok(_mapper.Map<ItemResponse>(item));
     }
 
     /// <summary>
@@ -169,10 +169,14 @@ public class ItemController : ControllerBase
     {
         var item = await _unitOfWork.Item.GetFirstOrDefaultAsync(itemId);
 
-        if (item == null) return NotFound();
+        if (item == null) 
+            return NotFound();
 
-        var userOwnsItem = await _unitOfWork.Item.UserOwnsItemAsync(itemId, _currentUserService.UserId);
-        if (!userOwnsItem) return BadRequest(new { error = "You don't own this item" });
+        if(item.CreatedBy != _currentUserService.UserId)
+            return BadRequest(new { error = "You don't own this item" });
+
+        if(item.Sold)
+            return BadRequest(new { error = "You can't delete a sold item" });
 
         _unitOfWork.Item.Remove(item);
         await _unitOfWork.SaveAsync();

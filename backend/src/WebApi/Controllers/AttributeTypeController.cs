@@ -58,7 +58,7 @@ public class AttributeTypeController : ControllerBase
         await _unitOfWork.AttributeType.AddAsync(attributeType);
         await _unitOfWork.SaveAsync();
 
-        return Ok(_mapper.Map<AttributeType>(attributeType));
+        return Ok(_mapper.Map<AttributeTypeResponse>(attributeType));
     }
 
     /// <summary>
@@ -81,7 +81,7 @@ public class AttributeTypeController : ControllerBase
         _unitOfWork.AttributeType.Update(attributeType);
         await _unitOfWork.SaveAsync();
 
-        return Ok(_mapper.Map<AttributeType>(attributeType));
+        return Ok(_mapper.Map<AttributeTypeResponse>(attributeType));
     }
 
     /// <summary>

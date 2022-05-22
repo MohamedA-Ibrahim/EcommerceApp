@@ -1,10 +1,8 @@
-﻿using System.Linq.Expressions;
-using Application.Common.Models;
-using Application.Contracts.V1.Requests.Queries;
-using Application.Models;
+﻿using Application.Models;
 using Domain.Common;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Infrastructure.Repository;
 
@@ -53,7 +51,7 @@ public class Repository<T> : IRepository<T> where T : AuditableEntity
             return query.ToListAsync();
         }
 
-        var skip = (paginationFilter.PageNumber -1) * paginationFilter.PageSize;
+        var skip = (paginationFilter.PageNumber - 1) * paginationFilter.PageSize;
         return query
             .Skip(skip)
             .Take(paginationFilter.PageSize)

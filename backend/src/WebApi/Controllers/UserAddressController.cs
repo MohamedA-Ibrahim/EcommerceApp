@@ -1,14 +1,14 @@
-﻿using System.Net.Mime;
-using Application.Common.Interfaces;
+﻿using Application.Common.Interfaces;
+using AutoMapper;
 using Domain.Entities;
 using Infrastructure.Repository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Application.Contracts.V1;
-using Application.Contracts.V1.Requests;
-using AutoMapper;
-using Application.Contracts.V1.Responses;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Net.Mime;
+using WebApi.Contracts.V1;
+using WebApi.Contracts.V1.Requests;
+using WebApi.Contracts.V1.Responses;
 
 namespace WebApi.Controllers
 {
@@ -46,7 +46,7 @@ namespace WebApi.Controllers
             var existingAddress = await _unitOfWork.UserAddress.FindByAsync(x => x.CreatedBy == _currentUserService.UserId);
 
             //Saving address for the first time
-            if(existingAddress == null)
+            if (existingAddress == null)
             {
                 var address = new UserAddress
                 {
@@ -79,7 +79,7 @@ namespace WebApi.Controllers
         [HttpDelete(ApiRoutes.UserAddress.Delete)]
         public async Task<IActionResult> Delete()
         {
-            var userAddress = await _unitOfWork.UserAddress.FindByAsync(x=> x.CreatedBy == _currentUserService.UserId);
+            var userAddress = await _unitOfWork.UserAddress.FindByAsync(x => x.CreatedBy == _currentUserService.UserId);
 
             if (userAddress == null)
                 return NotFound();

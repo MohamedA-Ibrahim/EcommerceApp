@@ -1,7 +1,6 @@
-﻿using System.Linq.Expressions;
-using Application.Contracts.V1.Requests.Queries;
-using Application.Models;
+﻿using Application.Models;
 using Domain.Common;
+using System.Linq.Expressions;
 
 namespace Infrastructure.Repository;
 

@@ -1,15 +1,15 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using Application.Common.Interfaces;
+﻿using Application.Common.Interfaces;
 using Application.Common.Models;
+using Application.Settings;
+using Application.Utils;
 using Domain.Entities;
 using Infrastructure.Persistence;
-using Application.Settings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Application.Utils;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace Infrastructure.Identity;
 
@@ -46,12 +46,12 @@ public class IdentityService : IIdentityService
 
     #endregion
 
-    public async Task<AuthenticationResult> RegisterAsync(string email, string password, string phone ,string profileName)
+    public async Task<AuthenticationResult> RegisterAsync(string email, string password, string phone, string profileName)
     {
         var existingUser = await _userManager.FindByEmailAsync(email);
 
         if (existingUser != null)
-            return new AuthenticationResult {Errors = new[] {"User with this email already exists"}};
+            return new AuthenticationResult { Errors = new[] { "User with this email already exists" } };
 
         var newUser = new ApplicationUser
         {
@@ -64,7 +64,7 @@ public class IdentityService : IIdentityService
         var userCreationResult = await _userManager.CreateAsync(newUser, password);
 
         if (!userCreationResult.Succeeded)
-            return new AuthenticationResult {Errors = userCreationResult.Errors.Select(e => e.Description)};
+            return new AuthenticationResult { Errors = userCreationResult.Errors.Select(e => e.Description) };
 
         await _userManager.AddToRolesAsync(newUser, new[] { "User" });
 
@@ -84,12 +84,12 @@ public class IdentityService : IIdentityService
         var user = await _userManager.FindByEmailAsync(email);
 
         if (user == null)
-            return new AuthenticationResult {Errors = new[] {"User doesn't exist"}};
+            return new AuthenticationResult { Errors = new[] { "User doesn't exist" } };
 
         var userHasValidPassword = await _userManager.CheckPasswordAsync(user, password);
 
         if (!userHasValidPassword)
-            return new AuthenticationResult {Errors = new[] {"Invalid Password"}};
+            return new AuthenticationResult { Errors = new[] { "Invalid Password" } };
 
         return await GenerateAuthenticationResultAsync(user);
     }
@@ -149,7 +149,7 @@ public class IdentityService : IIdentityService
 
         return user != null
             ? await DeleteUserAsync(user)
-            : new AuthenticationResult {Errors = new[] {"User not found"}};
+            : new AuthenticationResult { Errors = new[] { "User not found" } };
     }
 
     public async Task<AuthenticationResult> DeleteUserAsync(ApplicationUser user)
@@ -163,8 +163,8 @@ public class IdentityService : IIdentityService
     {
         var claimsPrincipal = GetPrincipalFromToken(token);
 
-        if (claimsPrincipal == null) 
-            return new AuthenticationResult {Errors = new[] {"Invalid Token"}};
+        if (claimsPrincipal == null)
+            return new AuthenticationResult { Errors = new[] { "Invalid Token" } };
 
         //This part is optional to prevent refreshing
         //the token when it isn't expired.
@@ -174,7 +174,7 @@ public class IdentityService : IIdentityService
             .AddSeconds(expiryDateUnix);
 
         if (expiryDateTimeUtc > DateUtil.GetCurrentDate())
-            return new AuthenticationResult {Errors = new[] {"This Token hasn't expired yet"}};
+            return new AuthenticationResult { Errors = new[] { "This Token hasn't expired yet" } };
 
         var jti = claimsPrincipal.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
 
@@ -182,18 +182,18 @@ public class IdentityService : IIdentityService
 
         //Some Validations
         if (storedRefreshToken == null)
-            return new AuthenticationResult {Errors = new[] {"This refresh token doesn't exist"}};
+            return new AuthenticationResult { Errors = new[] { "This refresh token doesn't exist" } };
 
         if (DateUtil.GetCurrentDate() > storedRefreshToken.ExpiryDate)
-            return new AuthenticationResult {Errors = new[] {"This refresh token has expired"}};
+            return new AuthenticationResult { Errors = new[] { "This refresh token has expired" } };
 
         if (storedRefreshToken.Invalidated)
-            return new AuthenticationResult {Errors = new[] {"This refresh token has been invalidted"}};
+            return new AuthenticationResult { Errors = new[] { "This refresh token has been invalidted" } };
 
         if (storedRefreshToken.Used)
-            return new AuthenticationResult {Errors = new[] {"This refresh token has been used"}};
+            return new AuthenticationResult { Errors = new[] { "This refresh token has been used" } };
         if (storedRefreshToken.JwtId != jti)
-            return new AuthenticationResult {Errors = new[] {"This refresh token doesn't match this JWT"}};
+            return new AuthenticationResult { Errors = new[] { "This refresh token doesn't match this JWT" } };
 
         //update the refresh token used status in database
         storedRefreshToken.Used = true;

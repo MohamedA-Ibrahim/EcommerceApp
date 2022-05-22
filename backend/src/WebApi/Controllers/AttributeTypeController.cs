@@ -1,13 +1,12 @@
-﻿using System.Net.Mime;
+﻿using AutoMapper;
 using Domain.Entities;
 using Infrastructure.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Application.Contracts.V1;
-using Application.Contracts.V1.Requests;
-using AutoMapper;
-using Application.Interfaces;
-using Application.Contracts.V1.Responses;
+using System.Net.Mime;
+using WebApi.Contracts.V1;
+using WebApi.Contracts.V1.Requests;
+using WebApi.Contracts.V1.Responses;
 
 
 namespace WebApi.Controllers;
@@ -33,7 +32,7 @@ public class AttributeTypeController : ControllerBase
     [HttpGet(ApiRoutes.AttributeTypes.GetByCategoryId)]
     public async Task<IActionResult> GetByCategoryAsync([FromRoute] int categoryId)
     {
-        var attributeTypes = await _unitOfWork.AttributeType.GetAllAsync(x=> x.CategoryId == categoryId);
+        var attributeTypes = await _unitOfWork.AttributeType.GetAllAsync(x => x.CategoryId == categoryId);
 
         var attributeTypsResponse = _mapper.Map<List<AttributeTypeResponse>>(attributeTypes);
 
@@ -74,11 +73,11 @@ public class AttributeTypeController : ControllerBase
     {
         var attributeType = await _unitOfWork.AttributeType.GetFirstOrDefaultAsync(attributeTypeId);
 
-        if (attributeType == null) 
+        if (attributeType == null)
             return NotFound();
 
         attributeType.Name = request.Name;
-      
+
         _unitOfWork.AttributeType.Update(attributeType);
         await _unitOfWork.SaveAsync();
 
@@ -96,7 +95,7 @@ public class AttributeTypeController : ControllerBase
     {
         var attributeType = await _unitOfWork.AttributeType.GetFirstOrDefaultAsync(attributeTypeId);
 
-        if (attributeType == null) 
+        if (attributeType == null)
             return NotFound();
 
         _unitOfWork.AttributeType.Remove(attributeType);

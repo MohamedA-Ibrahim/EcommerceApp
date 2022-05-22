@@ -1,6 +1,5 @@
 ﻿using Domain.Entities;
 using Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repository;
 
@@ -21,11 +20,11 @@ public class OrderRepository : Repository<Order>, IOrderRepository
     public async Task UpdateStatusAsync(int id, string orderStatus, string? paymentStatus = null)
     {
         var orderFromDb = await _db.Orders.FindAsync(id);
-        if(orderFromDb == null)
+        if (orderFromDb == null)
             return;
 
         orderFromDb.OrderStatus = orderStatus;
-        if(paymentStatus != null)
+        if (paymentStatus != null)
         {
             orderFromDb.PaymentStatus = paymentStatus;
         }
@@ -38,7 +37,7 @@ public class OrderRepository : Repository<Order>, IOrderRepository
         if (order == null)
             return false;
 
-        if (order.SellerId != userId) 
+        if (order.SellerId != userId)
             return false;
 
         return true;

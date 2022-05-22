@@ -1,0 +1,15 @@
+C:\Users\Mohamed\Documents\GitHub\EcommerceApp\backend\WebApi.Contracts\bin\Debug\net6.0\WebApi.Contracts.deps.json
+C:\Users\Mohamed\Documents\GitHub\EcommerceApp\backend\WebApi.Contracts\bin\Debug\net6.0\WebApi.Contracts.dll
+C:\Users\Mohamed\Documents\GitHub\EcommerceApp\backend\WebApi.Contracts\bin\Debug\net6.0\WebApi.Contracts.pdb
+C:\Users\Mohamed\Documents\GitHub\EcommerceApp\backend\WebApi.Contracts\bin\Debug\net6.0\Domain.dll
+C:\Users\Mohamed\Documents\GitHub\EcommerceApp\backend\WebApi.Contracts\bin\Debug\net6.0\Domain.pdb
+C:\Users\Mohamed\Documents\GitHub\EcommerceApp\backend\WebApi.Contracts\obj\Debug\net6.0\WebApi.Contracts.csproj.AssemblyReference.cache
+C:\Users\Mohamed\Documents\GitHub\EcommerceApp\backend\WebApi.Contracts\obj\Debug\net6.0\WebApi.Contracts.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Mohamed\Documents\GitHub\EcommerceApp\backend\WebApi.Contracts\obj\Debug\net6.0\WebApi.Contracts.AssemblyInfoInputs.cache
+C:\Users\Mohamed\Documents\GitHub\EcommerceApp\backend\WebApi.Contracts\obj\Debug\net6.0\WebApi.Contracts.AssemblyInfo.cs
+C:\Users\Mohamed\Documents\GitHub\EcommerceApp\backend\WebApi.Contracts\obj\Debug\net6.0\WebApi.Contracts.csproj.CoreCompileInputs.cache
+C:\Users\Mohamed\Documents\GitHub\EcommerceApp\backend\WebApi.Contracts\obj\Debug\net6.0\WebApi.Contracts.csproj.CopyComplete
+C:\Users\Mohamed\Documents\GitHub\EcommerceApp\backend\WebApi.Contracts\obj\Debug\net6.0\WebApi.Contracts.dll
+C:\Users\Mohamed\Documents\GitHub\EcommerceApp\backend\WebApi.Contracts\obj\Debug\net6.0\refint\WebApi.Contracts.dll
+C:\Users\Mohamed\Documents\GitHub\EcommerceApp\backend\WebApi.Contracts\obj\Debug\net6.0\WebApi.Contracts.pdb
+C:\Users\Mohamed\Documents\GitHub\EcommerceApp\backend\WebApi.Contracts\obj\Debug\net6.0\ref\WebApi.Contracts.dll

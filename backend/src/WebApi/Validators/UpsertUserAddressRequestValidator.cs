@@ -1,5 +1,5 @@
-﻿using Application.Contracts.V1.Requests;
-using FluentValidation;
+﻿using FluentValidation;
+using WebApi.Contracts.V1.Requests;
 
 namespace WebApi.Validators
 {

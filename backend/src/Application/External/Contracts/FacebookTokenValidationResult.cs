@@ -1,22 +1,17 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Common.Models
 {
     public class FacebookTokenValidationResult
     {
         [JsonProperty("data")]
-        public FacebookTokenValidationData Data { get;set; }
+        public FacebookTokenValidationData Data { get; set; }
     }
 
     public class FacebookTokenValidationData
     {
         [JsonProperty("app_id")]
-        public string AppId{ get; set; }
+        public string AppId { get; set; }
 
         [JsonProperty("type")]
         public string Type { get; set; }

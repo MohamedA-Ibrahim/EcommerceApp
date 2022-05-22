@@ -1,5 +1,4 @@
-﻿using System.Text;
-using Application.Common.Interfaces;
+﻿using Application.Common.Interfaces;
 using Application.Settings;
 using Domain.Entities;
 using Infrastructure.Identity;
@@ -11,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Infrastructure;
 
@@ -23,7 +23,7 @@ public static class DependencyInjection
                 configuration.GetConnectionString("DefaultConnection"),
                 b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
 
-        services.AddScoped(provider => (IApplicationDbContext) provider.GetRequiredService<ApplicationDbContext>());
+        services.AddScoped(provider => (IApplicationDbContext)provider.GetRequiredService<ApplicationDbContext>());
 
         services.AddDefaultIdentity<ApplicationUser>()
             .AddRoles<IdentityRole>()
@@ -61,7 +61,7 @@ public static class DependencyInjection
             {
                 x.SaveToken = true;
                 x.TokenValidationParameters = tokenValidationParameters;
-                
+
             });
         return services;
     }

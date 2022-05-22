@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using Application.Common.Interfaces;
+﻿using Application.Common.Interfaces;
 
 namespace WebApi.Services;
 
@@ -12,5 +11,5 @@ public class CurrentUserService : ICurrentUserService
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public string? UserId => _httpContextAccessor.HttpContext?.User?.Claims.Single(x=> x.Type == "userId").Value;
+    public string? UserId => _httpContextAccessor.HttpContext?.User?.Claims.Single(x => x.Type == "userId").Value;
 }

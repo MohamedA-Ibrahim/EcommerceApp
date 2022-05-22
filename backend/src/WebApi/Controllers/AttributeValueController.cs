@@ -1,13 +1,13 @@
-﻿using System.Net.Mime;
+﻿using Application.Interfaces;
+using AutoMapper;
 using Domain.Entities;
 using Infrastructure.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Application.Contracts.V1;
-using Application.Contracts.V1.Requests;
-using AutoMapper;
-using Application.Interfaces;
-using Application.Contracts.V1.Responses;
+using System.Net.Mime;
+using WebApi.Contracts.V1;
+using WebApi.Contracts.V1.Requests;
+using WebApi.Contracts.V1.Responses;
 
 
 namespace WebApi.Controllers;
@@ -21,7 +21,7 @@ public class AttributeValueController : ControllerBase
     private readonly IMapper _mapper;
     private readonly IUriService _uriService;
 
-    public AttributeValueController(IUnitOfWork unitOfWork,  IUriService uriService, IMapper mapper)
+    public AttributeValueController(IUnitOfWork unitOfWork, IUriService uriService, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
         _uriService = uriService;
@@ -39,8 +39,8 @@ public class AttributeValueController : ControllerBase
     {
         //TODO: change the itemId in the request to FromRoute
         //Delete any old existing attribute values for an item
-        var oldAttributes = await _unitOfWork.AttributeValue.GetAllAsync(x=> x.ItemId == requestAttributes.FirstOrDefault().ItemId);
-        if(oldAttributes.Count != 0)
+        var oldAttributes = await _unitOfWork.AttributeValue.GetAllAsync(x => x.ItemId == requestAttributes.FirstOrDefault().ItemId);
+        if (oldAttributes.Count != 0)
         {
             _unitOfWork.AttributeValue.RemoveRange(oldAttributes);
             await _unitOfWork.SaveAsync();
@@ -69,7 +69,7 @@ public class AttributeValueController : ControllerBase
     [HttpGet(ApiRoutes.AttributeValues.GetByItemId)]
     public async Task<IActionResult> GetItemAttributes([FromRoute] int itemId)
     {
-        var itemAttributes = await _unitOfWork.AttributeValue.GetAllIncludingAsync(x=> x.ItemId == itemId, null, x=> x.AttributeType);
+        var itemAttributes = await _unitOfWork.AttributeValue.GetAllIncludingAsync(x => x.ItemId == itemId, null, x => x.AttributeType);
         var itemAttributesResponse = _mapper.Map<List<AttributeValueResponse>>(itemAttributes);
 
         return Ok(itemAttributesResponse);

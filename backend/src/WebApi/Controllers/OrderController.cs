@@ -1,17 +1,17 @@
-﻿using Application.Interfaces;
+﻿using Application.Common.Interfaces;
+using Application.Enums;
+using Application.Interfaces;
+using Application.Utils;
 using AutoMapper;
 using Domain.Entities;
 using Infrastructure.Repository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
-using Application.Contracts.V1;
-using Application.Contracts.V1.Requests;
-using Application.Contracts.V1.Responses;
-using Application.Enums;
-using Application.Utils;
-using Application.Common.Interfaces;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using WebApi.Contracts.V1;
+using WebApi.Contracts.V1.Requests;
+using WebApi.Contracts.V1.Responses;
 
 namespace WebApi.Controllers
 {
@@ -41,7 +41,7 @@ namespace WebApi.Controllers
         [HttpGet(ApiRoutes.Orders.GetSellerOrders)]
         public async Task<IActionResult> GetSellerOrders()
         {
-            var orders = await _unitOfWork.Order.GetAllIncludingAsync(x => x.SellerId == _currentUserService.UserId, null, x=> x.Buyer, x=> x.Seller, x=> x.Item);
+            var orders = await _unitOfWork.Order.GetAllIncludingAsync(x => x.SellerId == _currentUserService.UserId, null, x => x.Buyer, x => x.Seller, x => x.Item);
             var orderResponse = _mapper.Map<List<OrderResponse>>(orders);
 
             return Ok(orderResponse);
@@ -81,10 +81,10 @@ namespace WebApi.Controllers
         {
             var userOwnsItem = await _unitOfWork.Item.UserOwnsItemAsync(orderRequest.ItemId, _currentUserService.UserId);
 
-            if(userOwnsItem)
+            if (userOwnsItem)
                 return BadRequest(new { error = "You can't buy your own item!" });
 
-            var order = new Order 
+            var order = new Order
             {
                 ItemId = orderRequest.ItemId,
                 SellerId = orderRequest.SellerId,
@@ -92,7 +92,7 @@ namespace WebApi.Controllers
                 StreetAddress = orderRequest.StreetAddress,
                 City = orderRequest.City,
                 State = orderRequest.State,
-                PostalCode  = orderRequest.PostalCode,
+                PostalCode = orderRequest.PostalCode,
                 RecieverName = orderRequest.RecieverName,
                 BuyerId = _currentUserService.UserId,
                 OrderDate = DateUtil.GetCurrentDate(),
@@ -169,7 +169,7 @@ namespace WebApi.Controllers
         [HttpPut(ApiRoutes.Orders.ShipOrder)]
         public async Task<IActionResult> ShipOrder([FromRoute] int orderId)
         {
-            var order = await _unitOfWork.Order.GetFirstOrDefaultIncludingAsync(orderId, x => x.ApplicationUser, x=> x.Item);
+            var order = await _unitOfWork.Order.GetFirstOrDefaultIncludingAsync(orderId, x => x.ApplicationUser, x => x.Item);
             if (order == null)
                 return NotFound();
 
@@ -209,7 +209,7 @@ namespace WebApi.Controllers
             if (!userOwnsOrder)
                 return BadRequest(new { error = "You are not a seller or a buyer of this order" });
 
-            if(order.OrderStatus == OrderStatus.StatusShipped)
+            if (order.OrderStatus == OrderStatus.StatusShipped)
                 return BadRequest(new { error = "The order has already been shipped. it can't be cancelled" });
 
             order.OrderStatus = OrderStatus.StatusCancelled;

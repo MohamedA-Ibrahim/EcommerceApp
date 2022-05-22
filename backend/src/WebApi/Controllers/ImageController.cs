@@ -1,13 +1,7 @@
-﻿using System.IO;
-using Microsoft.AspNetCore.Mvc;
-using System.Web;
-using Microsoft.AspNetCore.Http;
-using Application.Contracts.V1;
-using System.Net.Mime;
-using Application.Interfaces;
+﻿using Application.Interfaces;
 using Application.Models;
-using Application.Contracts.V1.Requests;
-using WebApi.Validators;
+using Microsoft.AspNetCore.Mvc;
+using WebApi.Contracts.V1;
 
 namespace WebApi.Controllers
 {
@@ -37,7 +31,7 @@ namespace WebApi.Controllers
                 ContentType = file.ContentType
             };
 
-            var imageUrl =  await _fileStorageService.UploadAsync(image);
+            var imageUrl = await _fileStorageService.UploadAsync(image);
             return imageUrl;
         }
     }

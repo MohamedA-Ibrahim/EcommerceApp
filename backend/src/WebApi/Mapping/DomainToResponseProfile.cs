@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Domain.Entities;
-using Application.Contracts.V1.Responses;
+using WebApi.Contracts.V1.Responses;
 
 namespace WebApi.Mapping
 {

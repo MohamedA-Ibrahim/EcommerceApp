@@ -1,6 +1,5 @@
 ﻿using Domain.Entities;
 using Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repository;
 
@@ -15,7 +14,7 @@ public class ItemRepository : Repository<Item>, IItemRepository
 
     public void Update(Item item)
     {
-        var itemFromDb =  _db.Items.Find(item.Id);
+        var itemFromDb = _db.Items.Find(item.Id);
         if (itemFromDb == null)
             return;
 
@@ -31,7 +30,7 @@ public class ItemRepository : Repository<Item>, IItemRepository
 
     public void UpdateSoldStatus(int itemId, bool isSold)
     {
-        var item =  _db.Items.Find(itemId);
+        var item = _db.Items.Find(itemId);
         if (item == null)
             return;
 
@@ -42,10 +41,10 @@ public class ItemRepository : Repository<Item>, IItemRepository
     {
         var item = await _db.Items.FindAsync(itemId);
 
-        if (item == null) 
+        if (item == null)
             return false;
 
-        if (item.CreatedBy != userId) 
+        if (item.CreatedBy != userId)
             return false;
 
         return true;

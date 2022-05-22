@@ -19,7 +19,7 @@ namespace WebApi.Services
             emailToSend.From.Add(MailboxAddress.Parse("mohamed.ib1751@gmail.com"));
             emailToSend.To.Add(MailboxAddress.Parse(email));
             emailToSend.Subject = subject;
-            emailToSend.Body = new TextPart(MimeKit.Text.TextFormat.Html){ Text = htmlMessage};
+            emailToSend.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = htmlMessage };
 
             //Get stored email and password from secrets.json
             var secretEmail = _config["SecretInfo:Email"];
@@ -28,7 +28,7 @@ namespace WebApi.Services
 
             using (var emailClient = new SmtpClient())
             {
-                emailClient.Connect("smtp.gmail.com", 587,MailKit.Security.SecureSocketOptions.StartTls);
+                emailClient.Connect("smtp.gmail.com", 587, MailKit.Security.SecureSocketOptions.StartTls);
                 emailClient.Authenticate(secretEmail, secretPassword);
                 emailClient.Send(emailToSend);
                 emailClient.Disconnect(true);

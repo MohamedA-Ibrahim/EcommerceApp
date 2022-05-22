@@ -1,8 +1,8 @@
 ﻿using Application.Common.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Application.Contracts.V1;
-using Application.Contracts.V1.Requests;
-using Application.Contracts.V1.Responses;
+using WebApi.Contracts.V1;
+using WebApi.Contracts.V1.Requests;
+using WebApi.Contracts.V1.Responses;
 
 namespace WebApi.Controllers;
 
@@ -24,7 +24,7 @@ public class IdentityController : Controller
     public async Task<IActionResult> RegisterAsync([FromBody] UserRegistrationRequest request)
     {
         var authResponse = await _identityService.RegisterAsync(request.Email, request.Password, request.Phone, request.ProfileName);
-        
+
         if (!authResponse.Success)
             return BadRequest(new AuthFailedResponse
             {

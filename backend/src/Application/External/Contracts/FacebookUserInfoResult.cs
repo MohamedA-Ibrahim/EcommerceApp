@@ -12,11 +12,11 @@ namespace Application.Common.Models
         public string LastName { get; set; }
 
         [JsonProperty("picture")]
-        public FacebookPicture FacebookPicture { get;set;}
+        public FacebookPicture FacebookPicture { get; set; }
 
         [JsonProperty("email")]
         public string Email { get; set; }
-       
+
         [JsonProperty("id")]
         public string Id { get; set; }
     }
@@ -24,7 +24,7 @@ namespace Application.Common.Models
     public class FacebookPicture
     {
         [JsonProperty("data")]
-        public FacebookPictureData Data { get;set;}
+        public FacebookPictureData Data { get; set; }
     }
 
     public class FacebookPictureData

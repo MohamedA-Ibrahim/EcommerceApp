@@ -1,12 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Domain.Common;
+﻿using Domain.Common;
+using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Entities;
 
 public class Category : AuditableEntity
 {
-    [Required] 
-    [MaxLength(50)] 
+    [Required]
+    [MaxLength(50)]
     public string Name { get; set; }
 
     [Required]

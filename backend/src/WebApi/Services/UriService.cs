@@ -1,7 +1,7 @@
 ﻿using Application.Interfaces;
 using Application.Models;
 using Microsoft.AspNetCore.WebUtilities;
-using Application.Contracts.V1;
+using WebApi.Contracts.V1;
 
 namespace WebApi.Services
 {

@@ -6,11 +6,11 @@ using Infrastructure.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
-using Application.Contracts.V1;
-using Application.Contracts.V1.Requests;
-using Application.Contracts.V1.Responses;
-using Application.Contracts.V1.Responses.Wrappers;
-using Application.Helpers;
+using WebApi.Contracts.V1;
+using WebApi.Contracts.V1.Requests;
+using WebApi.Contracts.V1.Responses;
+using WebApi.Contracts.V1.Responses.Wrappers;
+using WebApi.Helpers;
 
 namespace WebApi.Controllers;
 
@@ -42,7 +42,7 @@ public class CategoryController : Controller
         var categories = await _unitOfWork.Category.GetAllAsync(null, paginationFilter);
         var categoryResponse = _mapper.Map<List<CategoryResponse>>(categories);
 
-        if (paginationFilter == null || paginationFilter.PageNumber <1 || paginationFilter.PageSize < 1)
+        if (paginationFilter == null || paginationFilter.PageNumber < 1 || paginationFilter.PageSize < 1)
         {
             return Ok(new PagedResponse<CategoryResponse>(categoryResponse));
         }
@@ -63,7 +63,7 @@ public class CategoryController : Controller
     {
         var category = await _unitOfWork.Category.GetFirstOrDefaultAsync(categoryId);
 
-        if (category == null) 
+        if (category == null)
             return NotFound();
 
         return Ok(_mapper.Map<CategoryResponse>(category));
@@ -78,7 +78,7 @@ public class CategoryController : Controller
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create([FromBody] CreateCategoryRequest categoryRequest)
     {
-        var category = new Category {Name = categoryRequest.Name, Description = categoryRequest.Description, ImageUrl = categoryRequest.ImageUrl};
+        var category = new Category { Name = categoryRequest.Name, Description = categoryRequest.Description, ImageUrl = categoryRequest.ImageUrl };
 
         await _unitOfWork.Category.AddAsync(category);
         await _unitOfWork.SaveAsync();
@@ -99,7 +99,7 @@ public class CategoryController : Controller
     {
         var category = await _unitOfWork.Category.GetFirstOrDefaultAsync(categoryId);
 
-        if (category == null) 
+        if (category == null)
             return NotFound();
 
         category.Name = request.Name;

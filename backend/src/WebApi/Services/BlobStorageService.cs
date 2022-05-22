@@ -17,15 +17,15 @@ namespace WebApi.Services
 
         public async Task<string> UploadAsync(FileDto file)
         {
-            if(file == null)
+            if (file == null)
             {
                 return null;
             }
 
             var containerClient = _blobServiceClient.GetBlobContainerClient("images");
             var blobClient = containerClient.GetBlobClient(file.GetPathWithFileName());
-            await blobClient.UploadAsync(file.Content, new BlobHttpHeaders { ContentType = file.ContentType});
-        return blobClient.Uri.ToString();
+            await blobClient.UploadAsync(file.Content, new BlobHttpHeaders { ContentType = file.ContentType });
+            return blobClient.Uri.ToString();
         }
     }
 }

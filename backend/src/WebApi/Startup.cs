@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Application.Common.Interfaces;
+﻿using Application.Common.Interfaces;
 using Application.Interfaces;
 using Application.Settings;
 using Azure.Storage.Blobs;
@@ -8,6 +7,7 @@ using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
+using System.Reflection;
 using WebApi.Filters;
 using WebApi.Services;
 using X.Paymob.CashIn;
@@ -34,7 +34,7 @@ public class Startup
                 options.EnableEndpointRouting = false;
                 options.Filters.Add<ValidationFilter>();
             })
-            .AddFluentValidation(mvcConfiguration=> mvcConfiguration.RegisterValidatorsFromAssemblyContaining<Startup>());
+            .AddFluentValidation(mvcConfiguration => mvcConfiguration.RegisterValidatorsFromAssemblyContaining<Startup>());
 
         services.AddAutoMapper(typeof(Startup));
 
@@ -67,7 +67,7 @@ public class Startup
 
         services.AddSwaggerGen(x =>
         {
-            x.SwaggerDoc("v1", new OpenApiInfo {Title = "Ecommerce Api", Version = "v1"});
+            x.SwaggerDoc("v1", new OpenApiInfo { Title = "Ecommerce Api", Version = "v1" });
             x.OperationFilter<SwaggerFileOperationFilter>();
 
             //Add the filters
@@ -104,7 +104,7 @@ public class Startup
         services.AddSwaggerExamplesFromAssemblyOf<Startup>();
 
         //Payment Integration
-        services.AddPaymobCashIn(config => 
+        services.AddPaymobCashIn(config =>
         {
             config.ApiKey = "Api Key";
             config.Hmac = "Hmac secret";

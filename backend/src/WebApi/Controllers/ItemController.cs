@@ -1,18 +1,17 @@
-﻿using System.Net.Mime;
-using Application.Common.Interfaces;
+﻿using Application.Common.Interfaces;
+using Application.Interfaces;
+using Application.Models;
+using AutoMapper;
 using Domain.Entities;
 using Infrastructure.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Application.Contracts.V1;
-using Application.Contracts.V1.Requests;
-using Application.Models;
-using AutoMapper;
-using Application.Interfaces;
-using Application.Contracts.V1.Responses;
-using Application.Contracts.V1.Responses.Wrappers;
-using Application.Helpers;
-using Application.Contracts.V1.Requests.Queries;
+using System.Net.Mime;
+using WebApi.Contracts.V1;
+using WebApi.Contracts.V1.Requests;
+using WebApi.Contracts.V1.Responses;
+using WebApi.Contracts.V1.Responses.Wrappers;
+using WebApi.Helpers;
 
 namespace WebApi.Controllers;
 
@@ -43,11 +42,11 @@ public class ItemController : ControllerBase
     {
         List<Item> items;
 
-        if(itemName != null)
-            items = await _unitOfWork.Item.GetAllIncludingAsync(x => !x.Sold && x.Name.Contains(itemName), paginationFilter, x => x.Category, u => u.ApplicationUser);       
+        if (itemName != null)
+            items = await _unitOfWork.Item.GetAllIncludingAsync(x => !x.Sold && x.Name.Contains(itemName), paginationFilter, x => x.Category, u => u.ApplicationUser);
         else
-            items = await _unitOfWork.Item.GetAllIncludingAsync(x=> !x.Sold , paginationFilter, x=> x.Category, u=> u.ApplicationUser);
-        
+            items = await _unitOfWork.Item.GetAllIncludingAsync(x => !x.Sold, paginationFilter, x => x.Category, u => u.ApplicationUser);
+
         var itemResponse = _mapper.Map<List<ItemResponse>>(items);
 
         if (paginationFilter == null || paginationFilter.PageNumber < 1 || paginationFilter.PageSize < 1)
@@ -136,12 +135,12 @@ public class ItemController : ControllerBase
     {
         var item = await _unitOfWork.Item.GetFirstOrDefaultAsync(itemId);
 
-        if (item == null) 
+        if (item == null)
             return NotFound();
 
         var userOwnsItem = await _unitOfWork.Item.UserOwnsItemAsync(itemId, _currentUserService.UserId);
-        if (!userOwnsItem) 
-            return BadRequest(new {error = "You don't own this item"});
+        if (!userOwnsItem)
+            return BadRequest(new { error = "You don't own this item" });
 
         item.Name = request.Name;
         item.Description = request.Description;
@@ -173,7 +172,7 @@ public class ItemController : ControllerBase
         if (item == null) return NotFound();
 
         var userOwnsItem = await _unitOfWork.Item.UserOwnsItemAsync(itemId, _currentUserService.UserId);
-        if (!userOwnsItem) return BadRequest(new {error = "You don't own this item"});
+        if (!userOwnsItem) return BadRequest(new { error = "You don't own this item" });
 
         _unitOfWork.Item.Remove(item);
         await _unitOfWork.SaveAsync();

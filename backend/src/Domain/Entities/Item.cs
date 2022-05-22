@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Domain.Common;
+﻿using Domain.Common;
+using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Entities;
 
@@ -13,8 +13,8 @@ public class Item : AuditableEntity
     [Required]
     public string Description { get; set; }
 
-    [Required] 
-    [Range(1, 100000)] 
+    [Required]
+    [Range(1, 100000)]
     public double Price { get; set; }
 
     [Required]

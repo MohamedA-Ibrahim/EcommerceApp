@@ -1,3 +1,4 @@
+import 'package:ecommerce_app/layout/category_details.dart';
 import 'package:ecommerce_app/layout/items_by_category_screen.dart';
 import 'package:ecommerce_app/share/app_cubit.dart';
 import 'package:ecommerce_app/share/app_state.dart';
@@ -56,22 +57,38 @@ class CategoryModule extends StatelessWidget
         ),
         child: Column(
           children: [
+            Text(
+              cubit.categories[i].name!,//cubit.categories[i].name!,
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
             Expanded(
-              child: Center(
-                child: Text(
-                  cubit.categories[i].name!,//cubit.categories[i].name!,
-                  style: Theme.of(context).textTheme.bodyText1,
-                ),
+              child: Image(
+                image: NetworkImage(cubit.categories[i].imageUrl!),
               ),
             ),
-            TextButton(
-              onPressed: ()
-              {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ItemByCategoryScreen(cubit.categories[i], context)));
-              },
-              child: Text(
-                "go to items"
-              ),
+            Row(
+              children: [
+                TextButton(
+                  onPressed: ()
+                  {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ItemByCategoryScreen(cubit.categories[i], context)));
+                  },
+                  child: Text(
+                      "Items"
+                  ),
+                ),
+                Spacer(),
+                TextButton(
+                  onPressed: ()
+                  {
+                    cubit.categorty_categoryDetails = cubit.categories[i];
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => CategoryDetails(context)));
+                  },
+                  child: Text(
+                      "Details"
+                  ),
+                )
+              ],
             )
           ],
         ),

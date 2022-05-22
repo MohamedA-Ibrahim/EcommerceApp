@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:ecommerce_app/model/category_model.dart';
 import 'package:ecommerce_app/share/app_state.dart';
 import 'package:ecommerce_app/share/share_componant.dart';
@@ -80,31 +79,6 @@ GlobalKey<FormState> formKey = GlobalKey();
                         },
                         label: "Price",
                         ),
-                    SizedBox(height: 15,),
-                    defaultFormField(
-                        controller: cubit.expirationDate_AddItemScreen,
-                        onTap: ()
-                        {
-                          showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime.now(),
-                              lastDate: DateTime.parse("2200-05-03")).then((value)
-                          {
-                            cubit.expirationDate_AddItemScreen.text = value.toString();
-                            cubit.expirationDate_addItemScreen = DateFormat("yyyy-MM-dd hh:mm:ss").parse(value.toString());
-                          });
-                        },
-                        type: TextInputType.text,
-                        validate: (value)
-                        {
-                          if(value == null  || value.isEmpty)
-                            {
-                              return "Enter Expiration Date";
-                            }
-                        },
-                        label: "Expiration Date"
-                    ),
                     SizedBox(height: 15,),
                     TextButton(
                       onPressed: ()
@@ -253,7 +227,7 @@ GlobalKey<FormState> formKey = GlobalKey();
             if(value.statusCode == 200)
               {
                 Log.v("Success post image");
-                cubit.postNewItem_addItemScreen(cubit.name_addItemScreen.text.toString(), cubit.discription_addItemScreen.text.toString(), int.parse(cubit.price_addItemScreen.text.toString()), value.data.toString(), cubit.categoryForItem_addItemScreen!.id!, cubit.expirationDate_addItemScreen!);
+                cubit.postNewItem_addItemScreen(cubit.name_addItemScreen.text.toString(), cubit.discription_addItemScreen.text.toString(), int.parse(cubit.price_addItemScreen.text.toString()), value.data.toString(), cubit.categoryForItem_addItemScreen!.id!);
               }
           }).catchError((e)
           {

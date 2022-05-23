@@ -7,7 +7,6 @@ namespace WebApi.Validators
     {
         public CreateAttributeTypeRequestValidator()
         {
-            RuleFor(x => x.Name).NotEmpty();
             RuleFor(x=> x.CategoryId).NotEmpty();
         }
     }

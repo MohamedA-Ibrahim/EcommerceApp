@@ -22,6 +22,11 @@ public class Repository<T> : IRepository<T> where T : AuditableEntity
         await dbSet.AddAsync(entity);
     }
 
+    public async Task AddRangeAsync(List<T> entities)
+    {
+      await dbSet.AddRangeAsync(entities);
+    }
+
     public void Remove(T entity)
     {
         dbSet.Remove(entity);

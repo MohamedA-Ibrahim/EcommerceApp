@@ -49,16 +49,23 @@ public class AttributeTypeController : ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create([FromBody] CreateAttributeTypeRequest request)
     {
-        var attributeType = new AttributeType
-        {
-            CategoryId = request.CategoryId,
-            Name = request.Name
-        };
+        List<AttributeType> attributeTypes = new();
 
-        await _unitOfWork.AttributeType.AddAsync(attributeType);
+        foreach (var attribute in request.AttributeTypes)
+        {
+            var attributeType = new AttributeType
+            {
+                CategoryId = request.CategoryId,
+                Name = attribute
+            };
+            attributeTypes.Add(attributeType);
+        }
+
+        await _unitOfWork.AttributeType.AddRangeAsync(attributeTypes);
+
         await _unitOfWork.SaveAsync();
 
-        return Ok(_mapper.Map<AttributeTypeResponse>(attributeType));
+        return Ok();
     }
 
     /// <summary>

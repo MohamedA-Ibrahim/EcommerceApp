@@ -17,8 +17,4 @@ public class AttributeValueRepository : Repository<AttributeValue>, IAttributeVa
         _db.AttributeValues.Update(attributeValue);
     }
 
-    public async Task AddRangeAsync(List<AttributeValue> attributes)
-    {
-        await _db.AttributeValues.AddRangeAsync(attributes);
-    }
 }

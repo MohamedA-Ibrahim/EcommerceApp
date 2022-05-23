@@ -16,6 +16,5 @@ public interface IRepository<T> where T : AuditableEntity
     Task<T> GetFirstOrDefaultIncludingAsync(int id, params Expression<Func<T, object>>[] includeProperties);
 
     Task<T> FindByAsync(Expression<Func<T, bool>> predicate);
-
-
+    Task AddRangeAsync(List<T> entities);
 }

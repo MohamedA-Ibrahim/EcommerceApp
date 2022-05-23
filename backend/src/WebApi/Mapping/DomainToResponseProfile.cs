@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Domain.Entities;
-using WebApi.Contracts.V1.Responses;
+using Web.Contracts.V1.Responses;
 
-namespace WebApi.Mapping
+namespace Web.Mapping
 {
     public class DomainToResponseProfile : Profile
     {

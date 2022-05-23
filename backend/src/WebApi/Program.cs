@@ -2,7 +2,7 @@ using Domain.Entities;
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using WebApi;
+using Web;
 
 namespace WebUI;
 

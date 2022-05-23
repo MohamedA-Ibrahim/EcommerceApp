@@ -15,8 +15,11 @@
                 <label asp-for="Password" class="col-form-label"></label>
                 <input asp-for="Password" class="form-control" />
                 <span asp-validation-for=Password class="text-danger"></span>
-                <div class="row justify-content-between">
-                    <input asp-for=RememberMe class="form-check-input col-auto" value="remember me" />
+                <div class="row justify-content-between mt-2">
+                    <div class=col-auto>
+                        <input asp-for=RememberMe class="form-check-input" />
+                        <label asp-for="RememberMe" style="width:fit-content">remember me</label>
+                    </div>
                     <input type="submit" class="btn btn-primary col-auto" value="login" />
                 </div>
             </form>

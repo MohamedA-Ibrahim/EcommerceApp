@@ -2,7 +2,7 @@
 using MailKit.Net.Smtp;
 using MimeKit;
 
-namespace WebApi.Services
+namespace Web.Services
 {
     public class EmailService : IEmailService
     {

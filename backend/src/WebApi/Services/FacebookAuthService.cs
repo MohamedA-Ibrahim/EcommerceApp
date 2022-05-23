@@ -3,7 +3,7 @@ using Application.Common.Models;
 using Application.Settings;
 using Newtonsoft.Json;
 
-namespace WebApi.Services
+namespace Web.Services
 {
     public class FacebookAuthService : IFacebookAuthService
     {

@@ -39,7 +39,8 @@ namespace Ecommerce.WebUI.Controllers
         {
             ItemVM itemVM = new()
             {
-                Item = new(),
+                UpdateItemRequest = new(),
+                ItemResponse = new(),
                 CategoryList = new SelectList(await _categoryEndpoint.GetAll(), "Id", "Name")       
             };
 
@@ -49,7 +50,7 @@ namespace Ecommerce.WebUI.Controllers
             }
             else
             {
-                itemVM.Item = await _itemEndpoint.GetById(id);
+                itemVM.ItemResponse = await _itemEndpoint.GetById(id);
             }
 
             return View(itemVM);

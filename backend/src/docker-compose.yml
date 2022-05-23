@@ -5,14 +5,14 @@ networks:
     name: localdev
 
 services:
-  webapi:
+  Web:
     image: ecommerceapi
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
     build:
       context: .
-      dockerfile: WebApi/Dockerfile
+      dockerfile: Web/Dockerfile
     ports:
       - "5000:80"
     depends_on:

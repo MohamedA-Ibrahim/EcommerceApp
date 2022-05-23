@@ -1,9 +1,9 @@
 ﻿using Application.Interfaces;
 using Application.Models;
 using Microsoft.AspNetCore.WebUtilities;
-using WebApi.Contracts.V1;
+using Web.Contracts.V1;
 
-namespace WebApi.Services
+namespace Web.Services
 {
     public class UriService : IUriService
     {

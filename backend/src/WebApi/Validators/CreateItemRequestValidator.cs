@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using WebApi.Contracts.V1.Requests;
+using Web.Contracts.V1.Requests;
 
-namespace WebApi.Validators
+namespace Web.Validators
 {
     public class CreateItemRequestValidator : AbstractValidator<CreateItemRequest>
     {

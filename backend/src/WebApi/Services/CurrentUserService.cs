@@ -1,6 +1,6 @@
 ﻿using Application.Common.Interfaces;
 
-namespace WebApi.Services;
+namespace Web.Services;
 
 public class CurrentUserService : ICurrentUserService
 {

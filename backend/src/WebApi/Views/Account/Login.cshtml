@@ -1,0 +1,28 @@
+﻿@model LoginVM
+@Html.AntiForgeryToken()
+
+<div class="row justify-content-center">
+
+    <div class="card shadow col-sm-6 col-lg-4">
+        <div class="card-header">
+            <h3>Login</h3>
+        </div>
+        <div class="card-body">
+            <form asp-action="Login" asp-controller="Account" method="post">
+                <label asp-for="Email" class="col-form-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for=Email class="text-danger"></span>
+                <label asp-for="Password" class="col-form-label"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for=Password class="text-danger"></span>
+                <div class="row justify-content-between mt-2">
+                    <div class=col-auto>
+                        <input asp-for=RememberMe class="form-check-input" />
+                        <label asp-for="RememberMe" style="width:fit-content">remember me</label>
+                    </div>
+                    <input type="submit" class="btn btn-primary col-auto" value="login" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

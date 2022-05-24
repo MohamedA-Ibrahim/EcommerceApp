@@ -28,6 +28,8 @@ public class Startup
     {
 
         services.AddControllersWithViews();
+        services.AddScoped<IAttributeTypeServices, AttributeTypeServices>();
+        services.AddScoped<IAttributeValueServices, AttributeValueServices>();
         //Install services from other projects
         services.AddInfrastructure(Configuration);
         services

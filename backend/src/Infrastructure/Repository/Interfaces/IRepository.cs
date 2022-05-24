@@ -8,6 +8,7 @@ public interface IRepository<T> where T : AuditableEntity
 {
     Task AddAsync(T entity);
     void Remove(T entity);
+    void Remove(int entityID);
     void RemoveRange(IEnumerable<T> entities);
     Task<int> CountAsync();
     Task<List<T>> GetAllAsync(Expression<Func<T, bool>> filter = null, PaginationFilter paginationFilter = null);

@@ -31,6 +31,10 @@ public class Repository<T> : IRepository<T> where T : AuditableEntity
     {
         dbSet.Remove(entity);
     }
+    public async void Remove(int entityID)
+    {
+        dbSet.Remove(await dbSet.FirstOrDefaultAsync(x=>x.Id == entityID));
+    }
 
     public void RemoveRange(IEnumerable<T> entities)
     {

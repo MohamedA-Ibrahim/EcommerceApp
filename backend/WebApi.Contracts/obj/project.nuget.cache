@@ -1,22 +1,18 @@
 {
   "version": 2,
-  "dgSpecHash": "B+Q81Z9WvhPWH4Eo5ndHkOJMQB9aor0p3XEQ3fRJ/aGdx4fWskvFb+5f+5kzUOVIHFDcfQw5ZEzQ5AVg2sN5tQ==",
-  "success": true,
-  "projectFilePath": "C:\\Users\\Mohamed\\Documents\\GitHub\\EcommerceApp\\backend\\WebApi.Contracts\\WebApi.Contracts.csproj",
-  "expectedPackageFiles": [
-    "C:\\Users\\Mohamed\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\6.0.5\\microsoft.aspnetcore.cryptography.internal.6.0.5.nupkg.sha512",
-    "C:\\Users\\Mohamed\\.nuget\\packages\\microsoft.aspnetcore.cryptography.keyderivation\\6.0.5\\microsoft.aspnetcore.cryptography.keyderivation.6.0.5.nupkg.sha512",
-    "C:\\Users\\Mohamed\\.nuget\\packages\\microsoft.extensions.caching.abstractions\\6.0.0\\microsoft.extensions.caching.abstractions.6.0.0.nupkg.sha512",
-    "C:\\Users\\Mohamed\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\6.0.0\\microsoft.extensions.dependencyinjection.6.0.0.nupkg.sha512",
-    "C:\\Users\\Mohamed\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\6.0.0\\microsoft.extensions.dependencyinjection.abstractions.6.0.0.nupkg.sha512",
-    "C:\\Users\\Mohamed\\.nuget\\packages\\microsoft.extensions.identity.core\\6.0.5\\microsoft.extensions.identity.core.6.0.5.nupkg.sha512",
-    "C:\\Users\\Mohamed\\.nuget\\packages\\microsoft.extensions.identity.stores\\6.0.5\\microsoft.extensions.identity.stores.6.0.5.nupkg.sha512",
-    "C:\\Users\\Mohamed\\.nuget\\packages\\microsoft.extensions.logging\\6.0.0\\microsoft.extensions.logging.6.0.0.nupkg.sha512",
-    "C:\\Users\\Mohamed\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\6.0.0\\microsoft.extensions.logging.abstractions.6.0.0.nupkg.sha512",
-    "C:\\Users\\Mohamed\\.nuget\\packages\\microsoft.extensions.options\\6.0.0\\microsoft.extensions.options.6.0.0.nupkg.sha512",
-    "C:\\Users\\Mohamed\\.nuget\\packages\\microsoft.extensions.primitives\\6.0.0\\microsoft.extensions.primitives.6.0.0.nupkg.sha512",
-    "C:\\Users\\Mohamed\\.nuget\\packages\\system.diagnostics.diagnosticsource\\6.0.0\\system.diagnostics.diagnosticsource.6.0.0.nupkg.sha512",
-    "C:\\Users\\Mohamed\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512"
-  ],
-  "logs": []
+  "dgSpecHash": "+XFHFbX4BvLhxaLtzfI8V5EZQFH6FGNVtGFONMbOchtldA0dCpgwIPfoyr3hXTY2mEn/rV2cr0nRJDzLKaWzVw==",
+  "success": false,
+  "projectFilePath": "C:\\Users\\ysfme\\source\\repos\\MohamedA-Ibrahim\\EcommerceApp\\backend\\WebApi.Contracts\\WebApi.Contracts.csproj",
+  "expectedPackageFiles": [],
+  "logs": [
+    {
+      "code": "NU1105",
+      "level": "Error",
+      "message": "Unable to find project information for 'C:\\Users\\ysfme\\source\\repos\\MohamedA-Ibrahim\\EcommerceApp\\backend\\src\\Domain\\Domain.csproj'. If you are using Visual Studio, this may be because the project is unloaded or not part of the current solution so run a restore from the command-line. Otherwise, the project file may be invalid or missing targets required for restore.",
+      "libraryId": "C:\\Users\\ysfme\\source\\repos\\MohamedA-Ibrahim\\EcommerceApp\\backend\\src\\Domain\\Domain.csproj",
+      "targetGraphs": [
+        "net6.0"
+      ]
+    }
+  ]
 }

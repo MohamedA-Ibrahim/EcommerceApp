@@ -8,11 +8,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using System.Reflection;
-using WebApi.Filters;
-using WebApi.Services;
+using Web.Filters;
+using Web.Services;
 using X.Paymob.CashIn;
 
-namespace WebApi;
+namespace Web;
 
 public class Startup
 {
@@ -26,6 +26,10 @@ public class Startup
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
+
+        services.AddControllersWithViews();
+        services.AddScoped<IAttributeTypeServices, AttributeTypeServices>();
+        services.AddScoped<IAttributeValueServices, AttributeValueServices>();
         //Install services from other projects
         services.AddInfrastructure(Configuration);
         services
@@ -132,6 +136,7 @@ public class Startup
             app.UseExceptionHandler("/Error");
         }
 
+        app.UseHttpsRedirection();
         app.UseStaticFiles();
         //app.UseHsts();
         //app.UseHttpsRedirection();
@@ -142,7 +147,7 @@ public class Startup
         app.UseSwagger(option => { option.RouteTemplate = swaggerOptions.JsonRoute; });
 
         app.UseSwaggerUI(option => { option.SwaggerEndpoint(swaggerOptions.UIEndpoint, swaggerOptions.Description); });
-
+        app.UseDefaultFiles();
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
@@ -150,6 +155,7 @@ public class Startup
         {
             endpoints.MapRazorPages();
             endpoints.MapControllers();
+            endpoints.MapDefaultControllerRoute();
         });
     }
 }

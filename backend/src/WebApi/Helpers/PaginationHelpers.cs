@@ -1,8 +1,8 @@
 ﻿using Application.Interfaces;
 using Application.Models;
-using WebApi.Contracts.V1.Responses.Wrappers;
+using Web.Contracts.V1.Responses.Wrappers;
 
-namespace WebApi.Helpers
+namespace Web.Helpers
 {
     public class PaginationHelpers
     {

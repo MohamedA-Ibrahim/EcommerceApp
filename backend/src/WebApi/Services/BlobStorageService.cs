@@ -3,7 +3,7 @@ using Application.Models;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 
-namespace WebApi.Services
+namespace Web.Services
 {
     public class BlobStorageService : IFileStorageService
     {
@@ -14,6 +14,15 @@ namespace WebApi.Services
             _blobServiceClient = blobServiceClient;
         }
 
+        public async Task<bool> DeleteAsync(string filePath)
+        {
+            var containerClient = _blobServiceClient.GetBlobContainerClient("images");
+            var blobClient = containerClient.GetBlobClient(filePath);
+            if(blobClient == null)
+                return false;
+            await blobClient.DeleteIfExistsAsync();
+            return true;
+        }
 
         public async Task<string> UploadAsync(FileDto file)
         {

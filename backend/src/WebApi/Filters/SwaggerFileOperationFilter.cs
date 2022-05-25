@@ -1,7 +1,7 @@
 ﻿using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace WebApi.Filters;
+namespace Web.Filters;
 
 public class SwaggerFileOperationFilter : IOperationFilter
 {

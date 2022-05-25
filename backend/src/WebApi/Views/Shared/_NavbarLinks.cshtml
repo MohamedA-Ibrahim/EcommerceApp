@@ -1,0 +1,53 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Domain.Entities
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+
+<ul class="navbar-nav me-auto">
+    <li class="nav-item">
+
+        <a class="nav-link " asp-controller="Home" asp-action="Index">Home</a>
+    </li>
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item">
+                <a class="nav-link " asp-controller="MyItems" asp-action="Index"><i class="bi bi-boxes"></i> My Items</a>
+            </li>
+        @if (User.IsInRole("Admin"))
+        {
+            <li class="nav-item">
+                <a class="nav-link " asp-controller="ManageCategory" asp-action="Index"><i class="bi bi-cogs"></i>Categories Manage</a>
+            </li>
+        }
+
+    }
+    @* <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Admin Pages</a>
+        <div class="dropdown-menu">
+        </div>
+        </li>*@
+</ul>
+<ul class="navbar-nav">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item">
+            <a id="manage" class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @UserManager.GetUserAsync(User).Result?.ProfileName!</a>
+        </li>
+        <li class="nav-item">
+            <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                <button id="logout" type="submit" class="nav-link btn btn-link">Logout</button>
+            </form>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        </li>
+    }
+</ul>

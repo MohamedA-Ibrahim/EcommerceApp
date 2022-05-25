@@ -15,7 +15,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\backend\src\Domain\Domain.csproj" />
+    <Folder Include="Api\Endpoints\Account\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\backend\WebApi.Contracts\WebApi.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

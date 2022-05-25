@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
 using System.Text;
 
 namespace Infrastructure;
@@ -25,7 +26,7 @@ public static class DependencyInjection
 
         services.AddScoped(provider => (IApplicationDbContext)provider.GetRequiredService<ApplicationDbContext>());
 
-        services.AddDefaultIdentity<ApplicationUser>()
+        services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultUI()
@@ -51,18 +52,54 @@ public static class DependencyInjection
 
         services.AddSingleton(tokenValidationParameters);
 
-        services.AddAuthentication(x =>
-            {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(x =>
+        //services.AddAuthentication(x =>
+        //    {
+        //        x.DefaultAuthenticateScheme = "JWT_OR_COOKIE";
+        //        x.DefaultScheme = "JWT_OR_COOKIE";
+        //        x.DefaultChallengeScheme = "JWT_OR_COOKIE";
+        //    }).AddCookie(cfg =>
+        //    {
+        //        cfg.SlidingExpiration = false;
+        //        cfg.LoginPath = "/Identity/Account/Login";
+        //        cfg.LogoutPath = "/Identity/Account/Logout";
+        //        cfg.ExpireTimeSpan = new TimeSpan(30, 0, 0, 0);
+        //    })
+        //    .AddJwtBearer(x =>
+        //    {
+        //        x.SaveToken = true;
+        //        x.TokenValidationParameters = tokenValidationParameters;
+
+        //    }).AddPolicyScheme("JWT_OR_COOKIE", "JWT_OR_COOKIE", options =>
+        //    {
+        //        // runs on each request
+        //        options.ForwardDefaultSelector = context =>
+        //        {
+        //            // filter by auth type
+        //            string authorization = context.Request.Headers[HeaderNames.Authorization];
+        //            if (!string.IsNullOrEmpty(authorization) && authorization.StartsWith("Bearer"))
+        //                return "Bearer";
+
+        //            // otherwise always check for cookie auth
+        //            return "Cookies";
+        //        };
+        //    });
+        services.AddAuthentication()
+        //.AddFacebook(facebookOptions =>
+        //{
+        //    facebookOptions.AppId = configuration["FacebookAuthSettings:AppId"];
+        //    facebookOptions.AppSecret = configuration["FacebookAuthSettings:AppSecret"];
+        //})
+        .AddJwtBearer(x =>
             {
                 x.SaveToken = true;
                 x.TokenValidationParameters = tokenValidationParameters;
 
             });
+        services.ConfigureApplicationCookie(cfg =>
+        {
+            cfg.LoginPath = "/Identity/Account/Login";
+            cfg.LogoutPath = "/Identity/Account/Logout";
+        });
         return services;
     }
 }

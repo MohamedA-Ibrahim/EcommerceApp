@@ -1,0 +1,15 @@
+C:\Users\ysfme\source\repos\MohamedA-Ibrahim\EcommerceApp\backend\Web.Contracts\bin\Debug\net6.0\Web.Contracts.deps.json
+C:\Users\ysfme\source\repos\MohamedA-Ibrahim\EcommerceApp\backend\Web.Contracts\bin\Debug\net6.0\Web.Contracts.dll
+C:\Users\ysfme\source\repos\MohamedA-Ibrahim\EcommerceApp\backend\Web.Contracts\bin\Debug\net6.0\Web.Contracts.pdb
+C:\Users\ysfme\source\repos\MohamedA-Ibrahim\EcommerceApp\backend\Web.Contracts\bin\Debug\net6.0\Domain.dll
+C:\Users\ysfme\source\repos\MohamedA-Ibrahim\EcommerceApp\backend\Web.Contracts\bin\Debug\net6.0\Domain.pdb
+C:\Users\ysfme\source\repos\MohamedA-Ibrahim\EcommerceApp\backend\Web.Contracts\obj\Debug\net6.0\Web.Contracts.csproj.AssemblyReference.cache
+C:\Users\ysfme\source\repos\MohamedA-Ibrahim\EcommerceApp\backend\Web.Contracts\obj\Debug\net6.0\Web.Contracts.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ysfme\source\repos\MohamedA-Ibrahim\EcommerceApp\backend\Web.Contracts\obj\Debug\net6.0\Web.Contracts.AssemblyInfoInputs.cache
+C:\Users\ysfme\source\repos\MohamedA-Ibrahim\EcommerceApp\backend\Web.Contracts\obj\Debug\net6.0\Web.Contracts.AssemblyInfo.cs
+C:\Users\ysfme\source\repos\MohamedA-Ibrahim\EcommerceApp\backend\Web.Contracts\obj\Debug\net6.0\Web.Contracts.csproj.CoreCompileInputs.cache
+C:\Users\ysfme\source\repos\MohamedA-Ibrahim\EcommerceApp\backend\Web.Contracts\obj\Debug\net6.0\Web.Contracts.csproj.CopyComplete
+C:\Users\ysfme\source\repos\MohamedA-Ibrahim\EcommerceApp\backend\Web.Contracts\obj\Debug\net6.0\Web.Contracts.dll
+C:\Users\ysfme\source\repos\MohamedA-Ibrahim\EcommerceApp\backend\Web.Contracts\obj\Debug\net6.0\refint\Web.Contracts.dll
+C:\Users\ysfme\source\repos\MohamedA-Ibrahim\EcommerceApp\backend\Web.Contracts\obj\Debug\net6.0\Web.Contracts.pdb
+C:\Users\ysfme\source\repos\MohamedA-Ibrahim\EcommerceApp\backend\Web.Contracts\obj\Debug\net6.0\ref\Web.Contracts.dll

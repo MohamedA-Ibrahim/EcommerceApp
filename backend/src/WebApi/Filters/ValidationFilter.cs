@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using WebApi.Contracts.V1.Responses;
+using Web.Contracts.V1.Responses;
 
-namespace WebApi.Filters;
+namespace Web.Filters;
 
 public class ValidationFilter : IAsyncActionFilter
 {

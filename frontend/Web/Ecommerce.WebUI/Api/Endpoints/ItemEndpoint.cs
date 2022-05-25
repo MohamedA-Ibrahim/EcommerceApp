@@ -1,8 +1,9 @@
-﻿using Domain.Entities;
-using Ecommerce.WebUI.Models;
+﻿using Ecommerce.WebUI.Models;
 using Ecommerce.WebUI.Models.Wrappers;
 using System.Linq.Expressions;
 using System.Net;
+using WebApi.Contracts.V1.Requests;
+using WebApi.Contracts.V1.Responses;
 
 namespace Ecommerce.WebUI.Api
 {
@@ -15,13 +16,13 @@ namespace Ecommerce.WebUI.Api
             _apiHelper = apiHelper;
         }
 
-        public async Task<PagedResponse<Item>> GetAll()
+        public async Task<PagedResponse<ItemResponse>> GetAll()
         {
             using (HttpResponseMessage response = await _apiHelper.ApiClient.GetAsync("items"))
             {
                 if (response.IsSuccessStatusCode)
                 {
-                    var result = await response.Content.ReadAsAsync<PagedResponse<Item>>();
+                    var result = await response.Content.ReadAsAsync<PagedResponse<ItemResponse>>();
                     return result;
                 }
                 else
@@ -31,7 +32,7 @@ namespace Ecommerce.WebUI.Api
             }
         }
 
-        public async Task CreateAsync(Item item)
+        public async Task CreateAsync(CreateItemRequest item)
         {
             using (HttpResponseMessage response = await _apiHelper.ApiClient.PostAsJsonAsync("items", item))
             {
@@ -39,13 +40,12 @@ namespace Ecommerce.WebUI.Api
             }
         }
 
-        public async Task<Item> UpdateAsync(Item item)
+        public async Task<ItemResponse> UpdateAsync(UpdateItemRequest item,int id)
         {
-            HttpResponseMessage response = await _apiHelper.ApiClient.PutAsJsonAsync($"items/{item.Id}", item);
+            HttpResponseMessage response = await _apiHelper.ApiClient.PutAsJsonAsync($"items/{id}", item);
             response.EnsureSuccessStatusCode();
 
-            item = await response.Content.ReadAsAsync<Item>();
-            return item;
+            return await response.Content.ReadAsAsync<ItemResponse>(); 
         }
 
         public async Task<HttpStatusCode> DeleteAsync(int id)
@@ -54,13 +54,13 @@ namespace Ecommerce.WebUI.Api
             return response.StatusCode;
         }
 
-        public async Task<Item> GetById(int? id)
+        public async Task<ItemResponse> GetById(int? id)
         {
             using (HttpResponseMessage response = await _apiHelper.ApiClient.GetAsync($"items/{id}"))
             {
                 if (response.IsSuccessStatusCode)
                 {
-                    var result = await response.Content.ReadAsAsync<Item>();
+                    var result = await response.Content.ReadAsAsync<ItemResponse>();
                     return result;
                 }
                 else

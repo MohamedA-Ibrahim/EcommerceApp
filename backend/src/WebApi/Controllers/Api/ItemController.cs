@@ -64,7 +64,7 @@ public class ItemController : ControllerBase
     ///  Get items posted by user
     /// </summary>
     /// <returns></returns>
-    [Authorize(Roles = "Admin,User")]
+    [Authorize(Roles = "Admin,User", AuthenticationSchemes = "Bearer")]
     [HttpGet(ApiRoutes.Items.GetUserItems)]
     public async Task<IActionResult> GetPostedByUserAsync([FromQuery] PaginationFilter paginationFilter)
     {
@@ -105,7 +105,7 @@ public class ItemController : ControllerBase
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPost(ApiRoutes.Items.Create)]
-    [Authorize(Roles = "Admin,User")]
+    [Authorize(Roles = "Admin,User", AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> Create([FromBody] CreateItemRequest request)
     {
         var item = new Item
@@ -130,7 +130,7 @@ public class ItemController : ControllerBase
     /// <param name="request">The updated info</param>
     /// <returns></returns>
     [HttpPut(ApiRoutes.Items.Update)]
-    [Authorize(Roles = "Admin,User")]
+    [Authorize(Roles = "Admin,User", AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> Update([FromRoute] int itemId, [FromBody] UpdateItemRequest request)
     {
         var item = await _unitOfWork.Item.GetFirstOrDefaultAsync(itemId);
@@ -164,7 +164,7 @@ public class ItemController : ControllerBase
     /// <returns></returns>
 
     [HttpDelete(ApiRoutes.Items.Delete)]
-    [Authorize(Roles = "Admin,User")]
+    [Authorize(Roles = "Admin,User", AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> Delete([FromRoute] int itemId)
     {
         var item = await _unitOfWork.Item.GetFirstOrDefaultAsync(itemId);

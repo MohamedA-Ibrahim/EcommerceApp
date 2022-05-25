@@ -14,6 +14,15 @@ namespace Web.Services
             _blobServiceClient = blobServiceClient;
         }
 
+        public async Task<bool> DeleteAsync(string filePath)
+        {
+            var containerClient = _blobServiceClient.GetBlobContainerClient("images");
+            var blobClient = containerClient.GetBlobClient(filePath);
+            if(blobClient == null)
+                return false;
+            await blobClient.DeleteIfExistsAsync();
+            return true;
+        }
 
         public async Task<string> UploadAsync(FileDto file)
         {

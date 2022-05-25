@@ -29,4 +29,5 @@ public class Item : AuditableEntity
     public DateTime? ExpirationDate { get; set; }
 
     public bool Sold { get; set; } = false;
+    public virtual ICollection<AttributeValue> AttributeValues { get; set; }
 }

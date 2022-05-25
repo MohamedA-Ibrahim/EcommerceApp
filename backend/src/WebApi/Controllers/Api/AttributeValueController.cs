@@ -32,7 +32,7 @@ public class AttributeValueController : ControllerBase
     /// <param name="requestAttributes"></param>
     /// <returns></returns>
     [HttpPost(ApiRoutes.AttributeValues.Create)]
-    [Authorize(Roles = "Admin,User")]
+    [Authorize(Roles = "Admin,User", AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> Create([FromRoute]int itemId, [FromBody] List<CreateAttributeValueRequest> requestAttributes)
     {
         List<AttributeValue> attributeValues = await _services.Create(itemId, requestAttributes);
@@ -48,7 +48,7 @@ public class AttributeValueController : ControllerBase
     }
 
     [HttpPut(ApiRoutes.AttributeValues.Update)]
-    [Authorize(Roles = "Admin,User")]
+    [Authorize(Roles = "Admin,User", AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> Update([FromRoute] int attributeValueId, UpdateAttributeValueRequest request)
     {
         var attributeValue = await _services.Update(attributeValueId, request);

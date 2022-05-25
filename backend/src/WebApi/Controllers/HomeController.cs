@@ -9,6 +9,7 @@ namespace Web.Controllers
         // GET: HomeController
         public ActionResult Index()
         {
+            var claims = HttpContext.User.Claims;
             return View();
         }
 

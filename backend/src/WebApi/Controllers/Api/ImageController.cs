@@ -1,5 +1,6 @@
 ﻿using Application.Interfaces;
 using Application.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.Contracts.V1;
 
@@ -22,6 +23,7 @@ namespace Web.Controllers
         /// <response code="200">Returns the url of the uploaded image</response>
         [Produces("text/plain")]
         [HttpPost(ApiRoutes.Images.Upload)]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<string> UploadAsync([FromForm] IFormFile file)
         {
             var image = new FileDto

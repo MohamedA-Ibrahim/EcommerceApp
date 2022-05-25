@@ -1,17 +1,19 @@
 ﻿using Domain.Entities;
 using Infrastructure.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Web.Contracts.V1.Requests;
 
-namespace Web.Controllers.Admin
+namespace Web.Controllers
 {
-    public class CategoriesController : Controller
+    [Authorize(Roles = "Admin")]
+    public class ManageCategoryController : Controller
     {
 
         private readonly IUnitOfWork _unitOfWork;
 
-        public CategoriesController(IUnitOfWork unitOfWork)
+        public ManageCategoryController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
@@ -47,7 +49,7 @@ namespace Web.Controllers.Admin
                 return NotFound();
             }
 
-            var category = await _unitOfWork.Category.GetFirstOrDefaultIncludingAsync(id.Value,x=>x.AttributeTypes);
+            var category = await _unitOfWork.Category.GetFirstOrDefaultIncludingAsync(id.Value, x => x.AttributeTypes);
             if (category == null)
             {
                 return NotFound();

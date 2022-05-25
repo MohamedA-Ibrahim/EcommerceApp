@@ -16,12 +16,12 @@ namespace Web.Controllers;
 [Produces("application/json")]
 public class AttributeTypeController : ControllerBase
 {
-    private readonly IAttributeTypeServices _services;
+    private readonly IAttributeTypeServices _service;
     private readonly IMapper _mapper;
 
     public AttributeTypeController(IAttributeTypeServices services, IMapper mapper)
     {
-        _services = services;
+        _service = services;
         _mapper = mapper;
     }
 
@@ -32,7 +32,7 @@ public class AttributeTypeController : ControllerBase
     [HttpGet(ApiRoutes.AttributeTypes.GetByCategoryId)]
     public async Task<IActionResult> GetByCategoryAsync([FromRoute] int categoryId)
     {
-        var attributeTypes = await _services.GetByCategoryAsync(categoryId);
+        var attributeTypes = await _service.GetByCategoryAsync(categoryId);
         var attributeTypsResponse = _mapper.Map<List<AttributeTypeResponse>>(attributeTypes);
         return Ok(attributeTypsResponse);
     }
@@ -44,10 +44,10 @@ public class AttributeTypeController : ControllerBase
     /// <param name="request">The attribute type to create</param>
     ///<response code="200">Create Success</response>
     [HttpPost(ApiRoutes.AttributeTypes.Create)]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin", AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> Create([FromBody] List<CreateAttributeTypeRequest> request)
     {
-        if (await _services.Create(request))
+        if (await _service.Create(request))
             return Ok();
         else
             return BadRequest();
@@ -60,10 +60,10 @@ public class AttributeTypeController : ControllerBase
     /// <param name="request">The updated info</param>
     ///<response code="200">Update Success</response>
     [HttpPut(ApiRoutes.AttributeTypes.Update)]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin", AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> Update([FromRoute] int attributeTypeId, [FromBody] UpdateAttributeTypeRequest request)
     {
-        var attributeType = await _services.Update(attributeTypeId, request);
+        var attributeType = await _service.Update(attributeTypeId, request);
 
         if (attributeType == null)
             return NotFound();
@@ -77,10 +77,10 @@ public class AttributeTypeController : ControllerBase
     /// <param name="attributeTypeId">The id of the attribute type to delete</param>
     ///<response code="204">Delete Success</response>
     [HttpDelete(ApiRoutes.AttributeTypes.Delete)]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin", AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> Delete([FromRoute] int attributeTypeId)
     {
-        var attributeType = await _services.Delete(attributeTypeId);
+        var attributeType = await _service.Delete(attributeTypeId);
         if (!attributeType)
             return NotFound();
         return Ok();

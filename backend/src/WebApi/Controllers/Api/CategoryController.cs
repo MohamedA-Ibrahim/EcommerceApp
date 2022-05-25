@@ -75,7 +75,7 @@ public class CategoryController : Controller
     /// <param name="categoryRequest"></param>
     /// <returns></returns>
     [HttpPost(ApiRoutes.Categories.Create)]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin",AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> Create([FromBody] CreateCategoryRequest categoryRequest)
     {
         var category = new Category { Name = categoryRequest.Name, Description = categoryRequest.Description, ImageUrl = categoryRequest.ImageUrl };
@@ -94,7 +94,7 @@ public class CategoryController : Controller
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPut(ApiRoutes.Categories.Update)]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin", AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> Update([FromRoute] int categoryId, [FromBody] UpdateCategoryRequest request)
     {
         var category = await _unitOfWork.Category.GetFirstOrDefaultAsync(categoryId);
@@ -118,7 +118,7 @@ public class CategoryController : Controller
     /// <param name="categoryId"></param>
     /// <returns></returns>
     [HttpDelete(ApiRoutes.Categories.Delete)]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin", AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> Delete([FromRoute] int categoryId)
     {
         var category = await _unitOfWork.Category.GetFirstOrDefaultAsync(categoryId);

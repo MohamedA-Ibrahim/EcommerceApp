@@ -3,6 +3,6 @@
     public class CreateAttributeTypeRequest
     {
         public int CategoryId { get; set; }
-        public string Name { get; set; }
+        public List<string> AttributeTypes { get; set; }
     }
 }

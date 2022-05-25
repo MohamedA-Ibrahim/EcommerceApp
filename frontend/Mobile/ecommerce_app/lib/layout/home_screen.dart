@@ -9,7 +9,6 @@ import 'package:ecommerce_app/share/cash_helper.dart';
 import 'package:ecommerce_app/testing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 
 import 'add_category_screen.dart';
 
@@ -32,6 +31,10 @@ class HomeScreen extends StatelessWidget
               "E-commerce",
             ),
             actions: [
+              IconButton(
+                onPressed: (){},
+                icon: Icon(Icons.search),
+              ),
               IconButton(
                 onPressed: ()
                 {
@@ -56,6 +59,10 @@ class HomeScreen extends StatelessWidget
                 {
                   cubit.buildCategoryModule_homeScreen();
                 }
+              else if(index == 2)
+                {
+                  cubit.buildUserModule_homeScreen();
+                }
             },
             currentIndex: cubit.currentIndexBottomNavigationBar_homeScreen,
             showSelectedLabels: true,
@@ -71,6 +78,10 @@ class HomeScreen extends StatelessWidget
                 label: "Category",
                 icon: Icon(Icons.category_rounded)
               ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person),
+                label: "User"
+              )
             ],
           ),
           floatingActionButton: FloatingActionButton(

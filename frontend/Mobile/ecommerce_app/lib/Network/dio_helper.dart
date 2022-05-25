@@ -88,5 +88,10 @@ class DioHelper
     );
   }
 
+  Future<Response> get_attributeType(int categoryId) async
+  {
+    return await dio.get("$get_AttributeType$categoryId");
+  }
+
 
 }

@@ -20,4 +20,10 @@ class Log
   {
     print("////////////////////{--Warning--}//////////////////////-->> $w");
   }
+  static void faildResponse(value, String type)
+  {
+    w("Faild response $type");
+    w(value.statusCode);
+    w(value.data.toString());
+  }
 }

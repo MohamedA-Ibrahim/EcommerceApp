@@ -8,6 +8,7 @@ import 'package:ecommerce_app/model/category_model.dart';
 import 'package:ecommerce_app/model/item_model.dart';
 import 'package:ecommerce_app/model/user_model.dart';
 import 'package:ecommerce_app/module/items_module.dart';
+import 'package:ecommerce_app/module/user_module.dart';
 import 'package:ecommerce_app/share/app_state.dart';
 import 'package:ecommerce_app/share/cash_helper.dart';
 import 'package:ecommerce_app/share/share_api.dart';
@@ -61,6 +62,8 @@ class AppCubit extends Cubit<AppStates>
   File? image_addItemScreen;
   CategoryModel? categoryForItem_addItemScreen;
   DateTime? expirationDate_addItemScreen;
+  List<Map<String, dynamic>> attributeTypeByCategoryId_addItemScreen = [];
+  List<TextEditingController> attributeValuesControllers_addItemScreen = [];
 
   //variabel for add Category Screen
   File? imageCategory_addCategoryScreen;
@@ -170,6 +173,13 @@ class AppCubit extends Cubit<AppStates>
   {
     currentIndexBottomNavigationBar_homeScreen = 1;
     body_homeScreen = CategoryModule();
+    emit(AppChangeState());
+  }
+
+  void buildUserModule_homeScreen()
+  {
+    body_homeScreen = UserModule();
+    currentIndexBottomNavigationBar_homeScreen = 2;
     emit(AppChangeState());
   }
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -387,6 +397,39 @@ class AppCubit extends Cubit<AppStates>
       post_Image,
       data: formData
     );
+  }
+  void getAttributeTypeByCategoryId_addItemScreen(int categoryId)
+  {
+    attributeTypeByCategoryId_addItemScreen.clear();
+    attributeValuesControllers_addItemScreen.clear();
+    Log.v("Start get Attribute Type");
+    dio.get_attributeType(categoryId).then((value)
+    {
+      Log.v("complete get attribute");
+      if(value.statusCode == 200)
+        {
+          //Log.v(value.data.toString());
+          for(int i = 0; i < value.data.length; i++)
+            {
+              attributeTypeByCategoryId_addItemScreen.add({
+                "id": value.data[i]["id"],
+                "name": value.data[i]["name"]
+              });
+              attributeValuesControllers_addItemScreen.add(TextEditingController());
+            }
+          Log.v("Lenght of Controller ${attributeValuesControllers_addItemScreen.length}");
+          Log.v("Length of Attribute ${attributeTypeByCategoryId_addItemScreen.length}");
+          //Log.v(attributeTypeByCategoryId_addItemScreen[0].toString());
+          emit(AppChangeState());
+        }
+      else
+        {
+          Log.faildResponse(value, "Attribute Type");
+        }
+    }).catchError((e)
+    {
+      Log.catchE(e);
+    });
   }
 
   //function for Category Details

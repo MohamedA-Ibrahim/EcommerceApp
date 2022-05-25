@@ -11,14 +11,14 @@ class CategoryModel
   CategoryModel.fromJson(Map<String, dynamic> json)
   {
     id = json["id"];
-    Log.v("parse id");
+    //Log.v("parse id");
     name = json["name"];
-    Log.v("parse name");
+    //Log.v("parse name");
     description = json["description"];
-    Log.v("parse created");
+    //Log.v("parse created");
     createdBy = json["createdBy"];
-    Log.v("parse createdby");
+    //Log.v("parse createdby");
     imageUrl = json["imageUrl"];
-    Log.v("parse imageUrl");
+    //Log.v("parse imageUrl");
   }
 }

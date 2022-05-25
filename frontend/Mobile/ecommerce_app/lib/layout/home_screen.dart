@@ -76,10 +76,8 @@ class HomeScreen extends StatelessWidget
           floatingActionButton: FloatingActionButton(
             onPressed: ()
             {
-              String token = CacheHelper.getToken()!;
-              Map<String, dynamic> jsonToken = JwtDecoder.decode(token);
-              String role = jsonToken["role"];
-              if(role == "Admin")
+
+              if(cubit.user!.role! == "Admin")
                 {
                   if(cubit.isOpneBottomSheat_homeScreen)
                     {

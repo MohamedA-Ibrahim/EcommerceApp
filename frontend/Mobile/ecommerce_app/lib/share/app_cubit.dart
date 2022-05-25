@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:ecommerce_app/Network/dio_helper.dart';
@@ -17,6 +18,7 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../module/categoru_module.dart';
@@ -126,21 +128,14 @@ class AppCubit extends Cubit<AppStates>
         }
       else if(value.statusCode == 200)
         {
-          if(email == "admin@gmail.com")
-            {
-              CacheHelper.setAdmin(true);
-              Log.v("admin is true");
-            }
-          else
-            {
-              CacheHelper.setAdmin(false);
-              Log.v("admin is false");
-            }
-          user = UserModel.fromJson(value.data);
+          String token = value.data["token"];
+          Map<String, dynamic> jsonToken = JwtDecoder.decode(token);
+          user = UserModel.fromJson(value.data, jsonToken);
           CacheHelper.saveToken(user!.token!);
           Log.v(user!.token!);
           CacheHelper.saveRefreshToken(user!.refreshToken!);
           Log.v(user!.refreshToken!);
+          Log.v("User is ${AppCubit.get(context).user!.role}");
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => HomeScreen()),
@@ -260,40 +255,38 @@ class AppCubit extends Cubit<AppStates>
           Log.v(value.data.toString());
           getCategoriesData_categoryModule();
           Fluttertoast.showToast(msg: "Success Create Category", toastLength: Toast.LENGTH_LONG);
-          for(int i = 0; i < categoryAttributes_addCategoryScreen.length; i++)
-            {
-              Dio().post(
-                post_AttributeType,
-                data: {
-                  "categoryId": value.data["id"],
-                  "name": categoryAttributes_addCategoryScreen[i]
-                },
-                options: Options(
-                  headers: {
-                    "Authorization": "bearer ${CacheHelper.getToken()}"
-                  },
-                  contentType: Headers.jsonContentType,
-                  responseType: ResponseType.json,
-                  validateStatus: (_) => true,
-                ),
-              ).then((value2)
+          //post attribute for category
+          Log.v("Start Post Attribute");
+          Log.v(value.data["id"].toString());
+          Log.v(jsonEncode(categoryAttributes_addCategoryScreen));
+          Dio().post(
+            post_AttributeType,
+            data: {
+              "categoryId": value.data["id"],
+              "attributeTypes": categoryAttributes_addCategoryScreen.toList()
+            },
+            options: Options(
+              headers: {"Authorization": "bearer ${user!.token}"},
+              contentType: Headers.jsonContentType,
+              responseType: ResponseType.json,
+              validateStatus: (_) => true
+            )
+          ).then((value2){
+            Log.v("Success post attribute");
+            if(value2.statusCode == 200)
               {
-                if(value2.statusCode == 200)
-                  {
-                    Log.v("success post attribute");
-                  }
-                else
-                  {
-                    Log.w("post attribute faild");
-                    Log.w(value2.statusCode.toString());
-                    Log.w(value2.data.toString());
-                  }
-              }).catchError((e)
+                Log.v(value2.statusCode.toString());
+                Log.v("Success post Attribut");
+              }
+            else
               {
-                Log.e("can not post attribute");
-                Log.catchE(e);
-              });
-            }
+                Log.w("Faild post Attribute");
+                Log.w(value2.statusCode.toString());
+                Log.w(value2.data.toString());
+              }
+          }).catchError((e){
+            Log.e(e);
+          });
           Navigator.pop(context);
           imageCategory_addCategoryScreen = null;
           categoryAttributes_addCategoryScreen.clear();
@@ -424,7 +417,6 @@ class AppCubit extends Cubit<AppStates>
       Log.catchE(e);
     });
   }
-
 }
 
 //ImCG4IInMiIAZM1tIW1KHn4e1JM=

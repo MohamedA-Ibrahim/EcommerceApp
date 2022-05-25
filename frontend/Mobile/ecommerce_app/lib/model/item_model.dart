@@ -18,20 +18,20 @@ class ItemModel
   ItemModel.fromJson(Map<String, dynamic> json)
   {
     id = json["id"];
-    Log.v("parse id");
+    //Log.v("parse id");
     name = json["name"];
-    Log.v("parse name");
+    //Log.v("parse name");
     description = json["description"];
-    Log.v("parse description");
+    //Log.v("parse description");
     price = json["price"].toDouble();
-    Log.v("parse price");
+    //Log.v("parse price");
     imageUrl = json["imageUrl"];
-    Log.v("parse imageUIL");
+    //Log.v("parse imageUIL");
     category = CategoryModel.fromJson(json["category"]);
-    Log.v("parse category");
+    //Log.v("parse category");
     expirationDate = json["expirationDate"];
-    Log.v("parse expiration");
+    //Log.v("parse expiration");
     sold = json["sold"];
-    Log.v("parse sold");
+    //Log.v("parse sold");
   }
 }

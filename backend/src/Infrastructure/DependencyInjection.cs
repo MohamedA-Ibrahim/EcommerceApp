@@ -83,7 +83,13 @@ public static class DependencyInjection
         //            return "Cookies";
         //        };
         //    });
-        services.AddAuthentication().AddJwtBearer(x =>
+        services.AddAuthentication()
+        //.AddFacebook(facebookOptions =>
+        //{
+        //    facebookOptions.AppId = configuration["FacebookAuthSettings:AppId"];
+        //    facebookOptions.AppSecret = configuration["FacebookAuthSettings:AppSecret"];
+        //})
+        .AddJwtBearer(x =>
             {
                 x.SaveToken = true;
                 x.TokenValidationParameters = tokenValidationParameters;

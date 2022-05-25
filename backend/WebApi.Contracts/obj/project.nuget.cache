@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "dgSpecHash": "+XFHFbX4BvLhxaLtzfI8V5EZQFH6FGNVtGFONMbOchtldA0dCpgwIPfoyr3hXTY2mEn/rV2cr0nRJDzLKaWzVw==",
+  "success": false,
+  "projectFilePath": "C:\\Users\\ysfme\\source\\repos\\MohamedA-Ibrahim\\EcommerceApp\\backend\\WebApi.Contracts\\WebApi.Contracts.csproj",
+  "expectedPackageFiles": [],
+  "logs": [
+    {
+      "code": "NU1105",
+      "level": "Error",
+      "message": "Unable to find project information for 'C:\\Users\\ysfme\\source\\repos\\MohamedA-Ibrahim\\EcommerceApp\\backend\\src\\Domain\\Domain.csproj'. If you are using Visual Studio, this may be because the project is unloaded or not part of the current solution so run a restore from the command-line. Otherwise, the project file may be invalid or missing targets required for restore.",
+      "libraryId": "C:\\Users\\ysfme\\source\\repos\\MohamedA-Ibrahim\\EcommerceApp\\backend\\src\\Domain\\Domain.csproj",
+      "targetGraphs": [
+        "net6.0"
+      ]
+    }
+  ]
+}

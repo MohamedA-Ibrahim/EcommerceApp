@@ -9,12 +9,10 @@ namespace Web.Services;
 public class AttributeValueServices : IAttributeValueServices
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IUriService _uriService;
 
-    public AttributeValueServices(IUnitOfWork unitOfWork, IUriService uriService)
+    public AttributeValueServices(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
-        _uriService = uriService;
     }
 
     /// <summary>

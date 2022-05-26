@@ -1,16 +1,12 @@
-﻿using Application.Interfaces;
-using Application.Models;
+﻿using Application.Models;
 using AutoMapper;
-using Domain.Entities;
-using Infrastructure.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using Web.Contracts.V1;
 using Web.Contracts.V1.Requests;
 using Web.Contracts.V1.Responses;
-using Web.Contracts.V1.Responses.Wrappers;
-using Web.Helpers;
+using Web.Services.DataServices.Interfaces;
 
 namespace Web.Controllers;
 
@@ -19,15 +15,14 @@ namespace Web.Controllers;
 [Produces("application/json")]
 public class CategoryController : Controller
 {
-    private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
-    private readonly IUriService _uriService;
+    private ICategoryService _categoryService;
 
-    public CategoryController(IUnitOfWork unitOfWork, IMapper mapper, IUriService uriService)
+
+    public CategoryController(IMapper mapper,ICategoryService categoryService)
     {
-        _unitOfWork = unitOfWork;
         _mapper = mapper;
-        _uriService = uriService;
+        _categoryService = categoryService;
     }
 
     /// <summary>
@@ -39,23 +34,7 @@ public class CategoryController : Controller
     [HttpGet(ApiRoutes.Categories.GetAll)]
     public async Task<IActionResult> GetAll([FromQuery] string categoryName, [FromQuery] PaginationFilter paginationFilter)
     {
-        List<Category> categories;
-
-        if (categoryName != null)
-            categories = await _unitOfWork.Category.GetAllAsync(x => x.Name.Contains(categoryName), paginationFilter);
-        else
-            categories = await _unitOfWork.Category.GetAllAsync(null, paginationFilter);
-
-        var categoryResponse = _mapper.Map<List<CategoryResponse>>(categories);
-
-        if (paginationFilter == null || paginationFilter.PageNumber < 1 || paginationFilter.PageSize < 1)
-        {
-            return Ok(new PagedResponse<CategoryResponse>(categoryResponse));
-        }
-
-        var totalRecords = await _unitOfWork.Category.CountAsync();
-
-        var paginationResponse = PaginationHelpers.CreatePaginatedResponse(categoryResponse, paginationFilter, totalRecords, _uriService);
+        var paginationResponse = await _categoryService.GetAll(categoryName, paginationFilter);
         return Ok(paginationResponse);
     }
 
@@ -69,13 +48,15 @@ public class CategoryController : Controller
     [HttpGet(ApiRoutes.Categories.Get)]
     public async Task<IActionResult> Get([FromRoute] int categoryId)
     {
-        var category = await _unitOfWork.Category.GetFirstOrDefaultAsync(categoryId);
+        var category = await _categoryService.Get(categoryId);
 
         if (category == null)
             return NotFound();
 
         return Ok(_mapper.Map<CategoryResponse>(category));
     }
+
+
 
     /// <summary>
     /// Create a category
@@ -85,13 +66,8 @@ public class CategoryController : Controller
     [HttpPost(ApiRoutes.Categories.Create)]
     [Authorize(Roles = "Admin",AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> Create([FromBody] CreateCategoryRequest categoryRequest)
-    {
-        var category = new Category { Name = categoryRequest.Name, Description = categoryRequest.Description, ImageUrl = categoryRequest.ImageUrl };
-
-        await _unitOfWork.Category.AddAsync(category);
-        await _unitOfWork.SaveAsync();
-
-        var locationUri = _uriService.GetCategoryUri(category.Id.ToString());
+    {     
+        var category = _categoryService.Create(categoryRequest);
         return Ok(_mapper.Map<CategoryResponse>(category));
     }
 
@@ -105,17 +81,9 @@ public class CategoryController : Controller
     [Authorize(Roles = "Admin", AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> Update([FromRoute] int categoryId, [FromBody] UpdateCategoryRequest request)
     {
-        var category = await _unitOfWork.Category.GetFirstOrDefaultAsync(categoryId);
-
-        if (category == null)
+        var category = _categoryService.Update(categoryId, request);
+        if(category == null)
             return NotFound();
-
-        category.Name = request.Name;
-        category.Description = request.Description;
-        category.ImageUrl = request.ImageUrl;
-
-        _unitOfWork.Category.Update(category);
-        await _unitOfWork.SaveAsync();
 
         return Ok(_mapper.Map<CategoryResponse>(category));
     }
@@ -129,12 +97,9 @@ public class CategoryController : Controller
     [Authorize(Roles = "Admin", AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> Delete([FromRoute] int categoryId)
     {
-        var category = await _unitOfWork.Category.GetFirstOrDefaultAsync(categoryId);
-
-        if (category == null) return NotFound();
-
-        _unitOfWork.Category.Remove(category);
-        await _unitOfWork.SaveAsync();
+       var deleted = await _categoryService.Delete(categoryId);
+        if(!deleted)
+            return NotFound();
 
         return NoContent();
     }

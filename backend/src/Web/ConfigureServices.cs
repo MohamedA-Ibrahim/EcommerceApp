@@ -20,6 +20,7 @@ namespace Web
             services.AddScoped<IAttributeTypeServices, AttributeTypeServices>();
             services.AddScoped<IAttributeValueServices, AttributeValueServices>();
             services.AddScoped<IUserAddressService, UserAddressService>();
+            services.AddScoped<ICategoryService, CategoryService>();
 
 
             services.AddHttpContextAccessor();

@@ -12,6 +12,7 @@ using Web.Contracts.V1.Requests;
 using Web.Contracts.V1.Responses;
 using Web.Contracts.V1.Responses.Wrappers;
 using Web.Helpers;
+using Web.Services.DataServices.Interfaces;
 
 namespace Web.Controllers;
 
@@ -20,17 +21,13 @@ namespace Web.Controllers;
 [Produces("application/json")]
 public class ItemController : ControllerBase
 {
-    private readonly ICurrentUserService _currentUserService;
-    private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
-    private readonly IUriService _uriService;
+    private readonly IItemService _itemService;
 
-    public ItemController(IUnitOfWork unitOfWork, ICurrentUserService currentUserService, IUriService uriService, IMapper mapper)
+    public ItemController(IMapper mapper, IItemService itemService)
     {
-        _unitOfWork = unitOfWork;
-        _currentUserService = currentUserService;
-        _uriService = uriService;
         _mapper = mapper;
+        _itemService = itemService;
     }
 
     /// <summary>
@@ -39,23 +36,8 @@ public class ItemController : ControllerBase
     /// <param name="itemName">Search items by item name (optional)</param>
     [HttpGet(ApiRoutes.Items.GetAll)]
     public async Task<IActionResult> GetForSaleAsync([FromQuery] string itemName, [FromQuery] PaginationFilter paginationFilter)
-    {
-        List<Item> items;
-
-        if (itemName != null)
-            items = await _unitOfWork.Item.GetAllIncludingAsync(x => !x.Sold && x.Name.Contains(itemName), paginationFilter, x => x.Category, u => u.ApplicationUser);
-        else
-            items = await _unitOfWork.Item.GetAllIncludingAsync(x => !x.Sold, paginationFilter, x => x.Category, u => u.ApplicationUser);
-
-        var itemResponse = _mapper.Map<List<ItemResponse>>(items);
-
-        if (paginationFilter == null || paginationFilter.PageNumber < 1 || paginationFilter.PageSize < 1)
-        {
-            return Ok(new PagedResponse<ItemResponse>(itemResponse));
-        }
-
-        var totalRecords = await _unitOfWork.Item.CountAsync();
-        var paginationResponse = PaginationHelpers.CreatePaginatedResponse(itemResponse, paginationFilter, totalRecords, _uriService);
+    {      
+        var paginationResponse = await _itemService.GetForSaleAsync(itemName, paginationFilter);
 
         return Ok(paginationResponse);
     }
@@ -68,16 +50,7 @@ public class ItemController : ControllerBase
     [HttpGet(ApiRoutes.Items.GetUserItems)]
     public async Task<IActionResult> GetPostedByUserAsync([FromQuery] PaginationFilter paginationFilter)
     {
-        var items = await _unitOfWork.Item.GetAllIncludingAsync(x => x.CreatedBy == _currentUserService.UserId, paginationFilter, x => x.Category);
-        var itemResponse = _mapper.Map<List<ItemResponse>>(items);
-
-        if (paginationFilter == null || paginationFilter.PageNumber < 1 || paginationFilter.PageSize < 1)
-        {
-            return Ok(new PagedResponse<ItemResponse>(itemResponse));
-        }
-
-        var totalRecords = await _unitOfWork.Item.CountAsync();
-        var paginationResponse = PaginationHelpers.CreatePaginatedResponse(itemResponse, paginationFilter, totalRecords, _uriService);
+        var paginationResponse = await _itemService.GetPostedByUserAsync(paginationFilter);
 
         return Ok(paginationResponse);
     }
@@ -91,7 +64,7 @@ public class ItemController : ControllerBase
     [HttpGet(ApiRoutes.Items.Get)]
     public async Task<IActionResult> GetById([FromRoute] int itemId)
     {
-        var item = await _unitOfWork.Item.GetFirstOrDefaultAsync(itemId);
+        var item = await _itemService.GetAsync(itemId);
 
         if (item == null)
             return NotFound();
@@ -107,18 +80,7 @@ public class ItemController : ControllerBase
     [Authorize(Roles = "Admin,User", AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> Create([FromBody] CreateItemRequest request)
     {
-        var item = new Item
-        {
-            Name = request.Name,
-            Description = request.Description,
-            Price = request.Price,
-            ImageUrl = request.ImageUrl,
-            CategoryId = request.CategoryId,
-            ExpirationDate = request.ExpirationDate
-        };
-
-        await _unitOfWork.Item.AddAsync(item);
-        await _unitOfWork.SaveAsync();
+        var item = await _itemService.CreateAsync(request);
         return Ok(_mapper.Map<ItemResponse>(item));
     }
 
@@ -132,28 +94,11 @@ public class ItemController : ControllerBase
     [Authorize(Roles = "Admin,User", AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> Update([FromRoute] int itemId, [FromBody] UpdateItemRequest request)
     {
-        var item = await _unitOfWork.Item.GetFirstOrDefaultAsync(itemId);
+        var itemStatus = await _itemService.UpdateAsync(itemId, request);
+        if(itemStatus.item == null)
+            return BadRequest(new {error = itemStatus.message});
 
-        if (item == null)
-            return NotFound();
-
-        var userOwnsItem = await _unitOfWork.Item.UserOwnsItemAsync(itemId, _currentUserService.UserId);
-        if (!userOwnsItem)
-            return BadRequest(new { error = "You don't own this item" });
-
-        item.Name = request.Name;
-        item.Description = request.Description;
-        item.Price = request.Price;
-        item.CategoryId = request.CategoryId;
-        item.ExpirationDate = request.ExpirationDate;
-
-        if (request.ImageUrl != null)
-            item.ImageUrl = request.ImageUrl;
-
-        _unitOfWork.Item.Update(item);
-        await _unitOfWork.SaveAsync();
-
-        return Ok(_mapper.Map<ItemResponse>(item));
+        return Ok(_mapper.Map<ItemResponse>(itemStatus.item));
     }
 
     /// <summary>
@@ -166,19 +111,10 @@ public class ItemController : ControllerBase
     [Authorize(Roles = "Admin,User", AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> Delete([FromRoute] int itemId)
     {
-        var item = await _unitOfWork.Item.GetFirstOrDefaultAsync(itemId);
-
-        if (item == null) 
-            return NotFound();
-
-        if(item.CreatedBy != _currentUserService.UserId)
-            return BadRequest(new { error = "You don't own this item" });
-
-        if(item.Sold)
-            return BadRequest(new { error = "You can't delete a sold item" });
-
-        _unitOfWork.Item.Remove(item);
-        await _unitOfWork.SaveAsync();
+        var status = await _itemService.DeleteAsync(itemId);
+        
+        if(!status.success)
+            return BadRequest(new {error = status.message});
 
         return NoContent();
     }

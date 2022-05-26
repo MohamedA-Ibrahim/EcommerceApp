@@ -37,9 +37,15 @@ public class CategoryController : Controller
     /// <returns></returns>
 
     [HttpGet(ApiRoutes.Categories.GetAll)]
-    public async Task<IActionResult> GetAll([FromQuery] PaginationFilter paginationFilter)
+    public async Task<IActionResult> GetAll([FromQuery] string categoryName, [FromQuery] PaginationFilter paginationFilter)
     {
-        var categories = await _unitOfWork.Category.GetAllAsync(null, paginationFilter);
+        List<Category> categories;
+
+        if (categoryName != null)
+            categories = await _unitOfWork.Category.GetAllAsync(x => x.Name.Contains(categoryName), paginationFilter);
+        else
+            categories = await _unitOfWork.Category.GetAllAsync(null, paginationFilter);
+
         var categoryResponse = _mapper.Map<List<CategoryResponse>>(categories);
 
         if (paginationFilter == null || paginationFilter.PageNumber < 1 || paginationFilter.PageSize < 1)
@@ -52,6 +58,8 @@ public class CategoryController : Controller
         var paginationResponse = PaginationHelpers.CreatePaginatedResponse(categoryResponse, paginationFilter, totalRecords, _uriService);
         return Ok(paginationResponse);
     }
+
+
 
     /// <summary>
     /// Get category by id

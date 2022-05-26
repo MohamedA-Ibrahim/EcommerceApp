@@ -22,7 +22,7 @@
         </div>
         <div class="mb-3 col-6">
             <label asp-for="Item.Price"></label>
-            <input asp-for="Item.Price" class="form-control" />
+            <input asp-for="Item.Price" type="number" class="form-control" />
             <span asp-validation-for="Item.Price" class="text-danger"></span>
         </div>
         <div class="mb-3 col-6">
@@ -31,7 +31,7 @@
         </div>
         <div class="mb-3">
             <label asp-for="Item.ImageUrl"></label>
-            <input type="file" id="uploadBox" name="file" class="form-control" />
+            <input type="file" id="uploadBox" name="file" accept="image/*" class="form-control" />
             <span asp-validation-for="Item.ImageUrl" class="text-danger"></span>
         </div>
 

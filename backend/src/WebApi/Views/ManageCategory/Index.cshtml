@@ -8,16 +8,62 @@
     <div class="row pt-4">
         <div class="col-6">
             <h2 class="text-primary">Category List</h2>
-		</div>
+        </div>
         <div class="col-6 text-end">
             <a asp-controller="ManageCategory" asp-action="Create" class="btn btn-primary">
-               <i class="bi bi-plus-circle"></i> &nbsp; Create New Category
-			</a>
-		</div>
-	</div>
-    <br /><br />
+                <i class="bi bi-plus-circle"></i> &nbsp; Create New Category
+            </a>
+        </div>
+    </div>
+    <hr class=w-100 /><br />
 
-<table class="table table-bordered table-striped" style="width:100%">
+    <div class="row justify-content-around">
+        @foreach (var cat in Model)
+        {
+            <div class="col-md-6 col-lg-4 col-xl-3">
+                <div class="card shadow">
+                    <img asp-append-version="true" src="@(string.IsNullOrWhiteSpace(cat.ImageUrl)?"~/Images/no-image.jpg":cat.ImageUrl)" class="card-img-top" alt="Image">
+                    <div class="card-body">
+                        <h5 class="card-title">@cat.Name</h5>
+                        <p class="card-text">@cat.Description</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="row justify-content-around">
+                            <button class="btn btn-primary m-2 col-auto" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                                Atributes
+                            </button>
+                            <a asp-controller="ManageCategory" asp-action="Edit" asp-route-id="@cat.Id"
+                           class="btn btn-primary m-2 col-auto"> <i class="bi bi-pencil-square"></i> Edit</a>
+                            <a asp-controller="ManageCategory" asp-action="Delete" asp-route-id="@cat.Id"
+                           class="btn btn-danger m-2 col-auto"> <i class="bi bi-trash-fill"></i> Delete</a>
+                           
+                        <div class="collapse w-100" id="collapseExample">
+                            <div class="card card-body">
+                                @if (cat.AttributeTypes != null && cat.AttributeTypes.Count() > 0)
+                                {
+                                    <p>
+                                        @foreach (var att in cat.AttributeTypes)
+                                        {
+                                            <span class="badge bg-success">@att</span>
+                                        }
+                                    </p>
+
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">No attribute to show</span>
+                                }
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+
+@*    <table class="table table-bordered table-striped" style="width:100%">
     <thead>
         <tr>
             <th>
@@ -44,5 +90,7 @@
         }
     </tbody>
 
-</table>
+</table>*@
+
+
 </div>

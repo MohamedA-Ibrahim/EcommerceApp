@@ -50,7 +50,7 @@ namespace Web.Controllers.User
         }
 
         [HttpPost]
-        public async Task<ActionResult> Upsert(ItemVM itemVM, IFormFile? file)
+        public async Task<ActionResult> Upsert(ItemVM itemVM, IFormFile file)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -61,7 +61,7 @@ namespace Web.Controllers.User
                 {
                     await _fileStorageService.DeleteAsync(Path.GetFileName(itemVM.Item.ImageUrl));
                 }
-                var fileDto = new FileDto { ContentType = file.ContentType, Name = file.Name};
+                var fileDto = new FileDto { ContentType = file.ContentType, Name = file.Name, Content = Stream.Null };
                 await file.CopyToAsync(fileDto.Content);
                 itemVM.Item.ImageUrl = await _fileStorageService.UploadAsync(fileDto);
             }
@@ -88,7 +88,7 @@ namespace Web.Controllers.User
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            return Json(new { data = await _unitOfWork.Item.GetAllAsync(x=>x.CreatedBy == _userManager.GetUserId(User))});
+            return Json(new { data = await _unitOfWork.Item.GetAllAsync(x => x.CreatedBy == _userManager.GetUserId(User)) });
         }
 
         [HttpDelete]

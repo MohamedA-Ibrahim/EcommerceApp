@@ -190,7 +190,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageUrl")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("LastModified")
@@ -575,7 +574,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.AttributeType", b =>
                 {
                     b.HasOne("Domain.Entities.Category", "Category")
-                        .WithMany()
+                        .WithMany("AttributeTypes")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -602,7 +601,7 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("CreatedBy");
 
                     b.HasOne("Domain.Entities.Item", "Item")
-                        .WithMany()
+                        .WithMany("AttributeValues")
                         .HasForeignKey("ItemId");
 
                     b.Navigation("ApplicationUser");
@@ -624,13 +623,13 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Item", b =>
                 {
                     b.HasOne("Domain.Entities.Category", "Category")
-                        .WithMany()
+                        .WithMany("Items")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.ApplicationUser", "ApplicationUser")
-                        .WithMany()
+                        .WithMany("Items")
                         .HasForeignKey("CreatedBy");
 
                     b.Navigation("ApplicationUser");
@@ -736,6 +735,23 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Entities.ApplicationUser", b =>
+                {
+                    b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Category", b =>
+                {
+                    b.Navigation("AttributeTypes");
+
+                    b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Item", b =>
+                {
+                    b.Navigation("AttributeValues");
                 });
 #pragma warning restore 612, 618
         }

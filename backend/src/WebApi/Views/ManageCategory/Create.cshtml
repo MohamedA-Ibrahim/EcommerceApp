@@ -1,7 +1,7 @@
 ﻿@model Category
 
 
-<form method="post">
+<form method="post" enctype="multipart/form-data">
 	<div class="border p-3 mt-4">
 		<div class="row pb-2">
 			<h2 class="text-primary">Create Category</h2>
@@ -19,12 +19,12 @@
 		</div>
 		<div class="mb-3">
 			<label asp-for="ImageUrl"></label>
-			<input asp-for="ImageUrl" class="form-control" />
+			<input asp-for="ImageUrl" type="file"  accept="image/*" name="file" class="form-control" />
 			<span asp-validation-for="ImageUrl" class="text-danger"></span>
 		</div>
 		
 		<button type="submit" class="btn btn-primary" style="width:150px">Create</button>
-		<a asp-controller="Categories" asp-action="Index" class="btn btn-secondary" style="width:150px">
+		<a asp-controller="ManageCategory" asp-action="Index" class="btn btn-secondary" style="width:150px">
 			Back to List
 		</a>
 	</div>

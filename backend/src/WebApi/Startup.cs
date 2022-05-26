@@ -30,6 +30,8 @@ public class Startup
         services.AddControllersWithViews();
         services.AddScoped<IAttributeTypeServices, AttributeTypeServices>();
         services.AddScoped<IAttributeValueServices, AttributeValueServices>();
+
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
         //Install services from other projects
         services.AddInfrastructure(Configuration);
         services
@@ -64,7 +66,6 @@ public class Startup
         services.AddSingleton(x => new BlobServiceClient(blobStorageSettings.ConnectionString));
         services.AddScoped<IFileStorageService, BlobStorageService>();
 
-        services.AddSingleton<ICurrentUserService, CurrentUserService>();
         services.AddSingleton<IEmailService, EmailService>();
         services.AddDatabaseDeveloperPageExceptionFilter();
         services.AddHttpContextAccessor();

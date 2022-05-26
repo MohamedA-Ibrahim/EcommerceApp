@@ -79,7 +79,8 @@ class _CategoryDetailsState extends State<CategoryDetails>
                               ),
                             )
                     ),
-                  )
+                  ),
+                  buildDeleteCategory(context, (cubit.user!.role == "Admin"))
                 ],
               ),
             ),
@@ -87,5 +88,38 @@ class _CategoryDetailsState extends State<CategoryDetails>
         );
       },
     );
+  }
+
+  Widget buildDeleteCategory(BuildContext context, bool isAdmin)
+  {
+    if(isAdmin)
+      {
+        return Column(
+          children: [
+            SizedBox(height: 15,),
+            TextButton(
+              onPressed: ()
+              {
+                AppCubit.get(context).deleteCategory_categoryDetails(context, AppCubit.get(context).categorty_categoryDetails!.id!);
+              },
+              child: Container(
+                width: double.infinity,
+                height: 40,
+                color: Colors.blue,
+                child: Center(
+                  child: Text(
+                    "Delete Category",
+                    style: TextStyle(
+                        color: Colors.white
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ],
+        );
+      }
+    else
+      {return Container();}
   }
 }

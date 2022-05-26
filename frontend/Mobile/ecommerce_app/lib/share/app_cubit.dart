@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:ecommerce_app/Network/dio_helper.dart';
@@ -7,6 +8,7 @@ import 'package:ecommerce_app/model/category_model.dart';
 import 'package:ecommerce_app/model/item_model.dart';
 import 'package:ecommerce_app/model/user_model.dart';
 import 'package:ecommerce_app/module/items_module.dart';
+import 'package:ecommerce_app/module/user_module.dart';
 import 'package:ecommerce_app/share/app_state.dart';
 import 'package:ecommerce_app/share/cash_helper.dart';
 import 'package:ecommerce_app/share/share_api.dart';
@@ -17,6 +19,7 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../module/categoru_module.dart';
@@ -59,6 +62,8 @@ class AppCubit extends Cubit<AppStates>
   File? image_addItemScreen;
   CategoryModel? categoryForItem_addItemScreen;
   DateTime? expirationDate_addItemScreen;
+  List<Map<String, dynamic>> attributeTypeByCategoryId_addItemScreen = [];
+  List<TextEditingController> attributeValuesControllers_addItemScreen = [];
 
   //variabel for add Category Screen
   File? imageCategory_addCategoryScreen;
@@ -126,21 +131,14 @@ class AppCubit extends Cubit<AppStates>
         }
       else if(value.statusCode == 200)
         {
-          if(email == "admin@gmail.com")
-            {
-              CacheHelper.setAdmin(true);
-              Log.v("admin is true");
-            }
-          else
-            {
-              CacheHelper.setAdmin(false);
-              Log.v("admin is false");
-            }
-          user = UserModel.fromJson(value.data);
+          String token = value.data["token"];
+          Map<String, dynamic> jsonToken = JwtDecoder.decode(token);
+          user = UserModel.fromJson(value.data, jsonToken);
           CacheHelper.saveToken(user!.token!);
           Log.v(user!.token!);
           CacheHelper.saveRefreshToken(user!.refreshToken!);
           Log.v(user!.refreshToken!);
+          Log.v("User is ${AppCubit.get(context).user!.role}");
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => HomeScreen()),
@@ -175,6 +173,13 @@ class AppCubit extends Cubit<AppStates>
   {
     currentIndexBottomNavigationBar_homeScreen = 1;
     body_homeScreen = CategoryModule();
+    emit(AppChangeState());
+  }
+
+  void buildUserModule_homeScreen()
+  {
+    body_homeScreen = UserModule();
+    currentIndexBottomNavigationBar_homeScreen = 2;
     emit(AppChangeState());
   }
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -260,40 +265,38 @@ class AppCubit extends Cubit<AppStates>
           Log.v(value.data.toString());
           getCategoriesData_categoryModule();
           Fluttertoast.showToast(msg: "Success Create Category", toastLength: Toast.LENGTH_LONG);
-          for(int i = 0; i < categoryAttributes_addCategoryScreen.length; i++)
-            {
-              Dio().post(
-                post_AttributeType,
-                data: {
-                  "categoryId": value.data["id"],
-                  "name": categoryAttributes_addCategoryScreen[i]
-                },
-                options: Options(
-                  headers: {
-                    "Authorization": "bearer ${CacheHelper.getToken()}"
-                  },
-                  contentType: Headers.jsonContentType,
-                  responseType: ResponseType.json,
-                  validateStatus: (_) => true,
-                ),
-              ).then((value2)
+          //post attribute for category
+          Log.v("Start Post Attribute");
+          Log.v(value.data["id"].toString());
+          Log.v(jsonEncode(categoryAttributes_addCategoryScreen));
+          Dio().post(
+            post_AttributeType,
+            data: {
+              "categoryId": value.data["id"],
+              "attributeTypes": categoryAttributes_addCategoryScreen.toList()
+            },
+            options: Options(
+              headers: {"Authorization": "bearer ${user!.token}"},
+              contentType: Headers.jsonContentType,
+              responseType: ResponseType.json,
+              validateStatus: (_) => true
+            )
+          ).then((value2){
+            Log.v("Success post attribute");
+            if(value2.statusCode == 200)
               {
-                if(value2.statusCode == 200)
-                  {
-                    Log.v("success post attribute");
-                  }
-                else
-                  {
-                    Log.w("post attribute faild");
-                    Log.w(value2.statusCode.toString());
-                    Log.w(value2.data.toString());
-                  }
-              }).catchError((e)
+                Log.v(value2.statusCode.toString());
+                Log.v("Success post Attribut");
+              }
+            else
               {
-                Log.e("can not post attribute");
-                Log.catchE(e);
-              });
-            }
+                Log.w("Faild post Attribute");
+                Log.w(value2.statusCode.toString());
+                Log.w(value2.data.toString());
+              }
+          }).catchError((e){
+            Log.e(e);
+          });
           Navigator.pop(context);
           imageCategory_addCategoryScreen = null;
           categoryAttributes_addCategoryScreen.clear();
@@ -395,6 +398,39 @@ class AppCubit extends Cubit<AppStates>
       data: formData
     );
   }
+  void getAttributeTypeByCategoryId_addItemScreen(int categoryId)
+  {
+    attributeTypeByCategoryId_addItemScreen.clear();
+    attributeValuesControllers_addItemScreen.clear();
+    Log.v("Start get Attribute Type");
+    dio.get_attributeType(categoryId).then((value)
+    {
+      Log.v("complete get attribute");
+      if(value.statusCode == 200)
+        {
+          //Log.v(value.data.toString());
+          for(int i = 0; i < value.data.length; i++)
+            {
+              attributeTypeByCategoryId_addItemScreen.add({
+                "id": value.data[i]["id"],
+                "name": value.data[i]["name"]
+              });
+              attributeValuesControllers_addItemScreen.add(TextEditingController());
+            }
+          Log.v("Lenght of Controller ${attributeValuesControllers_addItemScreen.length}");
+          Log.v("Length of Attribute ${attributeTypeByCategoryId_addItemScreen.length}");
+          //Log.v(attributeTypeByCategoryId_addItemScreen[0].toString());
+          emit(AppChangeState());
+        }
+      else
+        {
+          Log.faildResponse(value, "Attribute Type");
+        }
+    }).catchError((e)
+    {
+      Log.catchE(e);
+    });
+  }
 
   //function for Category Details
   void getAttributeType_categoryDetails()
@@ -424,7 +460,24 @@ class AppCubit extends Cubit<AppStates>
       Log.catchE(e);
     });
   }
-
+  void deleteCategory_categoryDetails(BuildContext context, int categoryId)
+  {
+    Log.v("Start delete Category");
+    Log.v("Delete Category Id: $categoryId");
+    dio.delete_category(categoryId).then((value)
+    {
+      Log.v("Complete delete");
+      if(value.statusCode == 204)
+        {
+          Log.v("Success delete category");
+          getCategoriesData_categoryModule();
+          Navigator.pop(context);
+        }
+    }).catchError((e)
+    {
+      Log.e(e);
+    });
+  }
 }
 
 //ImCG4IInMiIAZM1tIW1KHn4e1JM=

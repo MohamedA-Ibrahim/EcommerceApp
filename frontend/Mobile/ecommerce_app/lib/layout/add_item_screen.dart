@@ -29,7 +29,9 @@ GlobalKey<FormState> formKey = GlobalKey();
       {
         AppCubit cubit = AppCubit.get(context);
         return Scaffold(
-          appBar: AppBar(),
+          appBar: AppBar(
+
+          ),
           body: SingleChildScrollView(
             child: Form(
               key: formKey,
@@ -142,6 +144,22 @@ GlobalKey<FormState> formKey = GlobalKey();
                         )
                       ],
                     ),
+                    SizedBox(height: 15,),
+                    ListView.separated(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: cubit.attributeValuesControllers_addItemScreen.length,
+                      separatorBuilder: (context, index) => SizedBox(height: 10,),
+                      itemBuilder: (context, index) => TextFormField(
+                        controller: cubit.attributeValuesControllers_addItemScreen[index],
+                        keyboardType: TextInputType.text,
+                        decoration: InputDecoration(
+                            label: Text(cubit.attributeTypeByCategoryId_addItemScreen[index]["name"]),
+                            border: OutlineInputBorder()
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 15,),
                     conditionBuilder(context, (state is AppLoadingState), cubit)
                   ],
                 ),
@@ -200,7 +218,9 @@ GlobalKey<FormState> formKey = GlobalKey();
           onTap: ()
           {
             cubit.categoryForItem_addItemScreen = cubit.categories[i];
+
             setState(() {
+              cubit.getAttributeTypeByCategoryId_addItemScreen(cubit.categoryForItem_addItemScreen!.id!);
             });
             Navigator.pop(context);
           },
@@ -242,7 +262,7 @@ GlobalKey<FormState> formKey = GlobalKey();
         color: Colors.blue,
         child: Center(
           child: Text(
-            "Create Item",
+            "Create Advertisement",
             style: TextStyle(
                 color: Colors.white
             ),

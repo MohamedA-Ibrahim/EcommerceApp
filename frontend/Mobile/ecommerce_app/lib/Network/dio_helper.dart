@@ -88,5 +88,20 @@ class DioHelper
     );
   }
 
+  Future<Response> get_attributeType(int categoryId) async
+  {
+    return await dio.get("$get_AttributeType$categoryId");
+  }
+
+  Future<Response> delete_category(int categoryId) async
+  {
+    return dio.delete("$delete_Category$categoryId",
+      options: Options(
+        headers: {
+          "Authorization": "bearer ${CacheHelper.getToken()}"
+        }
+      )
+    );
+  }
 
 }

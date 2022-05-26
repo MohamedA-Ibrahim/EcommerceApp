@@ -23,7 +23,7 @@ namespace Web.Services
         }
 
 
-        public async Task<List<Order>> GetSellerOrders()
+        public async Task<List<Order>> GetSellerOrdersAsync()
         {
             var orders = await _unitOfWork.Order.GetAllIncludingAsync(x => x.SellerId == _currentUserService.UserId, null, x => x.Buyer, x => x.Seller, x => x.Item);
 
@@ -31,20 +31,20 @@ namespace Web.Services
         }
 
 
-        public async Task<List<Order>> GetBuyerOrders()
+        public async Task<List<Order>> GetBuyerOrdersAsync()
         {
             var orders = await _unitOfWork.Order.GetAllIncludingAsync(x => x.BuyerId == _currentUserService.UserId, null, x => x.Buyer, x => x.Seller, x => x.Item);
 
             return orders;
         }
 
-        public async Task<Order> Get(int orderId)
+        public async Task<Order> GetAsync(int orderId)
         {
             var order = await _unitOfWork.Order.GetFirstOrDefaultIncludingAsync(orderId, x => x.Buyer, x => x.Seller, x => x.Item);
             return order;
         }
 
-        public async Task<(Order order, string message)> CreateOrder(CreateOrderRequest orderRequest)
+        public async Task<(Order order, string message)> CreateOrderAsync(CreateOrderRequest orderRequest)
         {
             var userOwnsItem = await _unitOfWork.Item.UserOwnsItemAsync(orderRequest.ItemId, _currentUserService.UserId);
 
@@ -76,7 +76,7 @@ namespace Web.Services
             return (order, "success");
         }
 
-        public async Task<(bool success, string message)> StartProcessing(int orderId)
+        public async Task<(bool success, string message)> StartProcessingAsync(int orderId)
         {
             var order = await _unitOfWork.Order.GetFirstOrDefaultAsync(orderId);
             if (order == null)
@@ -97,7 +97,7 @@ namespace Web.Services
         }
 
 
-        public async Task<(bool success, string message)> ConfirmPayment( int orderId)
+        public async Task<(bool success, string message)> ConfirmPaymentAsync( int orderId)
         {
             var order = await _unitOfWork.Order.GetFirstOrDefaultAsync(orderId);
             if (order == null)
@@ -118,7 +118,7 @@ namespace Web.Services
             return (true, "Order payment status updated successfully");
         }
 
-        public async Task<(bool success, string message)> ShipOrder(int orderId)
+        public async Task<(bool success, string message)> ShipOrderAsync(int orderId)
         {
             var order = await _unitOfWork.Order.GetFirstOrDefaultIncludingAsync(orderId, x => x.ApplicationUser, x => x.Item);
             if (order == null)
@@ -146,7 +146,7 @@ namespace Web.Services
             return (true, "Order shipped status updated successfully");
         }
 
-        public async Task<(bool success, string message)> CancelOrder( int orderId)
+        public async Task<(bool success, string message)> CancelOrderAsync( int orderId)
         {
             var order = await _unitOfWork.Order.GetFirstOrDefaultAsync(orderId);
             if (order == null)

@@ -34,7 +34,7 @@ public class CategoryController : Controller
     [HttpGet(ApiRoutes.Categories.GetAll)]
     public async Task<IActionResult> GetAll([FromQuery] string categoryName, [FromQuery] PaginationFilter paginationFilter)
     {
-        var paginationResponse = await _categoryService.GetAll(categoryName, paginationFilter);
+        var paginationResponse = await _categoryService.GetAllAsync(categoryName, paginationFilter);
         return Ok(paginationResponse);
     }
 
@@ -48,7 +48,7 @@ public class CategoryController : Controller
     [HttpGet(ApiRoutes.Categories.Get)]
     public async Task<IActionResult> Get([FromRoute] int categoryId)
     {
-        var category = await _categoryService.Get(categoryId);
+        var category = await _categoryService.GetAsync(categoryId);
 
         if (category == null)
             return NotFound();
@@ -67,7 +67,7 @@ public class CategoryController : Controller
     [Authorize(Roles = "Admin",AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> Create([FromBody] CreateCategoryRequest categoryRequest)
     {     
-        var category = _categoryService.Create(categoryRequest);
+        var category = await _categoryService.CreateAsync(categoryRequest);
         return Ok(_mapper.Map<CategoryResponse>(category));
     }
 
@@ -81,7 +81,7 @@ public class CategoryController : Controller
     [Authorize(Roles = "Admin", AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> Update([FromRoute] int categoryId, [FromBody] UpdateCategoryRequest request)
     {
-        var category = _categoryService.Update(categoryId, request);
+        var category = await _categoryService.UpdateAsync(categoryId, request);
         if(category == null)
             return NotFound();
 
@@ -97,7 +97,7 @@ public class CategoryController : Controller
     [Authorize(Roles = "Admin", AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> Delete([FromRoute] int categoryId)
     {
-       var deleted = await _categoryService.Delete(categoryId);
+       var deleted = await _categoryService.DeleteAsync(categoryId);
         if(!deleted)
             return NotFound();
 

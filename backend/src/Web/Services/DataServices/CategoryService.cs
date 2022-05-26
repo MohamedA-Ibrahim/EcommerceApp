@@ -24,7 +24,7 @@ namespace Web.Services
             _mapper = mapper;
         }
 
-        public async Task<PagedResponse<CategoryResponse>> GetAll(string categoryName, PaginationFilter paginationFilter)
+        public async Task<PagedResponse<CategoryResponse>> GetAllAsync(string categoryName, PaginationFilter paginationFilter)
         {
             List<Category> categories;
 
@@ -47,12 +47,12 @@ namespace Web.Services
             return paginationResponse;
         }
 
-        public async Task<Category> Get(int categoryId)
+        public async Task<Category> GetAsync(int categoryId)
         {
             return await _unitOfWork.Category.GetFirstOrDefaultAsync(categoryId);
         }
 
-        public async Task<Category> Create(CreateCategoryRequest categoryRequest)
+        public async Task<Category> CreateAsync(CreateCategoryRequest categoryRequest)
         {
             var category = new Category { Name = categoryRequest.Name, Description = categoryRequest.Description, ImageUrl = categoryRequest.ImageUrl };
 
@@ -62,7 +62,7 @@ namespace Web.Services
             return category;
         }
 
-        public async Task<Category> Update(int categoryId,UpdateCategoryRequest request)
+        public async Task<Category> UpdateAsync(int categoryId,UpdateCategoryRequest request)
         {
             var category = await _unitOfWork.Category.GetFirstOrDefaultAsync(categoryId);
 
@@ -79,7 +79,7 @@ namespace Web.Services
             return category;
         }
 
-        public async Task<bool> Delete(int categoryId)
+        public async Task<bool> DeleteAsync(int categoryId)
         {
             var category = await _unitOfWork.Category.GetFirstOrDefaultAsync(categoryId);
 

@@ -32,7 +32,7 @@ namespace Web.Controllers
         [HttpGet(ApiRoutes.UserAddress.GetUserAddress)]
         public async Task<IActionResult> GetUserAddress()
         {
-            UserAddress address = await _userAddressService.GetUserAddress();
+            UserAddress address = await _userAddressService.GetUserAddressAsync();
 
             var addressResponse = _mapper.Map<UserAddressResponse>(address);
 
@@ -43,7 +43,7 @@ namespace Web.Controllers
         [HttpPost(ApiRoutes.UserAddress.Upsert)]
         public async Task<IActionResult> Upsert([FromBody] UpsertUserAddressRequest request)
         {
-            var address = await _userAddressService.Upsert(request);
+            var address = await _userAddressService.UpsertAsync(request);
 
             return Ok(_mapper.Map<UserAddressResponse>(address));
         }             

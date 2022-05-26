@@ -17,12 +17,12 @@ namespace Web.Services
             _currentUserService = currentUserService;
         }
 
-        public async Task<UserAddress> GetUserAddress()
+        public async Task<UserAddress> GetUserAddressAsync()
         {
             return await _unitOfWork.UserAddress.FindByAsync(x => x.CreatedBy == _currentUserService.UserId);
         }
 
-        public async Task<UserAddress> Upsert(UpsertUserAddressRequest request)
+        public async Task<UserAddress> UpsertAsync(UpsertUserAddressRequest request)
         {
             var existingAddress = await _unitOfWork.UserAddress.FindByAsync(x => x.CreatedBy == _currentUserService.UserId);
 

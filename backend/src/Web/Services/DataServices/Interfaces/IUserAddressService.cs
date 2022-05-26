@@ -5,7 +5,7 @@ namespace Web.Services.DataServices.Interfaces
 {
     public interface IUserAddressService
     {
-        Task<UserAddress> GetUserAddress();
-        Task<UserAddress> Upsert(UpsertUserAddressRequest request);
+        Task<UserAddress> GetUserAddressAsync();
+        Task<UserAddress> UpsertAsync(UpsertUserAddressRequest request);
     }
 }

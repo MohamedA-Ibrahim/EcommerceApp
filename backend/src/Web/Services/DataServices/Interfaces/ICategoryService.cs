@@ -8,10 +8,10 @@ namespace Web.Services.DataServices.Interfaces
 {
     public interface ICategoryService
     {
-        Task<PagedResponse<CategoryResponse>> GetAll(string categoryName, PaginationFilter paginationFilter);
-        Task<Category> Get(int categoryId);
-        Task<Category> Create(CreateCategoryRequest categoryRequest);
-        Task<Category> Update(int categoryId, UpdateCategoryRequest request);
-        Task<bool> Delete(int categoryId);
+        Task<PagedResponse<CategoryResponse>> GetAllAsync(string categoryName, PaginationFilter paginationFilter);
+        Task<Category> GetAsync(int categoryId);
+        Task<Category> CreateAsync(CreateCategoryRequest categoryRequest);
+        Task<Category> UpdateAsync(int categoryId, UpdateCategoryRequest request);
+        Task<bool> DeleteAsync(int categoryId);
     }
 }

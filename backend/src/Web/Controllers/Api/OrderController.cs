@@ -34,7 +34,7 @@ namespace Web.Controllers
         [HttpGet(ApiRoutes.Orders.GetSellerOrders)]
         public async Task<IActionResult> GetSellerOrders()
         {
-            var orders = await _orderService.GetSellerOrders();
+            var orders = await _orderService.GetSellerOrdersAsync();
             var orderResponse = _mapper.Map<List<OrderResponse>>(orders);
 
             return Ok(orderResponse);
@@ -46,7 +46,7 @@ namespace Web.Controllers
         [HttpGet(ApiRoutes.Orders.GetBuyerOrders)]
         public async Task<IActionResult> GetBuyerOrders()
         {
-            var orders = await _orderService.GetBuyerOrders();
+            var orders = await _orderService.GetBuyerOrdersAsync();
             var orderResponse = _mapper.Map<List<OrderResponse>>(orders);
 
             return Ok(orderResponse);
@@ -60,7 +60,7 @@ namespace Web.Controllers
         [HttpGet(ApiRoutes.Orders.Get)]
         public async Task<IActionResult> Get([FromRoute] int orderId)
         {
-            var order = await _orderService.Get(orderId);
+            var order = await _orderService.GetAsync(orderId);
             var orderResponse = _mapper.Map<OrderResponse>(order);
             return Ok(orderResponse);
         }
@@ -72,7 +72,7 @@ namespace Web.Controllers
         [HttpPost(ApiRoutes.Orders.Create)]
         public async Task<IActionResult> CreateOrder([FromBody] CreateOrderRequest orderRequest)
         {
-            var orderStatus = await _orderService.CreateOrder(orderRequest);
+            var orderStatus = await _orderService.CreateOrderAsync(orderRequest);
             if(orderStatus.order == null)
                 return BadRequest(orderStatus.message);
 
@@ -87,7 +87,7 @@ namespace Web.Controllers
         [HttpPut(ApiRoutes.Orders.StartProcessing)]
         public async Task<IActionResult> StartProcessing([FromRoute] int orderId)
         {
-           var orderStatus = await _orderService.StartProcessing(orderId);
+           var orderStatus = await _orderService.StartProcessingAsync(orderId);
             if(!orderStatus.success)
                 return BadRequest(new {error = orderStatus.message});
 
@@ -101,7 +101,7 @@ namespace Web.Controllers
         [HttpPut(ApiRoutes.Orders.ConfirmPayment)]
         public async Task<IActionResult> ConfirmPayment([FromRoute] int orderId)
         {
-            var orderStatus = await _orderService.ConfirmPayment(orderId);
+            var orderStatus = await _orderService.ConfirmPaymentAsync(orderId);
             if (!orderStatus.success)
                 return BadRequest(new { error = orderStatus.message });
 
@@ -116,7 +116,7 @@ namespace Web.Controllers
         [HttpPut(ApiRoutes.Orders.ShipOrder)]
         public async Task<IActionResult> ShipOrder([FromRoute] int orderId)
         {
-            var orderStatus = await _orderService.ShipOrder(orderId);
+            var orderStatus = await _orderService.ShipOrderAsync(orderId);
             if (!orderStatus.success)
                 return BadRequest(new { error = orderStatus.message });
 
@@ -130,7 +130,7 @@ namespace Web.Controllers
         [HttpPut(ApiRoutes.Orders.CancelOrder)]
         public async Task<IActionResult> CancelOrder([FromRoute] int orderId)
         {
-            var orderStatus = await _orderService.CancelOrder(orderId);
+            var orderStatus = await _orderService.CancelOrderAsync(orderId);
             if (!orderStatus.success)
                 return BadRequest(new { error = orderStatus.message });
 

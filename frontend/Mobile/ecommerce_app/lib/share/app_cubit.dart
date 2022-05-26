@@ -460,6 +460,24 @@ class AppCubit extends Cubit<AppStates>
       Log.catchE(e);
     });
   }
+  void deleteCategory_categoryDetails(BuildContext context, int categoryId)
+  {
+    Log.v("Start delete Category");
+    Log.v("Delete Category Id: $categoryId");
+    dio.delete_category(categoryId).then((value)
+    {
+      Log.v("Complete delete");
+      if(value.statusCode == 204)
+        {
+          Log.v("Success delete category");
+          getCategoriesData_categoryModule();
+          Navigator.pop(context);
+        }
+    }).catchError((e)
+    {
+      Log.e(e);
+    });
+  }
 }
 
 //ImCG4IInMiIAZM1tIW1KHn4e1JM=

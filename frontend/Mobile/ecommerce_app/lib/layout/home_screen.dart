@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:ecommerce_app/layout/add_item_screen.dart';
@@ -9,6 +10,7 @@ import 'package:ecommerce_app/share/cash_helper.dart';
 import 'package:ecommerce_app/testing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logging/logging.dart';
 
 import 'add_category_screen.dart';
 
@@ -32,7 +34,9 @@ class HomeScreen extends StatelessWidget
             ),
             actions: [
               IconButton(
-                onPressed: (){},
+                onPressed: ()
+                {
+                },
                 icon: Icon(Icons.search),
               ),
               IconButton(
@@ -71,7 +75,7 @@ class HomeScreen extends StatelessWidget
             unselectedItemColor: Colors.black,
             items: [
               BottomNavigationBarItem(
-                label: "Items",
+                label: "Advertisement",
                 icon: Icon(Icons.menu_sharp)
               ),
               BottomNavigationBarItem(
@@ -105,7 +109,7 @@ class HomeScreen extends StatelessWidget
                             children: [
                               ListTile(
                                 leading: Icon(Icons.menu_sharp),
-                                title: Text("Item"),
+                                title: Text("Advertisement"),
                                 onTap: ()
                                 {
                                   Navigator.push(context, MaterialPageRoute(builder: (context)=> AddItemScreen())).then((value) => Navigator.pop(context));

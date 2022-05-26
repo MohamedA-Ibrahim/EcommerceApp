@@ -24,6 +24,8 @@ String get_GetAllCategories = "$baseUrl/categories";
 
 String post_CreateaCategory = "$baseUrl/categories";
 
+String delete_Category = "$baseUrl/categories/";
+
 String get_GetCategoryById = "$baseUrl/categories/";
 
 

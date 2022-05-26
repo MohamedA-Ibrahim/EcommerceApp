@@ -262,7 +262,7 @@ GlobalKey<FormState> formKey = GlobalKey();
         color: Colors.blue,
         child: Center(
           child: Text(
-            "Create Item",
+            "Create Advertisement",
             style: TextStyle(
                 color: Colors.white
             ),

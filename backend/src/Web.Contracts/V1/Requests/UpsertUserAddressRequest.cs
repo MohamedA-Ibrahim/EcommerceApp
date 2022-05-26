@@ -1,9 +1,10 @@
-﻿using Domain.Common;
+﻿
 using System.ComponentModel.DataAnnotations;
 
-namespace Domain.Entities
+
+namespace Web.Contracts.V1.Requests
 {
-    public class UserAddress : AuditableEntity
+    public class UpsertUserAddressRequest
     {
         [Required]
         [MaxLength(15)]

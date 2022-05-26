@@ -23,7 +23,7 @@ class Log
   static void faildResponse(value, String type)
   {
     w("Faild response $type");
-    w(value.statusCode);
+    w(value.statusCode.toString());
     w(value.data.toString());
   }
 }

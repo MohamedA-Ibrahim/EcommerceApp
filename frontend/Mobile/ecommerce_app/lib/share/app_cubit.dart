@@ -188,10 +188,10 @@ class AppCubit extends Cubit<AppStates>
   void getItemsData_itemModule()
   {
 
-    printDebug("Start get Item data");
+    //printDebug("Start get Item data");
     dio.get_item().then((value)
     {
-      printDebug("Success get ItemData");
+      //printDebug("Success get ItemData");
       //printDebug(value.data.toString());
       if(value.statusCode == 200)
         {
@@ -204,7 +204,7 @@ class AppCubit extends Cubit<AppStates>
           printDebug("Success parsing");
           //printDebug(items[0].name!);
           //printDebug(items[0].category!.name!);
-          printDebug(items.length.toString());
+          //printDebug(items.length.toString());
           emit(AppChangeState());
         }
       else
@@ -221,13 +221,13 @@ class AppCubit extends Cubit<AppStates>
   //function for category Module
   void getCategoriesData_categoryModule() async
   {
-    printDebug("Start get category");
+    //printDebug("Start get category");
     dio.get_category().then((value)
     {
-      printDebug("Success get data categoy");
+      //printDebug("Success get data categoy");
       if(value.statusCode == 200)
         {
-          Log.v("getCategoriesData_categoryModule Status code 200");
+          //Log.v("getCategoriesData_categoryModule Status code 200");
           //Log.v(value.data["data"].toString());
           isfinish_categoryModule = true;
           categories.clear();
@@ -238,7 +238,7 @@ class AppCubit extends Cubit<AppStates>
         }
       else
       {
-        Log.w("Error Requested ${value.statusCode}");
+        //Log.w("Error Requested ${value.statusCode}");
       }
       //printDebug("Success parsing");
       //printDebug(categories[0].name!);
@@ -262,44 +262,50 @@ class AppCubit extends Cubit<AppStates>
       if(value.statusCode == 200)
         {
           Log.v("Success Response");
-          Log.v(value.data.toString());
-          getCategoriesData_categoryModule();
+          //Log.v(value.data.toString());
+
           Fluttertoast.showToast(msg: "Success Create Category", toastLength: Toast.LENGTH_LONG);
           //post attribute for category
-          Log.v("Start Post Attribute");
+          //Log.v(jsonEncode(categoryAttributes_addCategoryScreen));
           Log.v(value.data["id"].toString());
-          Log.v(jsonEncode(categoryAttributes_addCategoryScreen));
-          Dio().post(
-            post_AttributeType,
-            data: {
-              "categoryId": value.data["id"],
-              "attributeTypes": categoryAttributes_addCategoryScreen.toList()
-            },
-            options: Options(
-              headers: {"Authorization": "bearer ${user!.token}"},
-              contentType: Headers.jsonContentType,
-              responseType: ResponseType.json,
-              validateStatus: (_) => true
-            )
-          ).then((value2){
-            Log.v("Success post attribute");
-            if(value2.statusCode == 200)
-              {
-                Log.v(value2.statusCode.toString());
-                Log.v("Success post Attribut");
-              }
-            else
-              {
-                Log.w("Faild post Attribute");
-                Log.w(value2.statusCode.toString());
-                Log.w(value2.data.toString());
-              }
-          }).catchError((e){
-            Log.e(e);
-          });
+          Log.v("Start Post Attribute");
+          for(int i = 0; i < categoryAttributes_addCategoryScreen.length; i++)
+            {
+              Dio().post(
+                  post_AttributeType,
+                  data:
+                    [{
+                      "categoryId": value.data["id"],
+                      "attributeTypeName": categoryAttributes_addCategoryScreen[i].toString()
+                    }]
+                  ,
+                  options: Options(
+                      headers: {"Authorization": "bearer ${user!.token}"},
+                      contentType: Headers.jsonContentType,
+                      responseType: ResponseType.json,
+                      validateStatus: (_) => true
+                  )
+              ).then((value2){
+                Log.v("complete post attribute");
+                if(value2.statusCode == 200)
+                {
+                  Log.v(value2.statusCode.toString());
+                  Log.v("Success post Attribut");
+                }
+                else
+                {
+                  Log.w("Faild post Attribute");
+                  Log.w(value2.statusCode.toString());
+                  Log.w(value2.data.toString());
+                }
+              }).catchError((e){
+                Log.catchE(e);
+              });
+            }
           Navigator.pop(context);
           imageCategory_addCategoryScreen = null;
           categoryAttributes_addCategoryScreen.clear();
+          getCategoriesData_categoryModule();
         }
       else
         {
@@ -338,7 +344,7 @@ class AppCubit extends Cubit<AppStates>
   }
 
   //function for Add Item Screem
-  void postNewItem_addItemScreen(String name, String description, int price, String imageUrl, int categoryId)
+  void postNewItem_addItemScreen(BuildContext context, String name, String description, int price, String imageUrl, int categoryId)
   {
     Log.v(CacheHelper.getToken()!);
     Log.v(imageUrl);
@@ -362,14 +368,23 @@ class AppCubit extends Cubit<AppStates>
     ).
     then((value)
     {
-      Log.v("Success post item");
+      Log.v("complete post item");
       {
         if(value.statusCode == 200)
           {
-            Log.v("Success Response");
-            Log.v(value.data.toString());
+            Log.v("Success Post Item");
+            //Log.v(value.data.toString());
             getItemsData_itemModule();
             Fluttertoast.showToast(msg: "Success Create Item", toastLength: Toast.LENGTH_LONG);
+            postItemAttribute_addItemScreen(value.data["id"]).then((value)
+            {
+              Log.v("complete  post Attributessssss");
+              Navigator.pop(context);
+            }).catchError((e)
+            {
+              Log.e("Error in post Item");
+              Log.catchE(e);
+            });
           }
         else
           {
@@ -395,7 +410,15 @@ class AppCubit extends Cubit<AppStates>
     });
     return await Dio().post(
       post_Image,
-      data: formData
+      data: formData,
+      options: Options(
+        headers: {
+          "Authorization": "bearer ${CacheHelper.getToken()}"
+        },
+        responseType: ResponseType.plain,
+        contentType: Headers.jsonContentType,
+        validateStatus: (_) => true
+      )
     );
   }
   void getAttributeTypeByCategoryId_addItemScreen(int categoryId)
@@ -430,6 +453,44 @@ class AppCubit extends Cubit<AppStates>
     {
       Log.catchE(e);
     });
+  }
+  Future postItemAttribute_addItemScreen(int itemId) async
+  {
+    Log.v("Start post Item Attribute");
+    for(int i = 0; i < attributeTypeByCategoryId_addItemScreen.length; i++)
+      {
+        await Dio().post(
+          post_AttributeValue,
+          data: [
+            {
+              "itemId": itemId,
+              "attributeTypeId": attributeTypeByCategoryId_addItemScreen[i]["id"],
+              "attributeValue": attributeValuesControllers_addItemScreen[i].text.toString()
+            }
+          ],
+          options: Options(
+            validateStatus: (_) => true,
+            contentType: Headers.jsonContentType,
+            responseType: ResponseType.json,
+            headers: {
+              "Authorization": "bearer ${CacheHelper.getToken()}"
+            }
+          )
+        ).then((value)
+        {
+          Log.v("Complete Start Attribute");
+          if(value.statusCode == 200)
+            {
+              Log.v("Success post Attribute");
+            }
+          else
+            {
+              Log.faildResponse(value, "Post Attribute item");
+            }
+        }).catchError((e){
+          Log.e("Error in post attribute");
+          Log.catchE(e);});
+      }
   }
 
   //function for Category Details
@@ -476,6 +537,48 @@ class AppCubit extends Cubit<AppStates>
     }).catchError((e)
     {
       Log.e(e);
+    });
+  }
+
+  void test()
+  {
+    List<Map<String, dynamic>> attributeData = [];
+    attributeData.add({
+      "categoryId": 36,
+      "attributeTypeName": "att2"
+    });
+    attributeData.add({
+      "categoryId": 36,
+      "attributeTypeName": "att3"
+    });
+    Log.v(attributeData.toList().toString());
+    Log.v("Statrt post attribute");
+    Dio().post(
+        post_AttributeType,
+        data: {
+          json.encode(attributeData.toList())
+        },
+        options: Options(
+            headers: {"Authorization": "bearer ${user!.token}"},
+            contentType: Headers.jsonContentType,
+            responseType: ResponseType.json,
+            validateStatus: (_) => true
+        )
+    ).then((value2){
+      Log.v("complete post attribute");
+      if(value2.statusCode == 200)
+      {
+        Log.v(value2.data.toString());
+        Log.v("Success post Attribut");
+      }
+      else
+      {
+        Log.w("Faild post Attribute");
+        Log.w(value2.statusCode.toString());
+        Log.w(value2.data.toString());
+      }
+    }).catchError((e){
+      Log.catchE(e);
     });
   }
 }

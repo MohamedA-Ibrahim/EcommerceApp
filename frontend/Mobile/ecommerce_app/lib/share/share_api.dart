@@ -37,4 +37,4 @@ String post_AttributeType = "$baseUrl/attributeTypes";
 
 String get_AttributeType = "$baseUrl/attributeTypes/";
 
-String post_AttrbuteValue = "$baseUrl/attributeValues";
+String post_AttributeValue = "$baseUrl/attributeValues";

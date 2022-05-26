@@ -38,12 +38,12 @@ class MyApp extends StatelessWidget
           String? token = CacheHelper.getToken();
           if(token != null)
           {
-            printDebug("Token is not Null");
+            //printDebug("Token is not Null");
             home = HomeScreen();
             Map<String, dynamic> jsonToken = JwtDecoder.decode(CacheHelper.getToken()!);
             AppCubit.get(context).user = UserModel(CacheHelper.getToken(), CacheHelper.getRefreshToken(), jsonToken);
-            Log.v("Token ${AppCubit.get(context).user!.token!}");
-            Log.v("User is ${AppCubit.get(context).user!.role}");
+            //Log.v("Token ${AppCubit.get(context).user!.token!}");
+            //Log.v("User is ${AppCubit.get(context).user!.role}");
           }
           return MaterialApp(
             debugShowCheckedModeBanner: false,

@@ -9,6 +9,7 @@ using System.Net.Mime;
 using Web.Contracts.V1;
 using Web.Contracts.V1.Requests;
 using Web.Contracts.V1.Responses;
+using Web.Services.DataServices.Interfaces;
 
 namespace Web.Controllers
 {
@@ -19,71 +20,33 @@ namespace Web.Controllers
 
     public class UserAddressController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IUserAddressService _userAddressService;
         private readonly IMapper _mapper;
-        private readonly ICurrentUserService _currentUserService;
-        public UserAddressController(IUnitOfWork unitOfWork, IMapper mapper, ICurrentUserService currentUserService)
+        public UserAddressController(IMapper mapper, IUserAddressService userAddressService)
         {
-            _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _currentUserService = currentUserService;
+            _userAddressService = userAddressService;
         }
 
 
         [HttpGet(ApiRoutes.UserAddress.GetUserAddress)]
         public async Task<IActionResult> GetUserAddress()
         {
-            var address = await _unitOfWork.UserAddress.FindByAsync(x => x.CreatedBy == _currentUserService.UserId);
+            UserAddress address = await _userAddressService.GetUserAddress();
 
             var addressResponse = _mapper.Map<UserAddressResponse>(address);
 
             return Ok(addressResponse);
         }
 
+
         [HttpPost(ApiRoutes.UserAddress.Upsert)]
         public async Task<IActionResult> Upsert([FromBody] UpsertUserAddressRequest request)
         {
-            var existingAddress = await _unitOfWork.UserAddress.FindByAsync(x => x.CreatedBy == _currentUserService.UserId);
+            var address = await _userAddressService.Upsert(request);
 
-            //Saving address for the first time
-            if (existingAddress == null)
-            {
-                var address = new UserAddress
-                {
-                    PhoneNumber = request.PhoneNumber,
-                    StreetAddress = request.StreetAddress,
-                    City = request.City,
-                    RecieverName = request.RecieverName
-                };
-
-                await _unitOfWork.UserAddress.AddAsync(address);
-                await _unitOfWork.SaveAsync();
-                return Ok(_mapper.Map<UserAddressResponse>(address));
-            }
-
-            //updating an Address
-            existingAddress.PhoneNumber = request.PhoneNumber;
-            existingAddress.StreetAddress = request.StreetAddress;
-            existingAddress.City = request.City;
-            existingAddress.RecieverName = request.RecieverName;
-            _unitOfWork.UserAddress.Update(existingAddress);
-            await _unitOfWork.SaveAsync();
-
-            return Ok((_mapper.Map<UserAddressResponse>(existingAddress)));
-        }
-
-        [HttpDelete(ApiRoutes.UserAddress.Delete)]
-        public async Task<IActionResult> Delete()
-        {
-            var userAddress = await _unitOfWork.UserAddress.FindByAsync(x => x.CreatedBy == _currentUserService.UserId);
-
-            if (userAddress == null)
-                return NotFound();
-
-            _unitOfWork.UserAddress.Remove(userAddress);
-            await _unitOfWork.SaveAsync();
-
-            return NoContent();
-        }
+            return Ok(_mapper.Map<UserAddressResponse>(address));
+        }             
+     
     }
 }

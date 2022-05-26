@@ -1,13 +1,7 @@
 ﻿using Application.Interfaces;
-using AutoMapper;
 using Domain.Entities;
 using Infrastructure.Repository;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System.Net.Mime;
-using Web.Contracts.V1;
 using Web.Contracts.V1.Requests;
-using Web.Contracts.V1.Responses;
 
 
 namespace Web.Services;
@@ -83,8 +77,7 @@ public class AttributeValueServices : IAttributeValueServices
         _unitOfWork.AttributeValue.RemoveRange(oldAttributes);
         await _unitOfWork.SaveAsync();
 
-        return true;
-        
+        return true;     
     }
 
 

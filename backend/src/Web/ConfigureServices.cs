@@ -6,6 +6,7 @@ using Swashbuckle.AspNetCore.Filters;
 using System.Reflection;
 using Web.Filters;
 using Web.Services;
+using Web.Services.DataServices.Interfaces;
 
 namespace Web
 {
@@ -14,11 +15,12 @@ namespace Web
         public static IServiceCollection AddWebUIServices(this IServiceCollection services)
         {
             services.AddDatabaseDeveloperPageExceptionFilter();
-
-            services.AddScoped<IAttributeTypeServices, AttributeTypeServices>();
-            services.AddScoped<IAttributeValueServices, AttributeValueServices>();
             services.AddSingleton<ICurrentUserService, CurrentUserService>();
             services.AddSingleton<IEmailService, EmailService>();
+            services.AddScoped<IAttributeTypeServices, AttributeTypeServices>();
+            services.AddScoped<IAttributeValueServices, AttributeValueServices>();
+            services.AddScoped<IUserAddressService, UserAddressService>();
+
 
             services.AddHttpContextAccessor();
             services.AddControllersWithViews();

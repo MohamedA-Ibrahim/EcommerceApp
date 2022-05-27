@@ -104,4 +104,9 @@ class DioHelper
     );
   }
 
+  Future<Response> getAttributeValues(int itemId) async
+  {
+    return await dio.get("$get_AttributeValue$itemId");
+  }
+
 }

@@ -34,15 +34,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
         AppCubit cubit = AppCubit.get(context);
         return Scaffold(
           appBar: AppBar(
-            actions: [
-              IconButton(
-                onPressed: ()
-                {
-                  cubit.test();
-                },
-                icon: Icon(Icons.add),
-              )
-            ],
+
           ),
           body: Center(
             child: SingleChildScrollView(

@@ -73,6 +73,10 @@ class AppCubit extends Cubit<AppStates>
   CategoryModel? categorty_categoryDetails;
   List<String> attributeType_categoryDetails = [];
 
+  //variabel for Item Detaile
+  ItemModel? item_itemDetails;
+  Response? itemAttributesValues_itemsDetailsScreen;
+
   AppCubit() : super(AppInitState());
 
   static AppCubit get(BuildContext context) => BlocProvider.of(context);
@@ -540,44 +544,23 @@ class AppCubit extends Cubit<AppStates>
     });
   }
 
-  void test()
+
+  //function for Item Details
+  void getAttributeValues_itemDetaielsScreen(int itemId)
   {
-    List<Map<String, dynamic>> attributeData = [];
-    attributeData.add({
-      "categoryId": 36,
-      "attributeTypeName": "att2"
-    });
-    attributeData.add({
-      "categoryId": 36,
-      "attributeTypeName": "att3"
-    });
-    Log.v(attributeData.toList().toString());
-    Log.v("Statrt post attribute");
-    Dio().post(
-        post_AttributeType,
-        data: {
-          json.encode(attributeData.toList())
-        },
-        options: Options(
-            headers: {"Authorization": "bearer ${user!.token}"},
-            contentType: Headers.jsonContentType,
-            responseType: ResponseType.json,
-            validateStatus: (_) => true
-        )
-    ).then((value2){
-      Log.v("complete post attribute");
-      if(value2.statusCode == 200)
-      {
-        Log.v(value2.data.toString());
-        Log.v("Success post Attribut");
-      }
+    dio.getAttributeValues(itemId).then((value)
+    {
+      if(value.statusCode == 200)
+        {
+          itemAttributesValues_itemsDetailsScreen = value;
+          emit(AppChangeState());
+        }
       else
-      {
-        Log.w("Faild post Attribute");
-        Log.w(value2.statusCode.toString());
-        Log.w(value2.data.toString());
-      }
-    }).catchError((e){
+        {
+          Log.faildResponse(value, "get Attribute Values");
+        }
+    }).catchError((e)
+    {
       Log.catchE(e);
     });
   }

@@ -65,7 +65,9 @@ class _ItemByCategoryScreenState extends State<ItemByCategoryScreen>
         child: GestureDetector(
           onTap: ()
           {
-            Navigator.push(context, MaterialPageRoute(builder: (context)=> ItemsDetailsScreen(cubit.items[index])));
+            cubit.item_itemDetails = cubit.itemsByCategoryId[index];
+            cubit.getAttributeValues_itemDetaielsScreen(cubit.item_itemDetails!.id!);
+            Navigator.push(context, MaterialPageRoute(builder: (context)=> ItemsDetailsScreen()));
 
           },
           child: Container(

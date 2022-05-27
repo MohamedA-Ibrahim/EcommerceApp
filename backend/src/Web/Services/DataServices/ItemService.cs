@@ -89,7 +89,7 @@ namespace Web.Services
 
         public async Task<(bool success, string message)> DeleteAsync(int itemId)
         {
-            var item = await _unitOfWork.Item.GetFirstOrDefaultAsync(itemId);
+            var item = await _unitOfWork.Item.GetFirstOrDefaultIncludingAsync(itemId, x=> x.AttributeValues);
 
             if (item == null)
                 return (false, "Not found");

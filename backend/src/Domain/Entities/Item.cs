@@ -16,8 +16,6 @@ public class Item : AuditableEntity
     [Required]
     [Range(1, 100000)]
     public double Price { get; set; }
-
-    [Required]
     public string ImageUrl { get; set; }
 
     [Display(Name = "Category")]

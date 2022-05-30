@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Web.Services;
 using Web.ViewModels;
 
 namespace Web.Controllers.User
@@ -15,13 +16,15 @@ namespace Web.Controllers.User
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IFileStorageService _fileStorageService;
+        private readonly IAttributeTypeServices _attributeTypeServices;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public MyItemsController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, IFileStorageService fileStorageService)
+        public MyItemsController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, IFileStorageService fileStorageService, IAttributeTypeServices attributeTypeServices)
         {
             _unitOfWork = unitOfWork;
             _userManager = userManager;
             _fileStorageService = fileStorageService;
+            _attributeTypeServices = attributeTypeServices;
         }
         public ActionResult Index()
         {
@@ -103,6 +106,13 @@ namespace Web.Controllers.User
             await _fileStorageService.DeleteAsync(Path.GetFileName(itemFromDb.ImageUrl));
             await _unitOfWork.SaveAsync();
             return Json(new { success = true, message = "Deleted Successfully" });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetGategoryAttributes(int id)
+        {
+            var attributes = await _attributeTypeServices.GetByCategoryAsync(id);
+            return PartialView("_GetegoryAttributes", attributes);
         }
 
         #endregion

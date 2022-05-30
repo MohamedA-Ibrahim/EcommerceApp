@@ -74,9 +74,7 @@
 </form>
 
 @section Scripts{
-	@{
-    <partial name="_ValidationScriptsPartial" />
-	}
+<partial name="_ValidationScriptsPartial" />
 
 <script>
     function ValidateInput(){
@@ -92,17 +90,35 @@
     }
 </script>
 <script>
-    $(document).ready(function () {
+    $(document).ready(async function () {
         $(".check").on("change",function(){
             var id = this.value;
-            $.ajax({
-                url:"../MyItems/GetGategoryAttributes/"+id,
+            getAttributeTypes(id);
+        });
+        if(@Model.Item.CategoryId > 0)
+        {
+           await getAttributeTypes(@Model.Item.CategoryId);
+        }
+        if(@((Model.Item.CategoryId > 0 && Model.Item.AttributeValues != null && Model.Item.AttributeValues.Count > 0).ToString().ToLower())){
+            
+            fillAttributeValues('@Json.Serialize(Model.Item.AttributeValues.Select(x=>x.Value))');
+        }
+    });
+    function getAttributeTypes(id){
+       return $.ajax({
+                url:"../../MyItems/GetGategoryAttributes/"+id,
                 type:"GET",
                 success:function(data){
                     $("#attributes").html(data);
                 }
             });
-        });
-        });
+    }
+    function fillAttributeValues(json)
+    {
+        var data = jQuery.parseJSON(json);
+        for(var i = 0;i < data.length;i++){
+            $(".attributevalue" + i).val(data[i]);
+        }
+    }
 </script>
 }

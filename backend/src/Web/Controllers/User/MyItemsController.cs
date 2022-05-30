@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Web.Services;
+using Web.Services.DataServices.Interfaces;
 using Web.ViewModels;
 
 namespace Web.Controllers.User
@@ -17,23 +18,35 @@ namespace Web.Controllers.User
         private readonly IUnitOfWork _unitOfWork;
         private readonly IFileStorageService _fileStorageService;
         private readonly IAttributeTypeServices _attributeTypeServices;
+        private readonly IItemService _itemServices;
         private readonly UserManager<ApplicationUser> _userManager;
-
-        public MyItemsController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, IFileStorageService fileStorageService, IAttributeTypeServices attributeTypeServices)
+        public MyItemsController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, IFileStorageService fileStorageService, IAttributeTypeServices attributeTypeServices, IItemService itemServices)
         {
             _unitOfWork = unitOfWork;
             _userManager = userManager;
             _fileStorageService = fileStorageService;
             _attributeTypeServices = attributeTypeServices;
+            _itemServices = itemServices;
         }
-        public ActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var userID = _userManager.GetUserId(User);
+            return View(await _unitOfWork.Item.GetAllIncludingAsync(filter: x => x.CreatedBy == userID, paginationFilter: null, x => x.Category));
         }
 
         public ActionResult Create()
         {
             return View();
+        }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            var userID = _userManager.GetUserId(User);
+            var item = (await _unitOfWork.Item.GetAllAsync(x => x.Id == id && x.CreatedBy == userID)).FirstOrDefault();
+            if (item == null)
+                return RedirectToAction("Index");
+            else
+                return View(item);
         }
 
         public async Task<ActionResult> Upsert(int? id)
@@ -46,7 +59,8 @@ namespace Web.Controllers.User
 
             if (id != null && id > 0)
             {
-                itemVM.Item = await _unitOfWork.Item.GetFirstOrDefaultAsync(id.Value);
+                var userID = _userManager.GetUserId(User);
+                itemVM.Item = (await _unitOfWork.Item.GetAllIncludingAsync(x => x.Id == id && x.CreatedBy == userID, null, x => x.AttributeValues)).FirstOrDefault();
             }
 
             return View(itemVM);
@@ -56,15 +70,15 @@ namespace Web.Controllers.User
         public async Task<ActionResult> Upsert(ItemVM itemVM, IFormFile file)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return View(itemVM);
 
-            if (file != null)
+            if (file != null && file.Length > 0)
             {
                 if (itemVM.Item?.ImageUrl != null)
                 {
                     await _fileStorageService.DeleteAsync(Path.GetFileName(itemVM.Item.ImageUrl));
                 }
-                var fileDto = new FileDto { ContentType = file.ContentType, Name = file.Name, Content = file.OpenReadStream()};
+                var fileDto = new FileDto { ContentType = file.ContentType, Name = file.Name, Content = file.OpenReadStream() };
                 itemVM.Item.ImageUrl = await _fileStorageService.UploadAsync(fileDto);
             }
 
@@ -76,9 +90,36 @@ namespace Web.Controllers.User
             }
             else
             {
+                int oldCategoryID = (await _unitOfWork.Item.GetFirstOrDefaultAsync(itemVM.Item.Id)).CategoryId;
+                if (itemVM.Item.AttributeValues != null && itemVM.Item.CategoryId == oldCategoryID)
+                {
+                    foreach (var attValue in await _unitOfWork.AttributeValue.GetAllAsync(x => x.ItemId == itemVM.Item.Id))
+                    {
+                        attValue.Value = itemVM.Item.AttributeValues.Where(x=>x.AttributeTypeId == attValue.AttributeTypeId).FirstOrDefault().Value;
+                    }
+                }
+                else if(itemVM.Item.CategoryId != oldCategoryID)
+                {
+                    //remove old attribute value
+                    _unitOfWork.AttributeValue.RemoveRange(await _unitOfWork.AttributeValue.GetAllAsync(x => x.ItemId == itemVM.Item.Id));
+                    await _unitOfWork.SaveAsync();
+
+                    //assign itemID for all attribute values
+                    foreach(var attValue in itemVM.Item.AttributeValues)
+                    {
+                        attValue.ItemId = itemVM.Item.Id;
+                    }
+
+                    //add attribute values to database
+                    await _unitOfWork.AttributeValue.AddRangeAsync(itemVM.Item.AttributeValues.ToList());
+                    await _unitOfWork.SaveAsync();
+                }
                 _unitOfWork.Item.Update(itemVM.Item);
+                await _unitOfWork.SaveAsync();
                 TempData["success"] = "Item created succesfully";
             }
+
+            await _unitOfWork.SaveAsync();
 
             return RedirectToAction("Index");
         }

@@ -1,28 +1,46 @@
-﻿<div class="container p-3">
+﻿@model IEnumerable<Item>
+<div class="container p-3">
     <div class="row pt-4">
         <div class="col-6">
             <h2 class="text-primary">Item List</h2>
-		</div>
+        </div>
         <div class="col-6 text-end">
             <a asp-controller="MyItems" asp-action="Upsert" class="btn btn-primary">
-               <i class="bi bi-plus-circle"></i> &nbsp; Create New Item
-			</a>
-		</div>
-	</div>
+                <i class="bi bi-plus-circle"></i> &nbsp; Create New Item
+            </a>
+        </div>
+    </div>
     <br /><br />
 
-<table id ="tblData" class="table table-bordered table-striped" style="width:100%">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Price</th>
-            <th>Category</th>
-            <th></th>
-		</tr>
-	</thead>
-</table>
+    <table id="tblData" class="table table-bordered table-striped" style="width:100%">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Category</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td><a asp-action="Details" asp-controller="MyItems" asp-route-id="@item.Id" >@item.Name</a></td>
+                    <td>@item.Description</td>
+                    <td>@item.Price</td>
+                    <td>@item.Category.Name</td>
+                    <td>
+                        <div class="w-75 btn-group" role="group">
+                            <a href="/MyItems/Upsert/@item.Id" class="btn btn-primary mx-2"> <i class="bi bi-pencil-square"></i> Edit</a>
+                            <a onClick="Delete('/MyItems/Delete/${data}')" class="btn btn-danger mx-2"> <i class="bi bi-trash-fill"></i> Delete</a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
 @section Scripts{
-    <script src="~/js/item.js"></script>
+<script src="~/js/item.js"></script>
 }

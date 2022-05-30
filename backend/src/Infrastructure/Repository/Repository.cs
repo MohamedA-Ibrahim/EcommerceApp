@@ -24,16 +24,12 @@ public class Repository<T> : IRepository<T> where T : AuditableEntity
 
     public async Task AddRangeAsync(List<T> entities)
     {
-      await dbSet.AddRangeAsync(entities);
+        await dbSet.AddRangeAsync(entities);
     }
 
     public void Remove(T entity)
     {
         dbSet.Remove(entity);
-    }
-    public async void Remove(int entityID)
-    {
-        dbSet.Remove(await dbSet.FirstOrDefaultAsync(x=>x.Id == entityID));
     }
 
     public void RemoveRange(IEnumerable<T> entities)
@@ -41,9 +37,11 @@ public class Repository<T> : IRepository<T> where T : AuditableEntity
         dbSet.RemoveRange(entities);
     }
 
-    public async Task<int> CountAsync()
+    public async Task<int> CountAsync(Expression<Func<T, bool>> filter = null)
     {
-        return await dbSet.CountAsync();
+        if (filter == null)
+            return await dbSet.CountAsync();
+        return await dbSet.CountAsync(filter);
     }
 
     public Task<List<T>> GetAllAsync(Expression<Func<T, bool>> filter = null, PaginationFilter paginationFilter = null)

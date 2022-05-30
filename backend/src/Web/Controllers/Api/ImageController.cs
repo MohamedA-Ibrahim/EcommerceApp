@@ -23,7 +23,6 @@ namespace Web.Controllers
         /// <response code="200">Returns the url of the uploaded image</response>
         [Produces("text/plain")]
         [HttpPost(ApiRoutes.Images.Upload)]
-        [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<string> UploadAsync([FromForm] IFormFile file)
         {
             var image = new FileDto

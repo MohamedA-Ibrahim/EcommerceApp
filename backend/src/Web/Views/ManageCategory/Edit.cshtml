@@ -1,36 +1,106 @@
 ﻿@model Category
+@{
+    ViewData["Title"] = "Edit category";
+}
 
 <form method="post" asp-action="Edit" enctype="multipart/form-data">
-	<input asp-for="Id" hidden />
-	<div class="border p-3 mt-4">
-		<div class="row pb-2">
-			<h2 class="text-primary">Edit Category</h2>
-			<hr />
-		</div>
-		<div class="mb-3">
-			<label asp-for="Name"></label>
-			<input asp-for="Name" class="form-control" />
-			<span asp-validation-for="Name" class="text-danger"></span>
-		</div>
-		<div class="mb-3">
-			<label asp-for="Description"></label>
-			<input asp-for="Description" class="form-control" />
-			<span asp-validation-for="Description" class="text-danger"></span>
-		</div>
-		<div class="mb-3">
-			<label asp-for="ImageUrl"></label>
-			<input name="file" type="file" accept="image/*" class="form-control" />
-			<span asp-validation-for="ImageUrl" class="text-danger"></span>
-		</div>
-		<button type="submit" class="btn btn-primary" style="width:150px">Update</button>
-		<a asp-controller="Categories" asp-action="Index" class="btn btn-secondary" style="width:150px">
-			Back to List
-		</a>
-	</div>
-</form>
+    <input asp-for="Id" hidden />
+    <div class="border p-3 mt-4">
+        <div class="row pb-2">
+            <h2 class="text-primary">Edit Category</h2>
+            <hr />
+        </div>
+        <div class="mb-3">
+            <label asp-for="Name"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Description"></label>
+            <input asp-for="Description" class="form-control" />
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="ImageUrl"></label>
+            <input name="file" type="file" accept="image/*" class="form-control" />
+            <span asp-validation-for="ImageUrl" class="text-danger"></span>
+        </div>
 
+        <div class="form-group">
+            <fieldset class="form-add-set border row justify-content-center">
+                <h3 for="sets" class="col-12 control-label">Attributes</h3>
+                <div class="col-10">
+
+                    <div class="add-sets"> 
+                        @if(Model.AttributeTypes.Count == 0)
+                        {
+                            Model.AttributeTypes.Add(new AttributeType());
+                        }
+                        @for (int i = 0; i < Model.AttributeTypes.Count; i++)
+                        {
+                            var atts = Model.AttributeTypes.ToList();
+                            var att = atts[i];
+                            <div class="form-inline add-set row">
+                                <div class="form-group col">
+                                    <label for="AttributeTypes[@i].Name" class="control-label for">Attribute type Name</label>
+                                    <input asp-for="@att.Name" id="AttributeTypes[@i].Name" name="AttributeTypes[@i].Name" value="@att.Name" class="form-control input" required />
+                                    <span asp-validation-for="@att.Name" data-valmsg-for="AttributeTypes[@i].Name" class="text-danger valid" />
+                                </div>
+                                <div class="form-group col-auto">
+                                    <label></label>
+                                    <br />
+                                    <button class="btn btn-outline-danger btn-remove-set" data-toggle="tooltip" title="Remove Set"><i class="bi bi-trash"></i></button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <button class="btn btn-outline-primary btn-add-set m-1">Add Set</button>
+                </div>
+            </fieldset>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:150px">Update</button>
+        <a asp-controller="Categories" asp-action="Index" class="btn btn-secondary" style="width:150px">
+            Back to List
+        </a>
+    </div>
+</form>
 @section Scripts{
-	@{
-		<partial name="_ValidationScriptsPartial" />
-	}
+<partial name="_ValidationScriptsPartial" />
+<script type="text/javascript">
+    $(document).ready(function () {
+        var wrapper = $('.add-sets');
+
+        $(".btn-add-set").click(function(e) {
+            e.preventDefault();
+            debugger
+            var obj = $('.add-set:first-child').clone(true);
+            var index = $('.add-set').length;
+            var txtIinput = obj.find(".input")[0];
+            var name = "AttributeTypes[" + index + "].Name";
+            txtIinput.setAttribute("name",name );
+            txtIinput.setAttribute("id",name );
+            txtIinput.value = "";
+            var valid = obj.find(".valid")[0];
+            valid.setAttribute("data-valmsg-for",name);
+            obj.find(".for")[0].setAttribute("for",name);
+
+            obj.appendTo(wrapper);
+
+            $('.add-set .btn-remove-set').show();
+        });
+
+        $('.btn-remove-set').click(function (e) {
+            e.preventDefault();
+            $(this).parents('.add-set').remove();
+
+            removeButton();
+        });
+
+        function removeButton() {
+            if ($('.add-set').length == 1) {
+                $('.add-set .btn-remove-set').hide();
+            }
+        }
+    });
+</script>
 }

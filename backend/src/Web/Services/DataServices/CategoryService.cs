@@ -62,7 +62,7 @@ namespace Web.Services
             return category;
         }
 
-        public async Task<Category> UpdateAsync(int categoryId,UpdateCategoryRequest request)
+        public async Task<Category> UpdateAsync(int categoryId, UpdateCategoryRequest request, bool saveOldImage = false)
         {
             var category = await _unitOfWork.Category.GetFirstOrDefaultAsync(categoryId);
 
@@ -71,7 +71,13 @@ namespace Web.Services
 
             category.Name = request.Name;
             category.Description = request.Description;
-            category.ImageUrl = request.ImageUrl;
+            if (saveOldImage)
+            {
+                if (!string.IsNullOrWhiteSpace(request.ImageUrl))
+                    category.ImageUrl = request.ImageUrl;
+            }
+            else
+                category.ImageUrl = request.ImageUrl;
 
             _unitOfWork.Category.Update(category);
             await _unitOfWork.SaveAsync();
@@ -83,7 +89,7 @@ namespace Web.Services
         {
             var category = await _unitOfWork.Category.GetFirstOrDefaultAsync(categoryId);
 
-            if (category == null) 
+            if (category == null)
                 return false;
 
             _unitOfWork.Category.Remove(category);

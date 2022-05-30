@@ -1,5 +1,6 @@
 ﻿using Domain.Common;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities
 {
@@ -10,7 +11,7 @@ namespace Domain.Entities
         [MaxLength(100)]
         public string Name { get; set; }
 
-        [Required]
+        [ForeignKey(nameof(Category))]
         public int CategoryId { get; set; }
 
         public virtual Category Category { get; set; }

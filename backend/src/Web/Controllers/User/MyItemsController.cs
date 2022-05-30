@@ -61,8 +61,7 @@ namespace Web.Controllers.User
                 {
                     await _fileStorageService.DeleteAsync(Path.GetFileName(itemVM.Item.ImageUrl));
                 }
-                var fileDto = new FileDto { ContentType = file.ContentType, Name = file.Name, Content = Stream.Null };
-                await file.CopyToAsync(fileDto.Content);
+                var fileDto = new FileDto { ContentType = file.ContentType, Name = file.Name, Content = file.OpenReadStream()};
                 itemVM.Item.ImageUrl = await _fileStorageService.UploadAsync(fileDto);
             }
 
@@ -100,7 +99,7 @@ namespace Web.Controllers.User
                 return Json(new { success = false, message = "item not found" });
             }
 
-            _unitOfWork.Item.Remove(id);
+            _unitOfWork.Item.Remove(await _unitOfWork.Item.GetFirstOrDefaultAsync(id));
             await _fileStorageService.DeleteAsync(Path.GetFileName(itemFromDb.ImageUrl));
             await _unitOfWork.SaveAsync();
             return Json(new { success = true, message = "Deleted Successfully" });

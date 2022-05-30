@@ -11,7 +11,7 @@ namespace Web.Services.DataServices.Interfaces
         Task<PagedResponse<CategoryResponse>> GetAllAsync(string categoryName, PaginationFilter paginationFilter);
         Task<Category> GetAsync(int categoryId);
         Task<Category> CreateAsync(CreateCategoryRequest categoryRequest);
-        Task<Category> UpdateAsync(int categoryId, UpdateCategoryRequest request);
+        Task<Category> UpdateAsync(int categoryId, UpdateCategoryRequest request, bool saveOldImage = false);
         Task<bool> DeleteAsync(int categoryId);
     }
 }

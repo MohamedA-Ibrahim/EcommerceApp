@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<Category>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Categories";
 }
 
 <div class="container p-3">
@@ -22,39 +22,41 @@
         {
             <div class="col-md-6 col-lg-4 col-xl-3">
                 <div class="card shadow">
-                    <img asp-append-version="true" src="@(string.IsNullOrWhiteSpace(cat.ImageUrl)?"~/Images/no-image.jpg":cat.ImageUrl)" class="card-img-top" alt="Image">
+                    <img asp-append-version="true" src="@(string.IsNullOrWhiteSpace(cat.ImageUrl)?"~/Images/no-image.jpg":cat.ImageUrl)" class="card-img-top" style="height:250px;width:100%;object-fit:cover;" alt="Image">
                     <div class="card-body">
                         <h5 class="card-title">@cat.Name</h5>
                         <p class="card-text">@cat.Description</p>
                     </div>
                     <div class="card-footer">
                         <div class="row justify-content-around">
-                            <button class="btn btn-primary m-2 col-auto" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                            <button class="btn btn-primary m-1 col-auto" type="button" data-bs-toggle="collapse" data-bs-target="#@("collapseExample" + cat.Id)" aria-expanded="false" aria-controls="@("collapseExample" + cat.Id)">
                                 Atributes
                             </button>
-                            <a asp-controller="ManageCategory" asp-action="Edit" asp-route-id="@cat.Id"
-                           class="btn btn-primary m-2 col-auto"> <i class="bi bi-pencil-square"></i> Edit</a>
-                            <a asp-controller="ManageCategory" asp-action="Delete" asp-route-id="@cat.Id"
-                           class="btn btn-danger m-2 col-auto"> <i class="bi bi-trash-fill"></i> Delete</a>
-                           
-                        <div class="collapse w-100" id="collapseExample">
-                            <div class="card card-body">
-                                @if (cat.AttributeTypes != null && cat.AttributeTypes.Count() > 0)
-                                {
-                                    <p>
-                                        @foreach (var att in cat.AttributeTypes)
-                                        {
-                                            <span class="badge bg-success">@att</span>
-                                        }
-                                    </p>
+                            <a asp-controller="ManageCategory" asp-action="Edit" asp-route-id="@cat.Id" class="btn btn-primary m-1 col-auto">
+                                <i class="bi bi-pencil-square"></i> Edit
+                            </a>
+                            <a asp-controller="ManageCategory" asp-action="Delete" asp-route-id="@cat.Id" class="btn btn-danger m-1 col-auto">
+                                <i class="bi bi-trash-fill"></i> Delete
+                            </a>
 
-                                }
-                                else
-                                {
-                                    <span class="badge bg-danger">No attribute to show</span>
-                                }
+                            <div class="collapse w-100" id="@("collapseExample" + cat.Id)">
+                                <div class="card card-body">
+                                    @if (cat.AttributeTypes != null && cat.AttributeTypes.Count() > 0)
+                                    {
+                                        <p>
+                                            @foreach (var att in cat.AttributeTypes)
+                                            {
+                                                <span class="badge bg-success">@att.Name</span>
+                                            }
+                                        </p>
+
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">No attribute to show</span>
+                                    }
+                                </div>
                             </div>
-                        </div>
                         </div>
                     </div>
                 </div>
@@ -63,34 +65,34 @@
     </div>
 
 
-@*    <table class="table table-bordered table-striped" style="width:100%">
-    <thead>
+    @*    <table class="table table-bordered table-striped" style="width:100%">
+        <thead>
         <tr>
-            <th>
-                Category Name
-			</th>
-		</tr>
-	</thead>
-    <tbody>
+        <th>
+        Category Name
+        </th>
+        </tr>
+        </thead>
+        <tbody>
         @foreach(var obj in Model)
         {
-            <tr>
-                <td width="50%">
-                    @obj.Name
-				</td>
-                <td>
-                    <div class="w-75 btn-group" role="group">
-                        <a asp-controller="Categories" asp-action="Edit" asp-route-id="@obj.Id"
-                        class="btn btn-primary mx-2"> <i class="bi bi-pencil-square"></i> Edit</a>
-                        <a asp-controller="Categories" asp-action="Delete" asp-route-id="@obj.Id"
-                        class="btn btn-danger mx-2"> <i class="bi bi-trash-fill"></i> Delete</a>
-					</div>
-				</td>
-			</tr>
+        <tr>
+        <td width="50%">
+        @obj.Name
+        </td>
+        <td>
+        <div class="w-75 btn-group" role="group">
+        <a asp-controller="Categories" asp-action="Edit" asp-route-id="@obj.Id"
+        class="btn btn-primary mx-2"> <i class="bi bi-pencil-square"></i> Edit</a>
+        <a asp-controller="Categories" asp-action="Delete" asp-route-id="@obj.Id"
+        class="btn btn-danger mx-2"> <i class="bi bi-trash-fill"></i> Delete</a>
+        </div>
+        </td>
+        </tr>
         }
-    </tbody>
+        </tbody>
 
-</table>*@
+        </table>*@
 
 
 </div>

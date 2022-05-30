@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Web.Contracts.V1.Requests;
+using Web.Services.DataServices.Interfaces;
 
 namespace Web.Controllers
 {
@@ -14,27 +15,29 @@ namespace Web.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IFileStorageService _fileStorageService;
+        private readonly ICategoryService _categoryService;
 
-        public ManageCategoryController(IUnitOfWork unitOfWork, IFileStorageService fileStorageService)
+        public ManageCategoryController(IUnitOfWork unitOfWork, IFileStorageService fileStorageService, ICategoryService categoryService)
         {
             _unitOfWork = unitOfWork;
             _fileStorageService = fileStorageService;
+            _categoryService = categoryService;
         }
 
         // GET: CategoriesController
         public async Task<IActionResult> Index()
         {
-            return View(await _unitOfWork.Category.GetAllIncludingAsync(null,null,x=>x.AttributeTypes));
+            return View(await _unitOfWork.Category.GetAllIncludingAsync(null, null, x => x.AttributeTypes));
         }
 
 
         public IActionResult Create()
         {
-            return View();
+            return View(new Category() { AttributeTypes = new List<AttributeType>() { new AttributeType() } });
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Category cat,IFormFile file)
+        public async Task<IActionResult> Create(Category cat, IFormFile file)
         {
             if (file != null)
             {
@@ -42,9 +45,8 @@ namespace Web.Controllers
                 {
                     ContentType = file.ContentType,
                     Name = file.Name,
-                    Content = Stream.Null
+                    Content = file.OpenReadStream()
                 };
-                await file.CopyToAsync(fileDto.Content);
                 cat.ImageUrl = await _fileStorageService.UploadAsync(fileDto);
             }
             else
@@ -80,7 +82,7 @@ namespace Web.Controllers
             if (!ModelState.IsValid)
                 return View(category);
 
-            if (file != null)
+            if (file != null && file.Length > 0)
             {
                 if (string.IsNullOrWhiteSpace(category?.ImageUrl))
                 {
@@ -91,16 +93,23 @@ namespace Web.Controllers
                 {
                     ContentType = file.ContentType,
                     Name = file.Name,
-                    Content = Stream.Null
+                    Content = file.OpenReadStream()
                 };
-                await file.CopyToAsync(fileDto.Content);
                 category.ImageUrl = await _fileStorageService.UploadAsync(fileDto);
             }
             else
                 category.ImageUrl = "";
 
-            _unitOfWork.Category.Update(category);
+            _unitOfWork.AttributeType.RemoveRange(await _unitOfWork.AttributeType.GetAllAsync(x => x.CategoryId == category.Id));
             await _unitOfWork.SaveAsync();
+
+            var attributeTypes = new List<AttributeType>();
+            attributeTypes.AddRange(category.AttributeTypes);
+            attributeTypes.ForEach(x => { x.CategoryId = category.Id; });
+            await _unitOfWork.AttributeType.AddRangeAsync(attributeTypes);
+            await _unitOfWork.SaveAsync();
+
+            await _categoryService.UpdateAsync(category.Id, new UpdateCategoryRequest() { Description = category.Description, Name = category.Name, ImageUrl = category.ImageUrl }, true);
 
             return RedirectToAction("Index");
         }
@@ -125,6 +134,7 @@ namespace Web.Controllers
         public async Task<IActionResult> DeletePOST(int id)
         {
             _unitOfWork.Category.Remove(await _unitOfWork.Category.GetFirstOrDefaultAsync(id));
+            await _unitOfWork.SaveAsync();
             return RedirectToAction("Index");
 
         }

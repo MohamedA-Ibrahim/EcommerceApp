@@ -62,6 +62,13 @@
                         <a asp-action="Upsert" asp-controller="Items" asp-route-id="@Model.Id" class="btn btn-primary d-block"><i class="bi bi-pencil-square mx-1"></i>Edit</a>
                         <a onClick="DeleteAndRedirect('/Items/Delete/${data}','/Items/Index')" class="btn btn-danger d-block"> <i class="bi bi-trash-fill mx-1"></i> Delete</a>
                     }
+                    else if (Model.Orders.Any(x => x.CreatedBy == userID))
+                    {
+                        var order = Model.Orders.FirstOrDefault(x => x.CreatedBy == userID);
+                        <h2>@order.OrderStatus</h2>
+                        <p>Payment : @order.PaymentStatus</p>
+                        <a asp-action="Details" asp-controller="Orders" asp-route-id="@order.Id" class="btn btn-primary d-block"><i class="bi bi-list-nested mx-1"></i>View Details</a>
+                    }
                     else
                     {
                         <a asp-action="Create" asp-controller="Orders" asp-route-id="@Model.Id" class="btn btn-primary d-block"><i class="bi bi-bag-fill mx-1"></i>Order</a>
@@ -100,7 +107,8 @@
                                     @if (!Model.Sold)
                                     {
                                         <td>
-                                            <a class="btn btn-primary"><i class="bi bi-bag-check-fill mx-1"></i>Accept</a>
+                                            <a asp-action="Accept" asp-controller="Orders" asp-route-id="@order.Id" class="btn btn-primary"><i class="bi bi-bag-check-fill mx-1"></i>Accept</a>
+                                            <a asp-action="Details" asp-controller="Orders" asp-route-id="@order.Id" class="btn btn-primary"><i class="bi bi-list-nested mx-1"></i>Details</a>
                                         </td>
                                     }
                                 </tr>

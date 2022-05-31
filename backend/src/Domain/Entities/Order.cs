@@ -14,6 +14,8 @@ namespace Domain.Entities
         public ApplicationUser Seller { get; set; }
 
 
+        [Display(Name = "Is Order Closed")]
+        public bool IsClosed { get; set; }
 
         [Required]
         public DateTime OrderDate { get; set; }
@@ -40,6 +42,7 @@ namespace Domain.Entities
 
         [Required, Display(Name = "Reciever Name")]
         public string RecieverName { get; set; }
+
 
     }
 }

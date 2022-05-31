@@ -49,8 +49,8 @@
                             @Html.DisplayFor(modelItem => item.OrderStatus)
                         </td>
                         <td>
-                            @Html.ActionLink("Details", "Details", new {  id=item.Id  }) |
-                            @Html.ActionLink("Delete", "Delete", new {  id=item.Id })
+                            <a asp-action="Details" asp-controller="Orders" asp-route-id="@item.Id" class="btn btn-primary"><i class="bi bi-list-nested mx-1"></i>Details</a>
+                            <a asp-action="Delete" asp-controller="Orders" asp-route-id="@item.Id" class="btn btn-danger"><i class="bi bi-trash-fill mx-1"></i>Delete</a>
                         </td>
                     </tr>
                 }

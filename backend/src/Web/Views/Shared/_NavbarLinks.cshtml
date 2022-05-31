@@ -8,12 +8,12 @@
 <ul class="navbar-nav me-auto">
     <li class="nav-item">
 
-        <a class="nav-link " asp-controller="Home" asp-action="Index">Home</a>
+        <a class="nav-link " asp-controller="Home" asp-action="Index">Ads</a>
     </li>
     @if (SignInManager.IsSignedIn(User))
     {
         <li class="nav-item">
-                <a class="nav-link " asp-controller="MyItems" asp-action="Index"><i class="bi bi-boxes"></i> My Items</a>
+                <a class="nav-link " asp-controller="Items" asp-action="Index"><i class="bi bi-boxes"></i> My Ads</a>
             </li>
         @if (User.IsInRole("Admin"))
         {
@@ -21,7 +21,10 @@
                 <a class="nav-link " asp-controller="ManageCategory" asp-action="Index"><i class="bi bi-cogs"></i>Categories Manage</a>
             </li>
         }
-
+        
+        <li class="nav-item">
+                <a class="nav-link " asp-controller="Orders" asp-action="Index"><i class="bi bi-boxes"></i>My Orders</a>
+            </li>
     }
     @* <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Admin Pages</a>

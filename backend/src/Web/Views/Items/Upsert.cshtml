@@ -56,7 +56,7 @@
                         <button type="submit" onclick="return ValidateInput()" class="btn btn-primary" style="width:150px">Create</button>
                     }
 
-                    <a asp-controller="MyItems" asp-action="Index" class="btn btn-secondary" style="width:150px">
+                    <a asp-controller="Items" asp-action="Index" class="btn btn-secondary" style="width:150px">
                         Back to List
                     </a>
                 </div>
@@ -106,7 +106,7 @@
     });
     function getAttributeTypes(id){
        return $.ajax({
-                url:"../../MyItems/GetGategoryAttributes/"+id,
+                url:"../../Items/GetGategoryAttributes/"+id,
                 type:"GET",
                 success:function(data){
                     $("#attributes").html(data);

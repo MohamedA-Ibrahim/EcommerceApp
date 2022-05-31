@@ -50,7 +50,7 @@ public class OrderRepository : Repository<Order>, IOrderRepository
         if (order == null)
             return false;
 
-        if (order.SellerId != userId && order.BuyerId != userId)
+        if (order.SellerId != userId && order.CreatedBy != userId)
             return false;
 
         return true;

@@ -1,0 +1,67 @@
+﻿@model IEnumerable<Domain.Entities.Order>
+
+@{
+    ViewData["Title"] = "My Orders";
+}
+<div class="card shadow">
+    <div class="card-header">
+        <h3>My Orders</h3>
+    </div>
+    <div class="card-body overflow-auto">
+        <table id="tblData" class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Item.Name)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Item.Price)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.OrderDate)
+                    </th>
+                    <th>
+                        Seller
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.OrderStatus)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Item.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Item.Price)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrderDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Seller.ProfileName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrderStatus)
+                        </td>
+                        <td>
+                            @Html.ActionLink("Details", "Details", new {  id=item.Id  }) |
+                            @Html.ActionLink("Delete", "Delete", new {  id=item.Id })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+@section scripts{
+<script>
+            $(document).ready(function () {
+        dataTable =  $('#tblData').DataTable();
+    });
+</script>
+}

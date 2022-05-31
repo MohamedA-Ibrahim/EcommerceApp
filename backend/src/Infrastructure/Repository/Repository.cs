@@ -9,44 +9,44 @@ namespace Infrastructure.Repository;
 public class Repository<T> : IRepository<T> where T : AuditableEntity
 {
     private readonly ApplicationDbContext _db;
-    internal DbSet<T> dbSet;
+    public DbSet<T> DBSet { get; set; }
 
     public Repository(ApplicationDbContext db)
     {
         _db = db;
-        dbSet = _db.Set<T>();
+        DBSet = _db.Set<T>();
     }
 
     public async Task AddAsync(T entity)
     {
-        await dbSet.AddAsync(entity);
+        await DBSet.AddAsync(entity);
     }
 
     public async Task AddRangeAsync(List<T> entities)
     {
-        await dbSet.AddRangeAsync(entities);
+        await DBSet.AddRangeAsync(entities);
     }
 
     public void Remove(T entity)
     {
-        dbSet.Remove(entity);
+        DBSet.Remove(entity);
     }
 
     public void RemoveRange(IEnumerable<T> entities)
     {
-        dbSet.RemoveRange(entities);
+        DBSet.RemoveRange(entities);
     }
 
     public async Task<int> CountAsync(Expression<Func<T, bool>> filter = null)
     {
         if (filter == null)
-            return await dbSet.CountAsync();
-        return await dbSet.CountAsync(filter);
+            return await DBSet.CountAsync();
+        return await DBSet.CountAsync(filter);
     }
 
     public Task<List<T>> GetAllAsync(Expression<Func<T, bool>> filter = null, PaginationFilter paginationFilter = null)
     {
-        var query = dbSet.AsQueryable();
+        var query = DBSet.AsQueryable();
 
         if (filter != null)
         {
@@ -89,7 +89,7 @@ public class Repository<T> : IRepository<T> where T : AuditableEntity
 
     public Task<T> GetFirstOrDefaultAsync(int id)
     {
-        return dbSet.FirstOrDefaultAsync(t => t.Id == id);
+        return DBSet.FirstOrDefaultAsync(t => t.Id == id);
     }
 
     public Task<T> GetFirstOrDefaultIncludingAsync(int id, params Expression<Func<T, object>>[] includeProperties)
@@ -100,7 +100,7 @@ public class Repository<T> : IRepository<T> where T : AuditableEntity
 
     public Task<T> FindByAsync(Expression<Func<T, bool>> predicate)
     {
-        return dbSet.FirstOrDefaultAsync(predicate);
+        return DBSet.FirstOrDefaultAsync(predicate);
     }
 
     /// <summary>
@@ -110,7 +110,7 @@ public class Repository<T> : IRepository<T> where T : AuditableEntity
     /// <param name="includeProperties">The properties to include</param>
     private IQueryable<T> IncludeProperties(params Expression<Func<T, object>>[] includeProperties)
     {
-        IQueryable<T> entities = dbSet;
+        IQueryable<T> entities = DBSet;
         foreach (var includeProperty in includeProperties)
         {
             entities = entities.Include(includeProperty);

@@ -14,5 +14,17 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+  padding-bottom: 60px !important;
+}
+html,body{
+    margin:0;
+    padding:0;
+    height:100%;
+}
+.toast-top-right{
+    margin-top: 90px;
+}
+.container {
+    min-height: 90%;
+    position: relative;
 }

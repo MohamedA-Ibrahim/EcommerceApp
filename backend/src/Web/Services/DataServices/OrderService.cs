@@ -25,7 +25,7 @@ namespace Web.Services
 
         public async Task<List<Order>> GetSellerOrdersAsync()
         {
-            var orders = await _unitOfWork.Order.GetAllIncludingAsync(x => x.SellerId == _currentUserService.UserId, null, x => x.Buyer, x => x.Seller, x => x.Item);
+            var orders = await _unitOfWork.Order.GetAllIncludingAsync(x => x.SellerId == _currentUserService.UserId, null, x => x.ApplicationUser, x => x.Seller, x => x.Item);
 
             return orders;
         }
@@ -33,14 +33,14 @@ namespace Web.Services
 
         public async Task<List<Order>> GetBuyerOrdersAsync()
         {
-            var orders = await _unitOfWork.Order.GetAllIncludingAsync(x => x.BuyerId == _currentUserService.UserId, null, x => x.Buyer, x => x.Seller, x => x.Item);
+            var orders = await _unitOfWork.Order.GetAllIncludingAsync(x => x.CreatedBy == _currentUserService.UserId, null, x => x.ApplicationUser, x => x.Seller, x => x.Item);
 
             return orders;
-        }
+        } 
 
         public async Task<Order> GetAsync(int orderId)
         {
-            var order = await _unitOfWork.Order.GetFirstOrDefaultIncludingAsync(orderId, x => x.Buyer, x => x.Seller, x => x.Item);
+            var order = await _unitOfWork.Order.GetFirstOrDefaultIncludingAsync(orderId, x => x.ApplicationUser, x => x.Seller, x => x.Item);
             return order;
         }
 
@@ -61,7 +61,6 @@ namespace Web.Services
                 City = orderRequest.City,
                 RecieverName = orderRequest.RecieverName,
                 SellerId = sellerId,
-                BuyerId = _currentUserService.UserId,
                 OrderDate = DateUtil.GetCurrentDate(),
                 OrderStatus = OrderStatus.StatusPending,
                 PaymentStatus = OrderStatus.PaymentStatusPending

@@ -5,7 +5,7 @@
             <h2 class="text-primary">Item List</h2>
         </div>
         <div class="col-6 text-end">
-            <a asp-controller="MyItems" asp-action="Upsert" class="btn btn-primary">
+            <a asp-controller="Items" asp-action="Upsert" class="btn btn-primary">
                 <i class="bi bi-plus-circle"></i> &nbsp; Create New Item
             </a>
         </div>
@@ -26,14 +26,14 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td><a asp-action="Details" asp-controller="MyItems" asp-route-id="@item.Id" >@item.Name</a></td>
+                    <td><a asp-action="Details" asp-controller="Items" asp-route-id="@item.Id" >@item.Name</a></td>
                     <td>@item.Description</td>
                     <td>@item.Price</td>
                     <td>@item.Category.Name</td>
                     <td>
                         <div class="w-75 btn-group" role="group">
-                            <a href="/MyItems/Upsert/@item.Id" class="btn btn-primary mx-2"> <i class="bi bi-pencil-square"></i> Edit</a>
-                            <a onClick="Delete('/MyItems/Delete/${data}')" class="btn btn-danger mx-2"> <i class="bi bi-trash-fill"></i> Delete</a>
+                            <a asp-action="Upsert" asp-controller="Items" asp-route-id="@item.Id" class="btn btn-primary mx-2"> <i class="bi bi-pencil-square mx-1"></i> Edit</a>
+                            <a onClick="Delete('/Items/Delete/${data}')" class="btn btn-danger mx-2"> <i class="bi bi-trash-fill mx-1"></i> Delete</a>
                         </div>
                     </td>
                 </tr>

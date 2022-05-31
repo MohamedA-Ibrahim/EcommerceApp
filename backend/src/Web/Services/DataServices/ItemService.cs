@@ -4,6 +4,7 @@ using Application.Models;
 using AutoMapper;
 using Domain.Entities;
 using Infrastructure.Repository;
+using Microsoft.EntityFrameworkCore;
 using Web.Contracts.V1.Requests;
 using Web.Contracts.V1.Responses;
 using Web.Contracts.V1.Responses.Wrappers;
@@ -67,6 +68,15 @@ namespace Web.Services
         public async Task<Item> GetAsync(int itemId)
         {
             return await _unitOfWork.Item.GetFirstOrDefaultAsync(itemId);
+        }
+        public async Task<Item> GetWithDetailsAsync(int itemId)
+        {
+            var iqItem = _unitOfWork.Item.DBSet.Where(x => x.Id == itemId)
+                .Include(x => x.AttributeValues).ThenInclude(a => a.AttributeType)
+                .Include(x => x.Category)
+                .Include(x => x.ApplicationUser)
+                .Include(x=>x.Orders).ThenInclude(b=>b.ApplicationUser);
+            return await iqItem.FirstOrDefaultAsync();
         }
 
         public async Task<Item> CreateAsync(CreateItemRequest request)

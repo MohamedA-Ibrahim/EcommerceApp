@@ -1,11 +1,13 @@
 ﻿using Application.Models;
 using Domain.Common;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace Infrastructure.Repository;
 
 public interface IRepository<T> where T : AuditableEntity
 {
+    DbSet<T> DBSet { get; set; }
     Task AddAsync(T entity);
     void Remove(T entity);
     void RemoveRange(IEnumerable<T> entities);

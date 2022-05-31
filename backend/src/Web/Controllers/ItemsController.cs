@@ -13,14 +13,14 @@ using Web.ViewModels;
 namespace Web.Controllers.User
 {
     [Authorize]
-    public class MyItemsController : Controller
+    public class ItemsController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IFileStorageService _fileStorageService;
         private readonly IAttributeTypeServices _attributeTypeServices;
         private readonly IItemService _itemServices;
         private readonly UserManager<ApplicationUser> _userManager;
-        public MyItemsController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, IFileStorageService fileStorageService, IAttributeTypeServices attributeTypeServices, IItemService itemServices)
+        public ItemsController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, IFileStorageService fileStorageService, IAttributeTypeServices attributeTypeServices, IItemService itemServices)
         {
             _unitOfWork = unitOfWork;
             _userManager = userManager;
@@ -34,19 +34,16 @@ namespace Web.Controllers.User
             return View(await _unitOfWork.Item.GetAllIncludingAsync(filter: x => x.CreatedBy == userID, paginationFilter: null, x => x.Category));
         }
 
-        public ActionResult Create()
-        {
-            return View();
-        }
-
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int id)
         {
-            var userID = _userManager.GetUserId(User);
-            var item = (await _unitOfWork.Item.GetAllAsync(x => x.Id == id && x.CreatedBy == userID)).FirstOrDefault();
+            var item = await _itemServices.GetWithDetailsAsync(id);
             if (item == null)
-                return RedirectToAction("Index");
-            else
-                return View(item);
+            {
+                TempData["warning"] = "item not found!";
+                return RedirectToAction("Index", "Home");
+            }
+            return View(item);
         }
 
         public async Task<ActionResult> Upsert(int? id)
@@ -116,7 +113,7 @@ namespace Web.Controllers.User
                 }
                 _unitOfWork.Item.Update(itemVM.Item);
                 await _unitOfWork.SaveAsync();
-                TempData["success"] = "Item created succesfully";
+                TempData["success"] = "Item updated succesfully";
             }
 
             await _unitOfWork.SaveAsync();

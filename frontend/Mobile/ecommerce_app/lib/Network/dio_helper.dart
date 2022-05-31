@@ -139,4 +139,16 @@ class DioHelper
     );
   }
 
+  Future<Response> getItemsPostedByUser() async
+  {
+    return await dio.get(
+      get_GetItemsPostedByUser,
+      options: Options(
+        headers: {
+          "Authorization": "bearer ${CacheHelper.getToken()}"
+        }
+      )
+    );
+  }
+
 }

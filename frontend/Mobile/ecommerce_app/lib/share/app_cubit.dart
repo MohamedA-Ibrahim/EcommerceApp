@@ -85,6 +85,10 @@ class AppCubit extends Cubit<AppStates>
   TextEditingController cityController_addressScreen = TextEditingController();
   TextEditingController recieverNameController_addressScreen = TextEditingController();
 
+  //variabel for Items By User
+  List<ItemModel> itemsPostedByUser_itemsByUser = [];
+
+
 
   AppCubit() : super(AppInitState());
 
@@ -615,6 +619,36 @@ class AppCubit extends Cubit<AppStates>
           Log.faildResponse(value, "post User Address");
         }
     }).catchError((e){Log.catchE(e);});
+  }
+
+  //functiom for Items by User
+  void getItemsPostedByUser()
+  {
+    emit(AppLoadingState());
+    itemsPostedByUser_itemsByUser.clear();
+    Log.v("Start get Items Posted By User");
+    dio.getItemsPostedByUser().then((value)
+    {
+      Log.v("complete get Items Posted By User");
+      if(value.statusCode == 200)
+        {
+          Log.v("Success get Items");
+          for(int i = 0; i < value.data["data"].length; i++)
+            {
+              itemsPostedByUser_itemsByUser.add(ItemModel.fromJson(value.data["data"][i]));
+            }
+          emit(AppChangeState());
+        }
+      else
+        {
+          Log.faildResponse(value, "Get Item Posted By User");
+          emit(AppChangeState());
+        }
+    }).catchError((e)
+    {
+      Log.catchE(e);
+      emit(AppChangeState());
+    });
   }
 }
 

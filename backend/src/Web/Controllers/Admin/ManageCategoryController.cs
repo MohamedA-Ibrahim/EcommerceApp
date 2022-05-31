@@ -100,13 +100,28 @@ namespace Web.Controllers
             else
                 category.ImageUrl = "";
 
-            _unitOfWork.AttributeType.RemoveRange(await _unitOfWork.AttributeType.GetAllAsync(x => x.CategoryId == category.Id));
-            await _unitOfWork.SaveAsync();
+            var oldAttributes = await _unitOfWork.AttributeType.GetAllAsync(x => x.CategoryId == category.Id);
 
-            var attributeTypes = new List<AttributeType>();
-            attributeTypes.AddRange(category.AttributeTypes);
-            attributeTypes.ForEach(x => { x.CategoryId = category.Id; });
-            await _unitOfWork.AttributeType.AddRangeAsync(attributeTypes);
+            var newAttributes = new List<AttributeType>();
+            newAttributes.AddRange(category.AttributeTypes);
+            newAttributes.ForEach(x => { x.CategoryId = category.Id; });
+            for (int i = 0; i < oldAttributes.Count || i < newAttributes.Count; i++)
+            {
+                if (i < oldAttributes.Count && i < newAttributes.Count)
+                {
+                    oldAttributes[i].Name = newAttributes[i].Name;
+                }
+                else if(i < oldAttributes.Count)
+                {
+                    _unitOfWork.AttributeType.RemoveRange(oldAttributes.Skip(i));
+                    break;
+                }
+                else if(i < newAttributes.Count)
+                {
+                    await _unitOfWork.AttributeType.AddRangeAsync(newAttributes.Skip(i).ToList());
+                    break;
+                }
+            }
             await _unitOfWork.SaveAsync();
 
             await _categoryService.UpdateAsync(category.Id, new UpdateCategoryRequest() { Description = category.Description, Name = category.Name, ImageUrl = category.ImageUrl }, true);

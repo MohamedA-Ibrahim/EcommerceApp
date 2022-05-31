@@ -27,7 +27,7 @@ namespace Web.Services
             _currentUserService = currentUserService;
         }
 
-        public async Task<PagedResponse<ItemResponse>> GetForSaleAsync(string itemName, PaginationFilter paginationFilter)
+        public async Task<PagedResponse<ItemResponse>> GetForSaleAsync(string itemName=null, PaginationFilter paginationFilter=null)
         {
             List<Item> items;
 

@@ -1,5 +1,27 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@using Web.Contracts.V1.Responses
+@model IEnumerable<ItemResponse>
+
+<h2>Ads</h2>
+<hr class=col-12 />
+<div class="row justify-content-around">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-6 col-lg-4 col-xl-3">
+                <div class="card shadow">
+                    <img asp-append-version="true" src="@(string.IsNullOrWhiteSpace(item.ImageUrl)?"~/Images/no-image.jpg":item.ImageUrl)" class="card-img-top" style="height:250px;width:100%;object-fit:cover;" alt="Image">
+                    <div class="card-body">
+                        <h5 class="card-title col">@item.Name</h5>
+                        <h5 class="card-title col-auto">@item.Price</h5>
+                        <p class="card-text">@item.Description</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="row justify-content-around">
+                            <button class="btn btn-primary m-1 col-auto" type="button">
+                                Button
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    }
+</div>

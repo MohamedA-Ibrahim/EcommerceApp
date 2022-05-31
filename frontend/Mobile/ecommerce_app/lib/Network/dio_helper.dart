@@ -109,4 +109,34 @@ class DioHelper
     return await dio.get("$get_AttributeValue$itemId");
   }
 
+  Future<Response> getUserAddress() async
+  {
+    return await dio.get(
+      get_UserAddress,
+      options: Options(
+        headers: {
+          "Authorization": "bearer ${CacheHelper.getToken()}"
+        }
+      )
+    );
+  }
+
+  Future<Response> postUserAddress(String phoneNumber, String streetAddress, String city, String recieverName) async
+  {
+    return await dio.post(
+      post_UserAddress,
+      data: {
+        "phoneNumber": phoneNumber,
+        "streetAddress": streetAddress,
+        "city": city,
+        "recieverName": recieverName
+      },
+      options: Options(
+        headers:{
+          "Authorization": "bearer ${CacheHelper.getToken()}"
+        }
+      )
+    );
+  }
+
 }

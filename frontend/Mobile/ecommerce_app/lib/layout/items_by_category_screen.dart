@@ -67,7 +67,7 @@ class _ItemByCategoryScreenState extends State<ItemByCategoryScreen>
           {
             cubit.item_itemDetails = cubit.itemsByCategoryId[index];
             cubit.getAttributeValues_itemDetaielsScreen(cubit.item_itemDetails!.id!);
-            Navigator.push(context, MaterialPageRoute(builder: (context)=> ItemsDetailsScreen()));
+            Navigator.push(context, MaterialPageRoute(builder: (context)=> ItemsDetailsScreen(cubit.itemsByCategoryId[index])));
 
           },
           child: Container(

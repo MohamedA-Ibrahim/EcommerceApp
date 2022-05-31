@@ -49,7 +49,7 @@ class ItemModule extends StatelessWidget
           Log.v("on tap item in item module item is ${cubit.items[index].name}");
           cubit.item_itemDetails = cubit.items[index];
           cubit.getAttributeValues_itemDetaielsScreen(cubit.item_itemDetails!.id!);
-          Navigator.push(context, MaterialPageRoute(builder: (context)=> ItemsDetailsScreen()));
+          Navigator.push(context, MaterialPageRoute(builder: (context)=> ItemsDetailsScreen(cubit.items[index])));
         },
         child: Container(
           padding: EdgeInsets.all(10),

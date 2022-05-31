@@ -22,6 +22,7 @@ import 'package:intl/intl.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../model/address_model.dart';
 import '../module/categoru_module.dart';
 
 class AppCubit extends Cubit<AppStates>
@@ -76,6 +77,14 @@ class AppCubit extends Cubit<AppStates>
   //variabel for Item Detaile
   ItemModel? item_itemDetails;
   Response? itemAttributesValues_itemsDetailsScreen;
+
+  //variabel for Adddress Screen
+  AddressModel? userAddress_addressScreen;
+  TextEditingController phoneNumberController_addressScreen = TextEditingController();
+  TextEditingController streetAddressController_addressScreen = TextEditingController();
+  TextEditingController cityController_addressScreen = TextEditingController();
+  TextEditingController recieverNameController_addressScreen = TextEditingController();
+
 
   AppCubit() : super(AppInitState());
 
@@ -163,7 +172,7 @@ class AppCubit extends Cubit<AppStates>
     });
   }
 
-///////////////////////////////////////////////////////////////////////////////////////////
+
 
   //function for homeScreen
   void buildItemModule_homeScreen()
@@ -186,7 +195,7 @@ class AppCubit extends Cubit<AppStates>
     currentIndexBottomNavigationBar_homeScreen = 2;
     emit(AppChangeState());
   }
-  ////////////////////////////////////////////////////////////////////////////////////////
+
 
   //function for Item Module
   void getItemsData_itemModule()
@@ -220,7 +229,7 @@ class AppCubit extends Cubit<AppStates>
       Log.catchE(e);
     });
   }
-////////////////////////////////////////////////////////////////////////////////////////
+
 
   //function for category Module
   void getCategoriesData_categoryModule() async
@@ -254,7 +263,7 @@ class AppCubit extends Cubit<AppStates>
     });
   }
 
-////////////////////////////////////////////////////////////////////////////////////////
+
   //function for add Catrgory Screen
   void postNewCategory_addCategoryScreen(String name, String descreption, String imageUrl, BuildContext context)
   {
@@ -563,6 +572,49 @@ class AppCubit extends Cubit<AppStates>
     {
       Log.catchE(e);
     });
+  }
+
+  //functions for User Address
+  void getUserAddress_addressScreen()
+  {
+    Log.v("Start get Address");
+    dio.getUserAddress().then((value)
+    {
+      //Log.v("Complete get Address");
+      if(value.statusCode == 200)
+        {
+          //Log.v("Success get user Address");
+          userAddress_addressScreen = AddressModel.fromJson(value.data);
+          cityController_addressScreen.text = userAddress_addressScreen!.city;
+          phoneNumberController_addressScreen.text = userAddress_addressScreen!.phoneNumber;
+          streetAddressController_addressScreen.text = userAddress_addressScreen!.streetAddress;
+          recieverNameController_addressScreen.text = userAddress_addressScreen!.recieverName;
+        }
+      else
+        {
+          Log.faildResponse(value, "User Address");
+        }
+    }).catchError((e)
+    {
+      Log.catchE(e);
+    });
+  }
+
+  void postUserAddress_addressScreen()
+  {
+    Log.v("Start Post User Address");
+    dio.postUserAddress(phoneNumberController_addressScreen.text.toString(), streetAddressController_addressScreen.text.toString(), cityController_addressScreen.text.toString(), recieverNameController_addressScreen.text.toString()).
+    then((value)
+    {
+      if(value.statusCode == 200)
+        {
+          Log.v("Success post Address");
+        }
+      else
+        {
+          Log.faildResponse(value, "post User Address");
+        }
+    }).catchError((e){Log.catchE(e);});
   }
 }
 

@@ -1,3 +1,4 @@
+import 'package:ecommerce_app/layout/address_screen.dart';
 import 'package:ecommerce_app/share/app_cubit.dart';
 import 'package:ecommerce_app/share/app_state.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,7 @@ class _UserModuleState extends State<UserModule> {
       listener: (context, state){},
       builder: (context, state)
       {
+        AppCubit cubit = AppCubit.get(context);
         return Container(
           height: double.infinity,
           padding: EdgeInsets.all(16),
@@ -25,7 +27,11 @@ class _UserModuleState extends State<UserModule> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 TextButton(
-                  onPressed: (){},
+                  onPressed: ()
+                  {
+                    cubit.getUserAddress_addressScreen();
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => AddressScreen()));
+                  },
                   child: Container(
                     width: double.infinity,
                     height: 40,

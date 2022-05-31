@@ -8,13 +8,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../testing.dart';
 class ItemsDetailsScreen extends StatefulWidget
 {
+  ItemModel item;
+  ItemsDetailsScreen(this.item);
   @override
-  State<ItemsDetailsScreen> createState() => _ItemsDetailsScreenState();
+  State<ItemsDetailsScreen> createState() => _ItemsDetailsScreenState(item);
 }
 
 class _ItemsDetailsScreenState extends State<ItemsDetailsScreen>
 {
 
+  ItemModel item;
+  _ItemsDetailsScreenState(this.item);
   @override
   void initState()
   {
@@ -32,7 +36,7 @@ class _ItemsDetailsScreenState extends State<ItemsDetailsScreen>
         AppCubit cubit = AppCubit.get(context);
         return Scaffold(
           appBar: AppBar(
-            title: Text(cubit.item_itemDetails!.name!),
+            title: Text(item.name!),
           ),
           body: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -47,7 +51,7 @@ class _ItemsDetailsScreenState extends State<ItemsDetailsScreen>
                       ),
                       SizedBox(width: 25,),
                       Text(
-                        cubit.item_itemDetails!.name!,
+                        item.name!,
                         style: Theme.of(context).textTheme.bodyText1,
                       ),
                     ],
@@ -61,7 +65,7 @@ class _ItemsDetailsScreenState extends State<ItemsDetailsScreen>
                       ),
                       SizedBox(width: 25,),
                       Text(
-                        cubit.item_itemDetails!.description!,
+                        item.description!,
                         style: Theme.of(context).textTheme.bodyText1,
                       ),
                     ],
@@ -75,7 +79,7 @@ class _ItemsDetailsScreenState extends State<ItemsDetailsScreen>
                       ),
                       SizedBox(width: 25,),
                       Text(
-                        cubit.item_itemDetails!.price.toString(),
+                        item.price.toString(),
                         style: Theme.of(context).textTheme.bodyText1,
                       ),
                     ],
@@ -89,7 +93,7 @@ class _ItemsDetailsScreenState extends State<ItemsDetailsScreen>
                       ),
                       SizedBox(width: 25,),
                       Text(
-                        cubit.item_itemDetails!.category!.name!,
+                        item.category!.name!,
                         style: Theme.of(context).textTheme.bodyText1,
                       ),
                     ],
@@ -126,6 +130,7 @@ class _ItemsDetailsScreenState extends State<ItemsDetailsScreen>
                       image: AssetImage("assets/images/error_image.jpg"),
                     ),
                   ),
+                  SizedBox(height: 15,)
                 ],
               ),
             ),

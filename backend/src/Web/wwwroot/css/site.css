@@ -1,0 +1,30 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  padding-bottom: 60px !important;
+}
+html,body{
+    margin:0;
+    padding:0;
+    height:100%;
+}
+.toast-top-right{
+    margin-top: 90px;
+}
+.container {
+    min-height: 90%;
+    position: relative;
+}

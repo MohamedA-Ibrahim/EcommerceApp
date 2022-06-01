@@ -1,0 +1,28 @@
+﻿@using Web.Contracts.V1.Responses
+@model IEnumerable<ItemResponse>
+@{
+    ViewData["title"] = "Home page";
+}
+
+<h2>Ads</h2>
+<hr class=col-12 />
+<div class="row justify-content-around">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-6 col-lg-4 col-xl-3">
+            <div class="card shadow m-1">
+                <a asp-action="Details" asp-controller="Items" class="carousel-fade" asp-route-id="@item.Id"><img asp-append-version="true" src="@(string.IsNullOrWhiteSpace(item.ImageUrl)?"~/Images/no-image.jpg":item.ImageUrl)" class="w-100" style="height:250px;object-fit:cover;" alt="@item.Name"></a>
+                <div class="card-body">
+                    <h5 class="card-title"><a asp-action="Details" asp-controller="Items" asp-route-id="@item.Id">@item.Name</a></h5>
+                    <p class="card-text">@item.Category.Name</p>
+                </div>
+                <div class="card-footer">
+                    <div class="row justify-content-between">
+                        <h4 class="card-title col-auto"><a asp-action="Details" asp-controller="Items" asp-route-id="@item.Id">@item.Price LE</a></h4>
+                        <a class="col-auto">@item.Seller.ProfileName</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

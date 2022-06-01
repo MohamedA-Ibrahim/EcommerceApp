@@ -1,0 +1,57 @@
+﻿@model Domain.Entities.Order
+
+@{
+    ViewData["Title"] = "Order " + Model.Item.Name;
+}
+
+<h1>Create Order</h1>
+<hr />
+<div class="card">
+    <div class="card-header">
+        <h2><a asp-action="Details" asp-controller="Items" asp-route-id="@Model.Item.Id">@Model.Item.Name</a></h2>
+        <h3>Price : @Model.Item.Price L.E</h3>
+    </div>
+    <div class="card-body">
+
+        <form asp-action="Create" class="row">
+            <div asp-validation-summary="ModelOnly" class="text-danger col-12"></div>
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(x=>x.ItemId)
+            @Html.HiddenFor(x=>x.SellerId)
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="RecieverName" class="control-label"></label>
+                    <input asp-for="RecieverName" class="form-control" />
+                    <span asp-validation-for="RecieverName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PhoneNumber" class="control-label"></label>
+                    <input asp-for="PhoneNumber" class="form-control" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="StreetAddress" class="control-label"></label>
+                    <input asp-for="StreetAddress" class="form-control" />
+                    <span asp-validation-for="StreetAddress" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="City" class="control-label"></label>
+                    <input asp-for="City" class="form-control" />
+                    <span asp-validation-for="City" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-bag-fill mx-1"></i>Order</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
+}

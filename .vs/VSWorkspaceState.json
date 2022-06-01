@@ -1,11 +1,17 @@
 {
   "ExpandedNodes": [
     "",
-    "\\frontend",
+    "\\backend",
+    "\\backend\\src",
+    "\\backend\\src\\WebApi",
+    "\\backend\\src\\WebApi\\Controllers",
+    "\\backend\\src\\WebApi\\Controllers\\Admin",
     "\\frontend\\Web",
     "\\frontend\\Web\\Ecommerce.WebUI",
-    "\\frontend\\Web\\Ecommerce.WebUI\\ViewModels"
+    "\\frontend\\Web\\Ecommerce.WebUI\\ViewModels",
+    "\\frontend\\Web\\Ecommerce.WebUI\\Views",
+    "\\frontend\\Web\\Ecommerce.WebUI\\Views\\Category"
   ],
-  "SelectedNode": "\\frontend\\Web\\Ecommerce.WebUI\\ViewModels\\RegisterVM.cs",
+  "SelectedNode": "\\backend\\src\\WebApi\\Controllers\\Admin\\ManageCategoryController.cs",
   "PreviewInSolutionExplorer": false
 }

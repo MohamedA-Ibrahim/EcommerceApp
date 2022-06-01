@@ -6,7 +6,6 @@ namespace Domain.Entities
 {
     public class Order : AuditableEntity
     {
-        public string BuyerId { get; set; }
 
         [Required]
         public string SellerId { get; set; }
@@ -14,16 +13,15 @@ namespace Domain.Entities
         [ForeignKey(nameof(SellerId))]
         public ApplicationUser Seller { get; set; }
 
-        [ForeignKey(nameof(BuyerId))]
-        public ApplicationUser Buyer { get; set; }
 
+        [Display(Name = "Is Order Closed")]
+        public bool IsClosed { get; set; }
 
         [Required]
         public DateTime OrderDate { get; set; }
 
-        [Required]
+        [ForeignKey(nameof(Item))]
         public int ItemId { get; set; }
-
         public Item Item { get; set; }
 
         public DateTime? ShippingDate { get; set; }
@@ -33,23 +31,18 @@ namespace Domain.Entities
         public string? PaymentStatus { get; set; }
 
         //User shipping info
-        [Required]
+        [Required, Display(Name = "Reciever Phone Number")]
         public string PhoneNumber { get; set; }
 
-        [Required]
+        [Required, Display(Name = "Recieve Street Address")]
         public string StreetAddress { get; set; }
 
-        [Required]
+        [Required, Display(Name = "Recieve City")]
         public string City { get; set; }
 
-        [Required]
-        public string State { get; set; }
-
-        [Required]
-        public string PostalCode { get; set; }
-
-        [Required]
+        [Required, Display(Name = "Reciever Name")]
         public string RecieverName { get; set; }
+
 
     }
 }

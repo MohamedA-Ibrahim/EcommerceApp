@@ -18,14 +18,6 @@ namespace Domain.Entities
         public string City { get; set; }
 
         [Required]
-        [MaxLength(40)]
-        public string State { get; set; }
-
-        [Required]
-        [MaxLength(10)]
-        public string PostalCode { get; set; }
-
-        [Required]
         [MaxLength(100)]
         public string RecieverName { get; set; }
     }

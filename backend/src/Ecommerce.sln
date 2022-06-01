@@ -13,11 +13,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "Application\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{9E2D8755-6021-4798-83FC-F046C235FD43}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web", "WebApi\Web.csproj", "{CEA77243-3D1F-4F8B-A7F5-F34962333B28}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web", "Web\Web.csproj", "{CEA77243-3D1F-4F8B-A7F5-F34962333B28}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{7387E579-B47D-40A4-9B3B-0A659C944D47}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web.Contracts", "..\Web.Contracts\Web.Contracts.csproj", "{0105EFB5-1019-441E-AAA4-6FA37C5D0070}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web.Contracts", "Web.Contracts\Web.Contracts.csproj", "{0105EFB5-1019-441E-AAA4-6FA37C5D0070}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

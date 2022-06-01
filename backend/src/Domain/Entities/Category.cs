@@ -12,7 +12,6 @@ public class Category : AuditableEntity
     [Required]
     public string Description { get; set; }
 
-    [Required]
     public string ImageUrl { get; set; }
 
     public virtual ICollection<AttributeType> AttributeTypes { get; set; }

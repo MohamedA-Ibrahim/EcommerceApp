@@ -1,0 +1,127 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model Domain.Entities.Item
+
+@inject UserManager<ApplicationUser> UserManager
+@{
+    ViewData["Title"] = Model.Name;
+    var userID = UserManager.GetUserId(User);
+}
+<div class="row">
+    <div class="col-md-8 pb-2">
+        <div class="card m-1 h-100">
+            <img asp-append-version="true" src="@(string.IsNullOrWhiteSpace(Model.ImageUrl)?"~/Images/no-image.jpg":Model.ImageUrl)" class="w-100  h-100" style="object-fit:contain; max-height:600px" alt="@Model.Name" />
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card m-1">
+            <div class="card-header @(Model.Sold?"bg-danger":"bg-info") ">
+                <h3 class="text-white">@(Model.Sold?"Sold":"Ready for Sale")</h3>
+            </div>
+            <div class="card-body">
+                <h1>@Model.Name</h1>
+                <h3>@Model.Price L.E</h3>
+                <h5><a href="#!">@Model.Category.Name</a></h5>
+                <p>Added on : @Model.Created</p>
+            </div>
+        </div>
+        <div class="card m-1">
+            <div class="card-header">
+                <h5>Seller details</h5>
+            </div>
+            <div class="card-body">
+                <h3>@Model.ApplicationUser.ProfileName</h3>
+                <p>Phone : @Model.ApplicationUser.PhoneNumber</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card m-1">
+            <div class="card-header">
+                <h5>Item details</h5>
+            </div>
+            <div class="card-body">
+                <div class=row>
+                    @foreach (var att in Model.AttributeValues)
+                    {
+                        <div class="col-lg-6 row justify-content-between">
+                            <h5 class="col-auto">@att.AttributeType.Name :</h5>
+                            <p class="col-auto">@att.Value</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    @if (!Model.Sold)
+    {
+        <div class="col-md-4">
+            <div class="card m-1">
+                <div class="card-body">
+                    @if (Model.CreatedBy == userID)
+                    {
+                        <a asp-action="Upsert" asp-controller="Items" asp-route-id="@Model.Id" class="btn btn-primary d-block"><i class="bi bi-pencil-square mx-1"></i>Edit</a>
+                        <a onClick="DeleteAndRedirect('/Items/Delete/${data}','/Items/Index')" class="btn btn-danger d-block"> <i class="bi bi-trash-fill mx-1"></i> Delete</a>
+                    }
+                    else if (Model.Orders.Any(x => x.CreatedBy == userID))
+                    {
+                        var order = Model.Orders.FirstOrDefault(x => x.CreatedBy == userID);
+                        <h2>@order.OrderStatus</h2>
+                        <p>Payment : @order.PaymentStatus</p>
+                        <a asp-action="Details" asp-controller="Orders" asp-route-id="@order.Id" class="btn btn-primary d-block"><i class="bi bi-list-nested mx-1"></i>View Details</a>
+                    }
+                    else
+                    {
+                        <a asp-action="Create" asp-controller="Orders" asp-route-id="@Model.Id" class="btn btn-primary d-block"><i class="bi bi-bag-fill mx-1"></i>Order</a>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+    @if (Model.CreatedBy == userID)
+    {
+        <div class="col-12">
+            <div class="card m-1">
+                <div class="card-header">
+                    <h5>Orders</h5>
+                </div>
+                <div class="card-body">
+                    <table id="tblData" class="table">
+                        <thead>
+                            <tr>
+                                <th>Buyer</th>
+                                <th>Ordered On</th>
+                                <th>Status</th>
+                                @if (!Model.Sold)
+                                {
+                                    <th></th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var order in Model.Orders)
+                            {
+                                <tr>
+                                    <td>@order.ApplicationUser.ProfileName</td>
+                                    <td>@order.OrderDate</td>
+                                    <td>@order.OrderStatus</td>
+                                    @if (!Model.Sold)
+                                    {
+                                        <td>
+                                            <a asp-action="Accept" asp-controller="Orders" asp-route-id="@order.Id" class="btn btn-primary"><i class="bi bi-bag-check-fill mx-1"></i>Accept</a>
+                                            <a asp-action="Details" asp-controller="Orders" asp-route-id="@order.Id" class="btn btn-primary"><i class="bi bi-list-nested mx-1"></i>Details</a>
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+@section Scripts{
+    @if(Model.CreatedBy == userID){
+<script src="~/js/item.js"></script>
+    }
+}

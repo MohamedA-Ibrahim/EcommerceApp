@@ -23,6 +23,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../model/address_model.dart';
+import '../model/item_brought_by_me_model.dart';
 import '../module/categoru_module.dart';
 
 class AppCubit extends Cubit<AppStates>
@@ -93,6 +94,9 @@ class AppCubit extends Cubit<AppStates>
 
   //variabel for search item screen
   List<ItemModel> item_searchItemScreen = [];
+
+  //variabel for your purchases
+  ItemsBroughtByMeModel? itemsBroughtByMeModel;
 
   AppCubit() : super(AppInitState());
 
@@ -612,7 +616,7 @@ class AppCubit extends Cubit<AppStates>
   }
 
   //functions for User Address
-  void getUserAddress_addressScreen()
+  void getUserAddress_addressScreen() async
   {
     Log.v("Start get Address");
     dio.getUserAddress().then((value)
@@ -654,7 +658,7 @@ class AppCubit extends Cubit<AppStates>
     }).catchError((e){Log.catchE(e);});
   }
 
-  //functiom for Items by User
+  //function for Items by User
   void getItemsPostedByUser()
   {
     emit(AppLoadingState());
@@ -718,6 +722,80 @@ class AppCubit extends Cubit<AppStates>
       }
     }
     emit(AppChangeState());
+  }
+
+  //function for order Items
+  void postOrdee_order(BuildContext context, ItemModel item)
+  {
+    dio.getUserAddress().then((value)
+    {
+      //Log.v("Complete get Address");
+      if(value.statusCode == 200)
+      {
+        //Log.v("Success get user Address");
+        userAddress_addressScreen = AddressModel.fromJson(value.data);
+        Log.v("Start post order");
+        dio.postOrder(item.id!,
+            item.seller!.id,
+            userAddress_addressScreen!.phoneNumber,
+            userAddress_addressScreen!.streetAddress,
+            userAddress_addressScreen!.city,
+            userAddress_addressScreen!.recieverName).
+        then((value2)
+        {
+          if(value2.statusCode == 200)
+          {
+            Log.v("Sucess post order");
+            getItemsData_itemModule();
+            Navigator.pop(context);
+          }
+          else if(value2.statusCode == 400)
+          {
+            Log.faildResponse(value, "post order");
+            Fluttertoast.showToast(msg: value.data.toString(), toastLength: Toast.LENGTH_LONG);
+          }
+          else
+          {
+            Log.faildResponse(value2, "post order");
+          }
+        }).catchError((e)
+        {
+          Log.catchE(e);
+        });
+      }
+      else
+      {
+        Log.faildResponse(value, "User Address");
+      }
+    }).catchError((e)
+    {
+      Log.catchE(e);
+    });
+  }
+
+  //function for your purchases Screen
+  void getItemsBroughtByUser_yourPurchasesScreen()
+  {
+    emit(AppLoadingState());
+    Log.v("start get Items bought by me");
+    dio.getBoughtOrders().then((value)
+    {
+      Log.v("Complete et Items bought by me");
+      if(value.statusCode == 200)
+        {
+          Log.v("Sucess et Items bought by me");
+          itemsBroughtByMeModel = ItemsBroughtByMeModel.fromJson(value);
+        }
+      else
+        {
+          Log.faildResponse(value, "items bought by me");
+        }
+      emit(AppChangeState());
+    }).catchError((e)
+    {
+      Log.catchE(e);
+      emit(AppChangeState());
+    });
   }
 }
 

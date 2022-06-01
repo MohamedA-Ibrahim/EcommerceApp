@@ -132,14 +132,14 @@ class _ItemsDetailsScreenState extends State<ItemsDetailsScreen>
                   TextButton(
                     onPressed: ()
                     {
-                      cubit.getUserAddress_addressScreen();
-
+                      cubit.postOrdee_order(context, item);
                     },
                     child: Container(
+                      height: 50,
                       color: Colors.blue,
                       child: Center(
                         child: Text(
-                          "Order This Item",
+                          "BUY",
                           style: TextStyle(
                             color: Colors.black
                           ),

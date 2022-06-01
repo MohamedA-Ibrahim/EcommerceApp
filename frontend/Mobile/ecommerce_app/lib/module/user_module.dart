@@ -1,5 +1,6 @@
 import 'package:ecommerce_app/layout/address_screen.dart';
 import 'package:ecommerce_app/layout/items_by_user.dart';
+import 'package:ecommerce_app/layout/your_purchases_screen.dart';
 import 'package:ecommerce_app/share/app_cubit.dart';
 import 'package:ecommerce_app/share/app_state.dart';
 import 'package:flutter/material.dart';
@@ -68,7 +69,11 @@ class _UserModuleState extends State<UserModule> {
                   ),
                 ),
                 TextButton(
-                  onPressed: (){},
+                  onPressed: ()
+                  {
+                    cubit.getItemsBroughtByUser_yourPurchasesScreen();
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => YourPurchasesScreen()));
+                  },
                   child: Container(
                     width: double.infinity,
                     height: 40,
@@ -76,6 +81,22 @@ class _UserModuleState extends State<UserModule> {
                     child: Center(
                       child: Text(
                         "your purchases",
+                        style: TextStyle(
+                            color: Colors.white
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: (){},
+                  child: Container(
+                    width: double.infinity,
+                    height: 40,
+                    color: Colors.blue,
+                    child: Center(
+                      child: Text(
+                        "Orders",
                         style: TextStyle(
                             color: Colors.white
                         ),

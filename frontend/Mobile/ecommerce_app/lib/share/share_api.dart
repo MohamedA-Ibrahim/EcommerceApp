@@ -45,3 +45,5 @@ String post_UserAddress = "$baseUrl/user/address";
 String get_UserAddress = "$baseUrl/user/address";
 
 String post_CreateAnOrder = "$baseUrl/user/orders";
+
+String get_BoughtOrders = "$baseUrl/user/boughtOrders";

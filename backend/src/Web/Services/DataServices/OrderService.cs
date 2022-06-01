@@ -1,5 +1,5 @@
 ﻿using Application.Common.Interfaces;
-using Application.Enums;
+using Application.Consts;
 using Application.Interfaces;
 using Application.Utils;
 using Domain.Entities;
@@ -33,7 +33,10 @@ namespace Web.Services
 
         public async Task<List<Order>> GetBuyerOrdersAsync()
         {
-            var orders = await _unitOfWork.Order.GetAllIncludingAsync(x => x.CreatedBy == _currentUserService.UserId, null, x => x.ApplicationUser, x => x.Seller, x => x.Item);
+            //Get all buyer orders except orders cancelled by the buyer
+            var orders = await _unitOfWork.Order.GetAllIncludingAsync(
+                x => x.CreatedBy == _currentUserService.UserId && !(x.OrderStatus == OrderStatus.StatusCancelled && x.LastModifiedBy == _currentUserService.UserId),
+                null, x => x.ApplicationUser, x => x.Seller, x => x.Item);
 
             return orders;
         } 

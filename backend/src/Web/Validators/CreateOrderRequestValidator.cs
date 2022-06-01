@@ -7,7 +7,6 @@ namespace Web.Validators
     {
         public CreateOrderRequestValidator()
         {
-            RuleFor(x => x.SellerId).NotEmpty();
             RuleFor(x=> x.ItemId).NotEmpty();
             RuleFor(x => x.PhoneNumber).NotEmpty().Length(11,11);
             RuleFor(x => x.StreetAddress).NotEmpty().MaximumLength(250);

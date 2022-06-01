@@ -1,5 +1,5 @@
 ﻿using Application.Common.Interfaces;
-using Application.Enums;
+using Application.Consts;
 using Application.Utils;
 using Domain.Entities;
 using Infrastructure.Repository;

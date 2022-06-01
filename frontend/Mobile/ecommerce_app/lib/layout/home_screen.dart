@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:ecommerce_app/layout/add_item_screen.dart';
 import 'package:ecommerce_app/layout/login_screen.dart';
+import 'package:ecommerce_app/layout/search_category_screen.dart';
+import 'package:ecommerce_app/layout/search_item_screen.dart';
 import 'package:ecommerce_app/share/app_cubit.dart';
 import 'package:ecommerce_app/share/app_state.dart';
 import 'package:ecommerce_app/share/cash_helper.dart';
@@ -36,6 +38,14 @@ class HomeScreen extends StatelessWidget
               IconButton(
                 onPressed: ()
                 {
+                  if(cubit.currentIndexBottomNavigationBar_homeScreen == 0)
+                    {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => SearchItemScreen()));
+                    }
+                  else if(cubit.currentIndexBottomNavigationBar_homeScreen == 1)
+                    {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => SearchCategoryScreen()));
+                    }
                 },
                 icon: Icon(Icons.search),
               ),

@@ -88,7 +88,11 @@ class AppCubit extends Cubit<AppStates>
   //variabel for Items By User
   List<ItemModel> itemsPostedByUser_itemsByUser = [];
 
+  //variable for search category screen
+  List<CategoryModel> category_searchCategoryScreen = [];
 
+  //variabel for search item screen
+  List<ItemModel> item_searchItemScreen = [];
 
   AppCubit() : super(AppInitState());
 
@@ -218,7 +222,7 @@ class AppCubit extends Cubit<AppStates>
           {
             items.add(ItemModel.fromJson(value.data["data"][i]));
           }
-          printDebug("Success parsing");
+          //Log.v(items[0].seller!.id);
           //printDebug(items[0].name!);
           //printDebug(items[0].category!.name!);
           //printDebug(items.length.toString());
@@ -578,6 +582,35 @@ class AppCubit extends Cubit<AppStates>
     });
   }
 
+  void postOrder_itemDetaielsScreen(ItemModel item)
+  {
+    Log.v("Start post Order");
+    
+    Dio().post(
+      post_CreateAnOrder,
+      data: {
+        "itemId": item.id,
+        "sellerId": item.seller!.id,
+        "phoneNumber": userAddress_addressScreen!.phoneNumber,
+        "streetAddress": userAddress_addressScreen!.streetAddress,
+        "city": userAddress_addressScreen!.city,
+        "recieverName": userAddress_addressScreen!.recieverName
+      },
+      options: Options(
+        contentType: Headers.jsonContentType,
+        responseType: ResponseType.json,
+        validateStatus: (_) => true
+      )
+    ).then((value)
+    {
+      if(value.statusCode == 200)
+        {}
+    }).catchError((e)
+    {
+
+    });
+  }
+
   //functions for User Address
   void getUserAddress_addressScreen()
   {
@@ -649,6 +682,42 @@ class AppCubit extends Cubit<AppStates>
       Log.catchE(e);
       emit(AppChangeState());
     });
+  }
+
+  //function for search category screen
+  void searchCategory_searchCategoryScreen(String value)
+  {
+    emit(AppLoadingState());
+    category_searchCategoryScreen.clear();
+    value = value.toLowerCase();
+    for(int i = 0; i < categories.length; i++)
+      {
+        String name = categories[i].name!;
+        name = name.toLowerCase();
+        if(name.contains(value))
+          {
+            category_searchCategoryScreen.add(categories[i]);
+          }
+      }
+    emit(AppChangeState());
+  }
+
+  //function for search Item Screeb
+  void searchItem_searchItemScreen(String value)
+  {
+    emit(AppLoadingState());
+    item_searchItemScreen.clear();
+    value = value.toLowerCase();
+    for(int i = 0; i < items.length; i++)
+    {
+      String name = items[i].name!;
+      name = name.toLowerCase();
+      if(name.contains(value))
+      {
+        item_searchItemScreen.add(items[i]);
+      }
+    }
+    emit(AppChangeState());
   }
 }
 

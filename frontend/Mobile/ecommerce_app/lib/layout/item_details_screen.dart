@@ -23,12 +23,10 @@ class _ItemsDetailsScreenState extends State<ItemsDetailsScreen>
   void initState()
   {
     super.initState();
-
   }
   @override
   Widget build(BuildContext context)
   {
-
     return BlocConsumer<AppCubit, AppStates>(
       listener: (context, state) {},
       builder: (context, state)
@@ -123,14 +121,32 @@ class _ItemsDetailsScreenState extends State<ItemsDetailsScreen>
                   Container(
                     width: 300,
                     height: 300,
-                    child: cubit.item_itemDetails!.imageUrl != null? Image(
-                      image: NetworkImage(cubit.item_itemDetails!.imageUrl!),
+                    child: item.imageUrl != null? Image(
+                      image: NetworkImage(item.imageUrl!),
                       fit: BoxFit.contain,
                     ) : Image(
                       image: AssetImage("assets/images/error_image.jpg"),
                     ),
                   ),
-                  SizedBox(height: 15,)
+                  SizedBox(height: 15,),
+                  TextButton(
+                    onPressed: ()
+                    {
+                      cubit.getUserAddress_addressScreen();
+
+                    },
+                    child: Container(
+                      color: Colors.blue,
+                      child: Center(
+                        child: Text(
+                          "Order This Item",
+                          style: TextStyle(
+                            color: Colors.black
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),

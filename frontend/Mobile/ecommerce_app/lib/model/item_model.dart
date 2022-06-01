@@ -14,6 +14,7 @@ class ItemModel
   CategoryModel? category;
   String? expirationDate;
   bool? sold;
+  Seller? seller;
 
   ItemModel.fromJson(Map<String, dynamic> json)
   {
@@ -33,5 +34,25 @@ class ItemModel
     //Log.v("parse expiration");
     sold = json["sold"];
     //Log.v("parse sold");
+    if(json["seller"] != null)
+      {
+        seller = Seller.fromJson(json["seller"]);
+      }
+  }
+}
+
+class Seller
+{
+  late String id;
+  late String userName;
+  late String profileName;
+  late String phoneNumber;
+
+  Seller.fromJson(Map<String, dynamic> json)
+  {
+    id = json["id"];
+    userName = json["userName"];
+    profileName = json["profileName"];
+    phoneNumber = json["phoneNumber"];
   }
 }

@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.Enums;
+using Domain.Entities;
 using Infrastructure.Persistence;
 
 namespace Infrastructure.Repository;
@@ -17,17 +18,15 @@ public class OrderRepository : Repository<Order>, IOrderRepository
         _db.Orders.Update(order);
     }
 
-    public async Task UpdateStatusAsync(int id, string orderStatus, string? paymentStatus = null)
+    public async Task UpdateStatusAsync(int id, OrderStatus orderStatus, PaymentStatus paymentStatus)
     {
         var orderFromDb = await _db.Orders.FindAsync(id);
         if (orderFromDb == null)
             return;
 
         orderFromDb.OrderStatus = orderStatus;
-        if (paymentStatus != null)
-        {
-            orderFromDb.PaymentStatus = paymentStatus;
-        }
+        orderFromDb.PaymentStatus = paymentStatus;
+        
     }
 
     public async Task<bool> UserIsOrderSellerAsync(int orderId, string userId)
@@ -43,14 +42,14 @@ public class OrderRepository : Repository<Order>, IOrderRepository
         return true;
     }
 
-    public async Task<bool> UserIsOrderSellerOrBuyerAsync(int orderId, string userId)
+    public async Task<bool> UserIsOrderBuyerAsync(int orderId, string userId)
     {
         var order = await _db.Orders.FindAsync(orderId);
 
         if (order == null)
             return false;
 
-        if (order.SellerId != userId && order.CreatedBy != userId)
+        if (order.CreatedBy != userId)
             return false;
 
         return true;

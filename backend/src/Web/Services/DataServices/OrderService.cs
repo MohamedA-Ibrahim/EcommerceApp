@@ -1,5 +1,5 @@
 ﻿using Application.Common.Interfaces;
-using Application.Consts;
+using Application.Enums;
 using Application.Interfaces;
 using Application.Utils;
 using Domain.Entities;
@@ -22,7 +22,6 @@ namespace Web.Services
             _emailService = emailService;
         }
 
-
         public async Task<List<Order>> GetSellerOrdersAsync()
         {
             var orders = await _unitOfWork.Order.GetAllIncludingAsync(x => x.SellerId == _currentUserService.UserId, null, x => x.ApplicationUser, x => x.Seller, x => x.Item);
@@ -30,12 +29,10 @@ namespace Web.Services
             return orders;
         }
 
-
         public async Task<List<Order>> GetBuyerOrdersAsync()
         {
             //Get all buyer orders except orders cancelled by the buyer
-            var orders = await _unitOfWork.Order.GetAllIncludingAsync(
-                x => x.CreatedBy == _currentUserService.UserId && !(x.OrderStatus == OrderStatus.StatusCancelled && x.LastModifiedBy == _currentUserService.UserId),
+            var orders = await _unitOfWork.Order.GetAllIncludingAsync(x => x.CreatedBy == _currentUserService.UserId && x.OrderStatus != OrderStatus.Cancelled,
                 null, x => x.ApplicationUser, x => x.Seller, x => x.Item);
 
             return orders;
@@ -65,13 +62,12 @@ namespace Web.Services
                 RecieverName = orderRequest.RecieverName,
                 SellerId = sellerId,
                 OrderDate = DateUtil.GetCurrentDate(),
-                OrderStatus = OrderStatus.StatusPending,
-                PaymentStatus = OrderStatus.PaymentStatusPending
+                OrderStatus = OrderStatus.Pending,
+                PaymentStatus = PaymentStatus.Pending
             };
 
 
             await _unitOfWork.Order.AddAsync(order);
-            _unitOfWork.Item.UpdateSoldStatus(orderRequest.ItemId, true);
 
             await _unitOfWork.SaveAsync();
 
@@ -88,8 +84,8 @@ namespace Web.Services
             if (!userOwnsOrder)
                 return (false, "You are not the seller of this order");
 
-            order.OrderStatus = OrderStatus.StatusInProcess;
-            order.PaymentStatus = OrderStatus.PaymentStatusPending;
+            order.OrderStatus = OrderStatus.InProcess;
+            order.PaymentStatus = PaymentStatus.Pending;
 
             _unitOfWork.Order.Update(order);
 
@@ -97,7 +93,6 @@ namespace Web.Services
 
             return (true, "Order status set to processing");
         }
-
 
         public async Task<(bool success, string message)> ConfirmPaymentAsync( int orderId)
         {
@@ -109,11 +104,18 @@ namespace Web.Services
             if (!userOwnsOrder)
                 return (false, "You are not the seller of this order");
 
-            order.OrderStatus = OrderStatus.StatusApproved;
-            order.PaymentStatus = OrderStatus.PaymentStatusApproved;
+            order.OrderStatus = OrderStatus.Approved;
+            order.PaymentStatus = PaymentStatus.Approved;
             order.PaymentDate = DateUtil.GetCurrentDate();
 
             _unitOfWork.Order.Update(order);
+
+            //Set the item to sold
+            _unitOfWork.Item.UpdateSoldStatus(order.ItemId, true);
+
+            //Set all remaining orders to rejected when the seller accepts one
+            var remainingOrders = await _unitOfWork.Order.GetAllAsync(x=> x.Id != order.Id && x.ItemId == order.ItemId);
+            remainingOrders.ForEach(x=> x.OrderStatus = OrderStatus.Rejected);
 
             await _unitOfWork.SaveAsync();
 
@@ -130,13 +132,13 @@ namespace Web.Services
             if (!userOwnsOrder)
                 return (false, "You are not the seller of this order");
 
-            if (order.OrderStatus == OrderStatus.StatusShipped)
+            if (order.OrderStatus == OrderStatus.Shipped)
                 return (false, "The order has already been shipped.");
 
-            if (order.PaymentStatus != OrderStatus.PaymentStatusApproved)
+            if (order.PaymentStatus != PaymentStatus.Approved)
                 return (false, "The order is still not paid!");
 
-            order.OrderStatus = OrderStatus.StatusShipped;
+            order.OrderStatus = OrderStatus.Shipped;
             order.ShippingDate = DateUtil.GetCurrentDate();
 
             _unitOfWork.Order.Update(order);
@@ -154,14 +156,37 @@ namespace Web.Services
             if (order == null)
                 return (false, "Order doesn't exist");
 
-            var userOwnsOrder = await _unitOfWork.Order.UserIsOrderSellerOrBuyerAsync(orderId, _currentUserService.UserId);
+            var userOwnsOrder = await _unitOfWork.Order.UserIsOrderBuyerAsync(orderId, _currentUserService.UserId);
             if (!userOwnsOrder)
-                return (false, "You are not a seller or a buyer of this order");
+                return (false, "You are not a buyer of this order");
 
-            if (order.OrderStatus == OrderStatus.StatusShipped)
+            if (order.OrderStatus == OrderStatus.Shipped)
                 return (false, "The order has already been shipped. it can't be cancelled");
 
-            order.OrderStatus = OrderStatus.StatusCancelled;
+            order.OrderStatus = OrderStatus.Cancelled;
+
+            _unitOfWork.Order.Update(order);
+            _unitOfWork.Item.UpdateSoldStatus(order.ItemId, false);
+
+            await _unitOfWork.SaveAsync();
+
+            return (true, "Order cancelled successfully");
+        }
+
+        public async Task<(bool success, string message)> RejectOrderAsync(int orderId)
+        {
+            var order = await _unitOfWork.Order.GetFirstOrDefaultAsync(orderId);
+            if (order == null)
+                return (false, "Order doesn't exist");
+
+            var userOwnsOrder = await _unitOfWork.Order.UserIsOrderSellerAsync(orderId, _currentUserService.UserId);
+            if (!userOwnsOrder)
+                return (false, "You are not the seller for this order");
+
+            if (order.OrderStatus == OrderStatus.Shipped)
+                return (false, "The order has already been shipped. it can't be rejected");
+
+            order.OrderStatus = OrderStatus.Rejected;
 
             _unitOfWork.Order.Update(order);
             _unitOfWork.Item.UpdateSoldStatus(order.ItemId, false);

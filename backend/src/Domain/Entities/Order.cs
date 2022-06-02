@@ -1,4 +1,5 @@
-﻿using Domain.Common;
+﻿using Application.Enums;
+using Domain.Common;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -6,13 +7,11 @@ namespace Domain.Entities
 {
     public class Order : AuditableEntity
     {
-
         [Required]
         public string SellerId { get; set; }
 
         [ForeignKey(nameof(SellerId))]
         public ApplicationUser Seller { get; set; }
-
 
         [Display(Name = "Is Order Closed")]
         public bool IsClosed { get; set; }
@@ -27,10 +26,14 @@ namespace Domain.Entities
         public DateTime? ShippingDate { get; set; }
         public DateTime? PaymentDate { get; set; }
 
-        public string? OrderStatus { get; set; }
-        public string? PaymentStatus { get; set; }
+        [Required]
+        public virtual OrderStatus OrderStatus { get; set; }
 
-        //User shipping info
+        [Required]
+        public virtual PaymentStatus PaymentStatus { get; set; }
+
+        #region User shipping info
+
         [Required, Display(Name = "Reciever Phone Number")]
         public string PhoneNumber { get; set; }
 
@@ -43,6 +46,7 @@ namespace Domain.Entities
         [Required, Display(Name = "Reciever Name")]
         public string RecieverName { get; set; }
 
+        #endregion
 
     }
 }

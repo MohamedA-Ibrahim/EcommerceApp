@@ -1,5 +1,5 @@
 ﻿using Application.Common.Interfaces;
-using Application.Consts;
+using Application.Enums;
 using Application.Utils;
 using Domain.Entities;
 using Infrastructure.Repository;
@@ -89,8 +89,8 @@ namespace Web.Controllers
             order.Id = 0;
             order.OrderDate = DateUtil.GetCurrentDate();
             order.SellerId = item.CreatedBy;
-            order.OrderStatus = OrderStatus.StatusPending;
-            order.PaymentStatus = OrderStatus.PaymentStatusPending;
+            order.OrderStatus = OrderStatus.Pending;
+            order.PaymentStatus = PaymentStatus.Pending;
             await _unitOfWork.Order.AddAsync(order);
             await _unitOfWork.SaveAsync();
             TempData["success"] = "Order Creted Successfully";

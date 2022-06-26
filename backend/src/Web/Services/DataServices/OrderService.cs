@@ -24,7 +24,7 @@ namespace Web.Services
 
         public async Task<List<Order>> GetSellerOrdersAsync()
         {
-            var orders = await _unitOfWork.Order.GetAllIncludingAsync(x => x.SellerId == _currentUserService.UserId, null, x => x.ApplicationUser, x => x.Seller, x => x.Item);
+            var orders = await _unitOfWork.Order.GetAllIncludingAsync(x => x.SellerId == _currentUserService.UserId, null, x => x.Item, x=> x.Seller);
 
             return orders;
         }
@@ -32,15 +32,15 @@ namespace Web.Services
         public async Task<List<Order>> GetBuyerOrdersAsync()
         {
             //Get all buyer orders except orders cancelled by the buyer
-            var orders = await _unitOfWork.Order.GetAllIncludingAsync(x => x.CreatedBy == _currentUserService.UserId && x.OrderStatus != OrderStatus.Cancelled,
-                null, x => x.ApplicationUser, x => x.Seller, x => x.Item);
+            var orders = await _unitOfWork.Order.GetAllIncludingAsync(x => x.BuyerId == _currentUserService.UserId && x.OrderStatus != OrderStatus.Cancelled,
+                null, x => x.Buyer, x => x.Item, x => x.Seller);
 
             return orders;
         } 
 
         public async Task<Order> GetAsync(int orderId)
         {
-            var order = await _unitOfWork.Order.GetFirstOrDefaultIncludingAsync(orderId, x => x.ApplicationUser, x => x.Seller, x => x.Item);
+            var order = await _unitOfWork.Order.GetFirstOrDefaultIncludingAsync(orderId, x => x.Buyer, x => x.Item, x=> x.Seller);
             return order;
         }
 
@@ -51,7 +51,7 @@ namespace Web.Services
             if (userOwnsItem)
                 return (null, "You can't buy your own item!");
 
-            var sellerId = (await _unitOfWork.Item.GetFirstOrDefaultAsync(orderRequest.ItemId)).CreatedBy;
+            var sellerId = (await _unitOfWork.Item.GetFirstOrDefaultAsync(orderRequest.ItemId)).SellerId;
 
             var order = new Order
             {
@@ -124,7 +124,7 @@ namespace Web.Services
 
         public async Task<(bool success, string message)> ShipOrderAsync(int orderId)
         {
-            var order = await _unitOfWork.Order.GetFirstOrDefaultIncludingAsync(orderId, x => x.ApplicationUser, x => x.Item);
+            var order = await _unitOfWork.Order.GetFirstOrDefaultIncludingAsync(orderId, x => x.Seller, x => x.Item);
             if (order == null)
                 return (false, "Order doesn't exist");
 

@@ -22,6 +22,9 @@ public class Item : AuditableEntity
     [Required]
     public int CategoryId { get; set; }
 
+    public string SellerId { get; set; }
+    public ApplicationUser Seller { get; set; }
+
     public Category Category { get; set; }
 
     public DateTime? ExpirationDate { get; set; }

@@ -31,7 +31,7 @@ namespace Web.Controllers.User
         public async Task<IActionResult> Index()
         {
             var userID = _userManager.GetUserId(User);
-            return View(await _unitOfWork.Item.GetAllIncludingAsync(filter: x => x.CreatedBy == userID, paginationFilter: null, x => x.Category));
+            return View(await _unitOfWork.Item.GetAllIncludingAsync(filter: x => x.SellerId == userID, paginationFilter: null, x => x.Category));
         }
 
         [AllowAnonymous]
@@ -57,7 +57,7 @@ namespace Web.Controllers.User
             if (id != null && id > 0)
             {
                 var userID = _userManager.GetUserId(User);
-                itemVM.Item = (await _unitOfWork.Item.GetAllIncludingAsync(x => x.Id == id && x.CreatedBy == userID, null, x => x.AttributeValues)).FirstOrDefault();
+                itemVM.Item = (await _unitOfWork.Item.GetAllIncludingAsync(x => x.Id == id && x.SellerId == userID, null, x => x.AttributeValues)).FirstOrDefault();
             }
 
             return View(itemVM);
@@ -128,13 +128,13 @@ namespace Web.Controllers.User
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            return Json(new { data = await _unitOfWork.Item.GetAllAsync(x => x.CreatedBy == _userManager.GetUserId(User)) });
+            return Json(new { data = await _unitOfWork.Item.GetAllAsync(x => x.SellerId == _userManager.GetUserId(User)) });
         }
 
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            var itemFromDb = (await _unitOfWork.Item.GetAllAsync(x => x.CreatedBy == _userManager.GetUserId(User) && x.Id == id)).FirstOrDefault();
+            var itemFromDb = (await _unitOfWork.Item.GetAllAsync(x => x.SellerId == _userManager.GetUserId(User) && x.Id == id)).FirstOrDefault();
             if (itemFromDb == null)
             {
                 return Json(new { success = false, message = "item not found" });

@@ -1,6 +1,7 @@
 ﻿using Application.Enums;
 using Domain.Entities;
 using Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repository;
 
@@ -31,27 +32,12 @@ public class OrderRepository : Repository<Order>, IOrderRepository
 
     public async Task<bool> UserIsOrderSellerAsync(int orderId, string userId)
     {
-        var order = await _db.Orders.FindAsync(orderId);
-
-        if (order == null)
-            return false;
-
-        if (order.SellerId != userId)
-            return false;
-
-        return true;
+        return await _db.Orders.AnyAsync(x=> x.Id == orderId && x.SellerId == userId);
     }
 
     public async Task<bool> UserIsOrderBuyerAsync(int orderId, string userId)
     {
-        var order = await _db.Orders.FindAsync(orderId);
+        return await _db.Orders.AnyAsync(x => x.Id == orderId && x.BuyerId == userId);
 
-        if (order == null)
-            return false;
-
-        if (order.CreatedBy != userId)
-            return false;
-
-        return true;
     }
 }

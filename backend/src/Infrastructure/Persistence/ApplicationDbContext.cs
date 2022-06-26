@@ -28,46 +28,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         base.OnModelCreating(builder);
     }
 
-    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
-    {
-        foreach (var entry in ChangeTracker.Entries<AuditableEntity>())
-            switch (entry.State)
-            {
-                case EntityState.Added:
-                    entry.Entity.CreatedBy = _currentUserService.UserId;
-                    entry.Entity.Created = DateUtil.GetCurrentDate();
-                    break;
-
-                case EntityState.Modified:
-                    entry.Entity.LastModifiedBy = _currentUserService.UserId;
-                    entry.Entity.LastModified = DateUtil.GetCurrentDate();
-                    break;
-            }
-
-        var result = await base.SaveChangesAsync(cancellationToken);
-
-        return result;
-    }
-
-    public override int SaveChanges()
-    {
-        foreach (var entry in ChangeTracker.Entries<AuditableEntity>())
-            switch (entry.State)
-            {
-                case EntityState.Added:
-                    entry.Entity.CreatedBy = _currentUserService.UserId;
-                    entry.Entity.Created = DateUtil.GetCurrentDate();
-                    break;
-
-                case EntityState.Modified:
-                    entry.Entity.LastModifiedBy = _currentUserService.UserId;
-                    entry.Entity.LastModified = DateUtil.GetCurrentDate();
-                    break;
-            }
-
-        return base.SaveChanges();
-    }
-
     #endregion
 
     #region Dbsets

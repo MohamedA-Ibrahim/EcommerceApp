@@ -7,10 +7,11 @@ namespace Domain.Entities
 {
     public class Order : AuditableEntity
     {
+        public string BuyerId { get; set; }
+        public ApplicationUser Buyer { get; set; }
+
         [Required]
         public string SellerId { get; set; }
-
-        [ForeignKey(nameof(SellerId))]
         public ApplicationUser Seller { get; set; }
 
         [Display(Name = "Is Order Closed")]

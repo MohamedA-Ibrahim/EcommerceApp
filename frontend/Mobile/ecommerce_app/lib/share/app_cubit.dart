@@ -98,6 +98,9 @@ class AppCubit extends Cubit<AppStates>
   //variabel for your purchases
   ItemsBroughtByMeModel? itemsBroughtByMeModel;
 
+  //variabel for search item category screen
+  List<ItemModel> searchItemsCategoryByName_searchItemsByCategoryScreen = [];
+
   AppCubit() : super(AppInitState());
 
   static AppCubit get(BuildContext context) => BlocProvider.of(context);
@@ -796,6 +799,25 @@ class AppCubit extends Cubit<AppStates>
       Log.catchE(e);
       emit(AppChangeState());
     });
+  }
+
+  //function for search item By Category screen
+  void searchItemCategoryByName_searchItemCategoryScreen(String name)
+  {
+    emit(AppLoadingState());
+    searchItemsCategoryByName_searchItemsByCategoryScreen.clear();
+    name = name.toLowerCase();
+    for(int i = 0; i < itemsByCategoryId.length; i++)
+      {
+        String value = itemsByCategoryId[i].name!;
+        value = value.toLowerCase();
+        if(value.contains(name))
+          {
+            searchItemsCategoryByName_searchItemsByCategoryScreen.add(itemsByCategoryId[i]);
+          }
+      }
+    //Log.v(searchItemsCategoryByName_searchItemsByCategoryScreen.toString());
+    emit(AppChangeState());
   }
 }
 

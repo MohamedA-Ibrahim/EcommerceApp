@@ -19,6 +19,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         _currentUserService = currentUserService;
     }
 
+
     #endregion
 
     #region Overrides

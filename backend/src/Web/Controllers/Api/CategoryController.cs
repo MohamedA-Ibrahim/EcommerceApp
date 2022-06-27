@@ -19,7 +19,7 @@ public class CategoryController : Controller
     private ICategoryService _categoryService;
 
 
-    public CategoryController(IMapper mapper,ICategoryService categoryService)
+    public CategoryController(IMapper mapper, ICategoryService categoryService)
     {
         _mapper = mapper;
         _categoryService = categoryService;

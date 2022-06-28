@@ -1,4 +1,5 @@
 
+import 'package:ecommerce_app/layout/search_item_by_category_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_conditional_rendering/conditional.dart';
@@ -47,6 +48,15 @@ class _ItemByCategoryScreenState extends State<ItemByCategoryScreen>
             return Scaffold(
               appBar: AppBar(
                 title: Text(widget.category.name!),
+                actions: [
+                  IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed: ()
+                    {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => SearchItemByCategoryScreen()));
+                    },
+                  )
+                ],
               ),
               body: ListView.separated(
                 itemCount: cubit.itemsByCategoryId.length,

@@ -21,9 +21,9 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:permission_handler/permission_handler.dart';
-
 import '../model/address_model.dart';
 import '../model/item_brought_by_me_model.dart';
+import '../module/attribute_value_model.dart';
 import '../module/categoru_module.dart';
 
 class AppCubit extends Cubit<AppStates>
@@ -97,6 +97,17 @@ class AppCubit extends Cubit<AppStates>
 
   //variabel for your purchases
   ItemsBroughtByMeModel? itemsBroughtByMeModel;
+
+  //variabel for search item category screen
+  List<ItemModel> searchItemsCategoryByName_searchItemsByCategoryScreen = [];
+
+  //variabel for update item details posted by user screen
+  List<TextEditingController> attributeValueController_updateItemDetailsPostedByUser = [];
+  List<AttributeValueModel> attributeValuesItem_updateItemDetailsPostedByUser = [];
+  ItemModel? itemPostedByUser_updateIOtemDetailsPostedByUser;
+  TextEditingController nameController_updateItemDetailsPostedByUser = TextEditingController();
+  TextEditingController descriptionController_updateItemDetailsPostedByUser = TextEditingController();
+  TextEditingController priceController_updateItemDetailsPostedByUser = TextEditingController();
 
   AppCubit() : super(AppInitState());
 
@@ -687,6 +698,29 @@ class AppCubit extends Cubit<AppStates>
       emit(AppChangeState());
     });
   }
+  void deleteItemById_itemsByUser(int id)
+  {
+    Log.v("Start delete Item");
+    dio.deleteItemById(id).then((value)
+    {
+      Log.v("Complete delete Item");
+      if(value.statusCode == 204 || value.statusCode == 200)
+        {
+          Log.v("Success delete Item");
+          getItemsPostedByUser();
+          getItemsData_itemModule();
+          Fluttertoast.showToast(msg: "DELETE", toastLength: Toast.LENGTH_LONG);
+          emit(AppChangeState());
+        }
+      else
+        {
+          Log.faildResponse(value, "Delete Item");
+        }
+    }).catchError((e)
+    {
+      Log.catchE(e);
+    });
+  }
 
   //function for search category screen
   void searchCategory_searchCategoryScreen(String value)
@@ -795,6 +829,106 @@ class AppCubit extends Cubit<AppStates>
     {
       Log.catchE(e);
       emit(AppChangeState());
+    });
+  }
+
+  //function for search item By Category screen
+  void searchItemCategoryByName_searchItemCategoryScreen(String name)
+  {
+    emit(AppLoadingState());
+    searchItemsCategoryByName_searchItemsByCategoryScreen.clear();
+    name = name.toLowerCase();
+    for(int i = 0; i < itemsByCategoryId.length; i++)
+      {
+        String value = itemsByCategoryId[i].name!;
+        value = value.toLowerCase();
+        if(value.contains(name))
+          {
+            searchItemsCategoryByName_searchItemsByCategoryScreen.add(itemsByCategoryId[i]);
+          }
+      }
+    //Log.v(searchItemsCategoryByName_searchItemsByCategoryScreen.toString());
+    emit(AppChangeState());
+  }
+
+  //function for update item details posted by user screen
+  void getAttributeValuesForItems_updateItemDetailsPostedByUser(int id)
+  {
+    attributeValueController_updateItemDetailsPostedByUser.clear();
+    attributeValuesItem_updateItemDetailsPostedByUser.clear();
+    dio.getAttributeValues(id).then((value)
+    {
+      Log.v("Complete get Attribute values");
+      if(value.statusCode == 200)
+        {
+          Log.v("Success get Attribute Values");
+          for(int i = 0; i < value.data.length; i++)
+            {
+              TextEditingController c = TextEditingController();
+              c.text = value.data[i]["value"];
+              attributeValueController_updateItemDetailsPostedByUser.add(c);
+              attributeValuesItem_updateItemDetailsPostedByUser.add(AttributeValueModel.json(value.data[i]));
+            }
+          Log.v(attributeValuesItem_updateItemDetailsPostedByUser[0].value);
+          emit(AppChangeState());
+        }
+      else
+        {
+          Log.faildResponse(value, "Attribute values");
+        }
+    }).catchError((e)
+    {
+      Log.catchE(e);
+    });
+  }
+  void updateItemDetails_updateItemsDetailsPostedByUser()
+  {
+    Log.v("Start update item details");
+    double price = double.parse(priceController_updateItemDetailsPostedByUser.text.toString());
+    dio.putUpdateItemDetails(
+        itemPostedByUser_updateIOtemDetailsPostedByUser!.id!,
+        nameController_updateItemDetailsPostedByUser.text.toString(),
+        descriptionController_updateItemDetailsPostedByUser.text.toString(),
+        price,
+        itemPostedByUser_updateIOtemDetailsPostedByUser!.category!.id!).
+    then((value)
+    {
+      Log.v("Complet update item details");
+      if(value.statusCode == 200)
+        {
+          Log.v("Success update item details");
+          for(int i = 0; i < attributeValuesItem_updateItemDetailsPostedByUser.length; i++)
+            {
+              Log.v("start Update Attribute value");
+              dio.putUpdateAttributeValueForItem(
+                  attributeValuesItem_updateItemDetailsPostedByUser[i].id,
+                  attributeValueController_updateItemDetailsPostedByUser[i].text.toString()).then((value2)
+              {
+                Log.v("Complete update Attribute value");
+                if(value2.statusCode == 200)
+                  {
+                    Log.v("Success put Attribute value");
+                  }
+                else
+                  {
+                    Log.faildResponse(value, "put Attribute value");
+                  }
+              }).catchError((e)
+              {
+                Log.catchE(e);
+              });
+            }
+          getItemsPostedByUser();
+          getItemsData_itemModule();
+          Fluttertoast.showToast(msg: "Update", toastLength: Toast.LENGTH_LONG);
+        }
+      else
+        {
+          Log.faildResponse(value, "update item details");
+        }
+    }).catchError((e)
+    {
+      Log.catchE(e);
     });
   }
 }

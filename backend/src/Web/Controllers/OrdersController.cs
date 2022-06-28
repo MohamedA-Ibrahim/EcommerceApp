@@ -58,7 +58,7 @@ namespace Web.Controllers
                 return RedirectToAction("Details", "Item", new { id = item.Id });
             }
 
-            return View(new Order() { SellerId = item.SellerId, Item = item, PhoneNumber = user.PhoneNumber, RecieverName = user.ProfileName, ItemId = item.Id });
+            return View(new Order() { Item = item, PhoneNumber = user.PhoneNumber, RecieverName = user.ProfileName, ItemId = item.Id });
         }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace Web.Controllers
                 TempData["error"] = "Order not found!";
                 return RedirectToAction("Index");
             }
-            if(order.SellerId != _currentUserService.UserId)
+            if(order.Item.SellerId != _currentUserService.UserId)
             {
                 TempData["warning"] = "you are not the seller";
                 return RedirectToAction("Index");
@@ -136,12 +136,12 @@ namespace Web.Controllers
                 TempData["error"] = "Order not found!";
                 return RedirectToAction("Index");
             }
-            if (order.SellerId != _currentUserService.UserId && order.BuyerId != _currentUserService.UserId)
+            if (order.Item.SellerId != _currentUserService.UserId && order.BuyerId != _currentUserService.UserId)
             {
                 TempData["warning"] = "you are not the seller or buyer in this order";
                 return RedirectToAction("Index");
             }
-            return View(order.SellerId == _currentUserService.UserId? "DetailsSeller": "DetailsBuyer", order);
+            return View(order.Item.SellerId == _currentUserService.UserId? "DetailsSeller": "DetailsBuyer", order);
         }
 
         /// <summary>
@@ -189,7 +189,7 @@ namespace Web.Controllers
                 TempData["error"] = "Order not found!";
                 return RedirectToAction("Index");
             }
-            if (order.SellerId != _currentUserService.UserId)
+            if (order.Item.SellerId != _currentUserService.UserId)
             {
                 TempData["warning"] = "you are not the seller";
                 return RedirectToAction("Index");

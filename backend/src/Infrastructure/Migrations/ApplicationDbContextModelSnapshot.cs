@@ -253,10 +253,6 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SellerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime?>("ShippingDate")
                         .HasColumnType("datetime2");
 
@@ -269,8 +265,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("BuyerId");
 
                     b.HasIndex("ItemId");
-
-                    b.HasIndex("SellerId");
 
                     b.ToTable("Orders");
                 });
@@ -538,17 +532,9 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.ApplicationUser", "Seller")
-                        .WithMany()
-                        .HasForeignKey("SellerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Buyer");
 
                     b.Navigation("Item");
-
-                    b.Navigation("Seller");
                 });
 
             modelBuilder.Entity("Domain.Entities.RefreshToken", b =>

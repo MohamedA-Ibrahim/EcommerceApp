@@ -10,10 +10,6 @@ namespace Domain.Entities
         public string BuyerId { get; set; }
         public ApplicationUser Buyer { get; set; }
 
-        [Required]
-        public string SellerId { get; set; }
-        public ApplicationUser Seller { get; set; }
-
         [Display(Name = "Is Order Closed")]
         public bool IsClosed { get; set; }
 

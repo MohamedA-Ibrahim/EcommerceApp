@@ -12,11 +12,7 @@
     <div class="col-md-4">
         <form asp-action="Accept">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="SellerId" class="control-label"></label>
-                <input asp-for="SellerId" class="form-control" />
-                <span asp-validation-for="SellerId" class="text-danger"></span>
-            </div>
+
             <div class="form-group">
                 <label asp-for="OrderDate" class="control-label"></label>
                 <input asp-for="OrderDate" class="form-control" />

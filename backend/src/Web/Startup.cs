@@ -3,6 +3,7 @@ using Application.Interfaces;
 using Application.Settings;
 using Azure.Storage.Blobs;
 using Infrastructure;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Web.Services;
 
@@ -36,6 +37,8 @@ public class Startup
 
         // Customise default API behaviour
         services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
+
+        services.Configure<IdentityOptions>(options =>options.SignIn.RequireConfirmedEmail = false);
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -4,7 +4,7 @@
 		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
 
 		<TargetFramework>net6.0</TargetFramework>
-        <Nullable>disable</Nullable>
+        <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>01a0aa59-1eea-4751-8216-2db95476fceb</UserSecretsId>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>

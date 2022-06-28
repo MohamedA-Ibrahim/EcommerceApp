@@ -17,7 +17,6 @@
             <div asp-validation-summary="ModelOnly" class="text-danger col-12"></div>
             @Html.AntiForgeryToken()
             @Html.HiddenFor(x=>x.ItemId)
-            @Html.HiddenFor(x=>x.SellerId)
             <div class="col-md-6">
                 <div class="form-group">
                     <label asp-for="RecieverName" class="control-label"></label>

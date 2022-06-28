@@ -24,7 +24,7 @@ namespace Web.Services
 
         public async Task<List<Order>> GetSellerOrdersAsync()
         {
-            var orders = await _unitOfWork.Order.GetAllIncludingAsync(x => x.SellerId == _currentUserService.UserId, null, x => x.Item, x=> x.Seller);
+            var orders = await _unitOfWork.Order.GetAllIncludingAsync(x => x.Item.SellerId == _currentUserService.UserId, null, x => x.Item, x=> x.Item.Seller);
 
             return orders;
         }
@@ -33,14 +33,14 @@ namespace Web.Services
         {
             //Get all buyer orders except orders cancelled by the buyer
             var orders = await _unitOfWork.Order.GetAllIncludingAsync(x => x.BuyerId == _currentUserService.UserId && x.OrderStatus != OrderStatus.Cancelled,
-                null, x => x.Buyer, x => x.Item, x => x.Seller);
+                null, x => x.Buyer, x => x.Item, x => x.Item.Seller);
 
             return orders;
         } 
 
         public async Task<Order> GetAsync(int orderId)
         {
-            var order = await _unitOfWork.Order.GetFirstOrDefaultIncludingAsync(orderId, x => x.Buyer, x => x.Item, x=> x.Seller);
+            var order = await _unitOfWork.Order.GetFirstOrDefaultIncludingAsync(orderId, x => x.Buyer, x => x.Item, x=> x.Item.Seller);
             return order;
         }
 
@@ -51,8 +51,6 @@ namespace Web.Services
             if (userOwnsItem)
                 return (null, "You can't buy your own item!");
 
-            var sellerId = (await _unitOfWork.Item.GetFirstOrDefaultAsync(orderRequest.ItemId)).SellerId;
-
             var order = new Order
             {
                 ItemId = orderRequest.ItemId,
@@ -60,7 +58,6 @@ namespace Web.Services
                 StreetAddress = orderRequest.StreetAddress,
                 City = orderRequest.City,
                 RecieverName = orderRequest.RecieverName,
-                SellerId = sellerId,
                 OrderDate = DateUtil.GetCurrentDate(),
                 OrderStatus = OrderStatus.Pending,
                 PaymentStatus = PaymentStatus.Pending
@@ -124,7 +121,7 @@ namespace Web.Services
 
         public async Task<(bool success, string message)> ShipOrderAsync(int orderId)
         {
-            var order = await _unitOfWork.Order.GetFirstOrDefaultIncludingAsync(orderId, x => x.Seller, x => x.Item);
+            var order = await _unitOfWork.Order.GetFirstOrDefaultIncludingAsync(orderId, x => x.Item, x=> x.Item.Seller);
             if (order == null)
                 return (false, "Order doesn't exist");
 

@@ -35,6 +35,7 @@ namespace Web.Areas.Identity.Pages.Account
             _logger = logger;
             this.userManager = userManager;
             this.roleManager = roleManager;
+            userManager.Options.SignIn.RequireConfirmedAccount = false;
         }
 
         /// <summary>

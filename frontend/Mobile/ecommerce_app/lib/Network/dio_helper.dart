@@ -182,4 +182,50 @@ class DioHelper
       )
     );
   }
+
+  Future<Response> putUpdateAttributeValueForItem(int id, String value) async
+  {
+    return await dio.put(
+      "$put_AttributeValue$id",
+      data: {
+        "id": id,
+        "value": value
+      },
+      options: Options(
+        headers: {
+          "Authorization": "bearer ${CacheHelper.getToken()}"
+        }
+      )
+    );
+  }
+
+  Future<Response> putUpdateItemDetails(int id, String name, String discription, double price, int categoryId) async
+  {
+    return await dio.put(
+        "$put_UpdateAnItemById$id",
+      data: {
+        "name": name,
+        "description": discription,
+        "price": price,
+        "categoryId": categoryId,
+      },
+      options: Options(
+          headers: {
+            "Authorization": "bearer ${CacheHelper.getToken()}"
+          }
+      )
+    );
+  }
+
+  Future<Response> deleteItemById(int id) async
+  {
+    return await dio.delete(
+      "$delete_DeleteAnItemById$id",
+      options: Options(
+        headers: {
+          "Authorization": "bearer ${CacheHelper.getToken()}"
+        }
+      )
+    );
+  }
 }

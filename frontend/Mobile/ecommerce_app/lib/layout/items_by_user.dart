@@ -1,3 +1,4 @@
+import 'package:ecommerce_app/layout/update_item_details_posted_by_user.dart';
 import 'package:ecommerce_app/share/app_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -49,9 +50,14 @@ class _ItemsByUserScreenState extends State<ItemsByUserScreen>
         onTap: ()
         {
           //Log.v("on tap item in item module item is ${cubit.items[index].name}");
-          cubit.item_itemDetails = cubit.items[index];
-          cubit.getAttributeValues_itemDetaielsScreen(cubit.itemsPostedByUser_itemsByUser[index].id!);
-          Navigator.push(context, MaterialPageRoute(builder: (context)=> ItemsDetailsScreen(cubit.itemsPostedByUser_itemsByUser[index])));
+          cubit.itemPostedByUser_updateIOtemDetailsPostedByUser = cubit.itemsPostedByUser_itemsByUser[index];
+
+          //cubit.getAttributeValues_itemDetaielsScreen(cubit.itemsPostedByUser_itemsByUser[index].id!);
+          cubit.getAttributeValuesForItems_updateItemDetailsPostedByUser(cubit.itemPostedByUser_updateIOtemDetailsPostedByUser!.id!);
+          cubit.nameController_updateItemDetailsPostedByUser.text = cubit.itemPostedByUser_updateIOtemDetailsPostedByUser!.name!;
+          cubit.descriptionController_updateItemDetailsPostedByUser.text = cubit.itemPostedByUser_updateIOtemDetailsPostedByUser!.description!;
+          cubit.priceController_updateItemDetailsPostedByUser.text = cubit.itemPostedByUser_updateIOtemDetailsPostedByUser!.price!.toString();
+          Navigator.push(context, MaterialPageRoute(builder: (context)=> UpdateItemDetailsPostedByUser()));
         },
         child: Container(
           padding: EdgeInsets.all(10),
@@ -77,6 +83,30 @@ class _ItemsByUserScreenState extends State<ItemsByUserScreen>
                 image: cubit.itemsPostedByUser_itemsByUser[index].imageUrl != null ? NetworkImage(cubit.itemsPostedByUser_itemsByUser[index].imageUrl!) : AssetImage("assets/images/error_image.jpg") as ImageProvider,
                 fit: BoxFit.cover,
 
+              ),
+              Row(
+                children: [
+                  Spacer(),
+                  TextButton(
+                    onPressed: ()
+                    {
+                      cubit.deleteItemById_itemsByUser(cubit.itemsPostedByUser_itemsByUser[index].id!);
+                    },
+                    child: Container(
+                      width: 70,
+                      height: 40,
+                      color: Colors.blue,
+                      child: Center(
+                        child: Text(
+                          "DELETE",
+                          style: TextStyle(
+                            color: Colors.black
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
               )
             ],
           ),

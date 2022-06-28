@@ -40,6 +40,8 @@ String post_AttributeValue = "$baseUrl/attributeValues";
 
 String get_AttributeValue = "$baseUrl/attributeValues/";
 
+String put_AttributeValue = "$baseUrl/attributeValues/";
+
 String post_UserAddress = "$baseUrl/user/address";
 
 String get_UserAddress = "$baseUrl/user/address";

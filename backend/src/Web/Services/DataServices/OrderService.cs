@@ -51,6 +51,10 @@ namespace Web.Services
             if (userOwnsItem)
                 return (null, "You can't buy your own item!");
 
+            bool userHasExistingOrderForItem = await _unitOfWork.Order.UserHasExistingOrderForItem(orderRequest.ItemId, _currentUserService.UserId);
+            if(userHasExistingOrderForItem)
+                return (null, "You can't buy the same item twice!");
+
             var order = new Order
             {
                 ItemId = orderRequest.ItemId,

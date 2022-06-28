@@ -40,4 +40,9 @@ public class OrderRepository : Repository<Order>, IOrderRepository
         return await _db.Orders.AnyAsync(x => x.Id == orderId && x.BuyerId == userId);
 
     }
+
+    public async Task<bool> UserHasExistingOrderForItem(int itemId, string userId)
+    {
+        return await _db.Orders.AnyAsync(x => x.ItemId == itemId && x.BuyerId == userId);
+    }
 }

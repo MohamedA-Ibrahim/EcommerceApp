@@ -88,7 +88,8 @@ namespace Web.Services
                 Price = request.Price,
                 ImageUrl = request.ImageUrl,
                 CategoryId = request.CategoryId,
-                ExpirationDate = request.ExpirationDate
+                ExpirationDate = request.ExpirationDate,
+                SellerId = _currentUserService.UserId
             };
 
             await _unitOfWork.Item.AddAsync(item);

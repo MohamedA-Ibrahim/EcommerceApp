@@ -33,9 +33,9 @@ namespace Web.Services
             List<Item> items;
 
             if (itemName != null)
-                items = await _unitOfWork.Item.GetAllIncludingAsync(x => !x.Sold && x.Name.Contains(itemName), paginationFilter, x => x.Category, u => u.ApplicationUser);
+                items = await _unitOfWork.Item.GetAllIncludingAsync(x => !x.Sold && x.Name.Contains(itemName), paginationFilter, x => x.Category, u => u.Seller);
             else
-                items = await _unitOfWork.Item.GetAllIncludingAsync(x => !x.Sold, paginationFilter, x => x.Category, u => u.ApplicationUser);
+                items = await _unitOfWork.Item.GetAllIncludingAsync(x => !x.Sold, paginationFilter, x => x.Category, u => u.Seller);
 
             var itemResponse = _mapper.Map<List<ItemResponse>>(items);
 
@@ -51,7 +51,7 @@ namespace Web.Services
 
         public async Task<PagedResponse<ItemResponse>> GetPostedByUserAsync(PaginationFilter paginationFilter)
         {
-            var items = await _unitOfWork.Item.GetAllIncludingAsync(x => x.CreatedBy == _currentUserService.UserId, paginationFilter, x => x.Category);
+            var items = await _unitOfWork.Item.GetAllIncludingAsync(x => x.SellerId == _currentUserService.UserId, paginationFilter, x => x.Category);
             var itemResponse = _mapper.Map<List<ItemResponse>>(items);
 
             if (paginationFilter == null || paginationFilter.PageNumber < 1 || paginationFilter.PageSize < 1)
@@ -74,8 +74,8 @@ namespace Web.Services
             var iqItem = _unitOfWork.Item.DBSet.Where(x => x.Id == itemId)
                 .Include(x => x.AttributeValues).ThenInclude(a => a.AttributeType)
                 .Include(x => x.Category)
-                .Include(x => x.ApplicationUser)
-                .Include(x=>x.Orders).ThenInclude(b=>b.ApplicationUser);
+                .Include(x => x.Seller)
+                .Include(x=>x.Orders).ThenInclude(b=> b.Buyer);
             return await iqItem.FirstOrDefaultAsync();
         }
 
@@ -88,7 +88,8 @@ namespace Web.Services
                 Price = request.Price,
                 ImageUrl = request.ImageUrl,
                 CategoryId = request.CategoryId,
-                ExpirationDate = request.ExpirationDate
+                ExpirationDate = request.ExpirationDate,
+                SellerId = _currentUserService.UserId
             };
 
             await _unitOfWork.Item.AddAsync(item);
@@ -104,7 +105,7 @@ namespace Web.Services
             if (item == null)
                 return (false, "Not found");
 
-            if (item.CreatedBy != _currentUserService.UserId)
+            if (item.SellerId != _currentUserService.UserId)
                 return (false, "You don't own this item");
 
 

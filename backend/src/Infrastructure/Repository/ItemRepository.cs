@@ -44,7 +44,7 @@ public class ItemRepository : Repository<Item>, IItemRepository
         if (item == null)
             return false;
 
-        if (item.CreatedBy != userId)
+        if (item.SellerId != userId)
             return false;
 
         return true;

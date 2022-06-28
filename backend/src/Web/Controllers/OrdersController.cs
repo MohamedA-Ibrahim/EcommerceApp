@@ -1,5 +1,5 @@
 ﻿using Application.Common.Interfaces;
-using Application.Consts;
+using Application.Enums;
 using Application.Utils;
 using Domain.Entities;
 using Infrastructure.Repository;
@@ -47,7 +47,7 @@ namespace Web.Controllers
                 return RedirectToAction("Index", "Home");
             }
             var user = await _userManger.GetUserAsync(User);
-            if (item.CreatedBy == user.Id)
+            if (item.SellerId == user.Id)
             {
                 TempData["warning"] = "item is already yours!";
                 return RedirectToAction("Details", "Item", new { id = item.Id });
@@ -58,7 +58,7 @@ namespace Web.Controllers
                 return RedirectToAction("Details", "Item", new { id = item.Id });
             }
 
-            return View(new Order() { SellerId = item.CreatedBy, Item = item, PhoneNumber = user.PhoneNumber, RecieverName = user.ProfileName, ItemId = item.Id });
+            return View(new Order() { SellerId = item.SellerId, Item = item, PhoneNumber = user.PhoneNumber, RecieverName = user.ProfileName, ItemId = item.Id });
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace Web.Controllers
                 return RedirectToAction("Index", "Home");
             }
             var user = await _userManger.GetUserAsync(User);
-            if (item.CreatedBy == user.Id)
+            if (item.SellerId == user.Id)
             {
                 TempData["warning"] = "item is already yours!";
                 return RedirectToAction("Details", "Item", new { id = item.Id });
@@ -88,9 +88,8 @@ namespace Web.Controllers
             }
             order.Id = 0;
             order.OrderDate = DateUtil.GetCurrentDate();
-            order.SellerId = item.CreatedBy;
-            order.OrderStatus = OrderStatus.StatusPending;
-            order.PaymentStatus = OrderStatus.PaymentStatusPending;
+            order.OrderStatus = OrderStatus.Pending;
+            order.PaymentStatus = PaymentStatus.Pending;
             await _unitOfWork.Order.AddAsync(order);
             await _unitOfWork.SaveAsync();
             TempData["success"] = "Order Creted Successfully";
@@ -137,7 +136,7 @@ namespace Web.Controllers
                 TempData["error"] = "Order not found!";
                 return RedirectToAction("Index");
             }
-            if (order.SellerId != _currentUserService.UserId && order.CreatedBy != _currentUserService.UserId)
+            if (order.SellerId != _currentUserService.UserId && order.BuyerId != _currentUserService.UserId)
             {
                 TempData["warning"] = "you are not the seller or buyer in this order";
                 return RedirectToAction("Index");
@@ -158,7 +157,7 @@ namespace Web.Controllers
                 TempData["error"] = "Order not found!";
                 return RedirectToAction("Index");
             }
-            if (order.CreatedBy != _currentUserService.UserId)
+            if (order.BuyerId != _currentUserService.UserId)
             {
                 TempData["warning"] = "you are not the buyer";
                 return RedirectToAction("Index");

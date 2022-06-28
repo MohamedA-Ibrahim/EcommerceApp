@@ -5,6 +5,9 @@ namespace Domain.Entities
 {
     public class UserAddress : AuditableEntity
     {
+        public string UserId { get; set; }
+        public ApplicationUser User { get; set; }
+
         [Required]
         [MaxLength(15)]
         public string PhoneNumber { get; set; }

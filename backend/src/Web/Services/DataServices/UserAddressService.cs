@@ -19,12 +19,12 @@ namespace Web.Services
 
         public async Task<UserAddress> GetUserAddressAsync()
         {
-            return await _unitOfWork.UserAddress.FindByAsync(x => x.CreatedBy == _currentUserService.UserId);
+            return await _unitOfWork.UserAddress.FindByAsync(x => x.UserId == _currentUserService.UserId);
         }
 
         public async Task<UserAddress> UpsertAsync(UpsertUserAddressRequest request)
         {
-            var existingAddress = await _unitOfWork.UserAddress.FindByAsync(x => x.CreatedBy == _currentUserService.UserId);
+            var existingAddress = await _unitOfWork.UserAddress.FindByAsync(x => x.UserId == _currentUserService.UserId);
 
             //Saving address for the first time
             if (existingAddress == null)

@@ -58,6 +58,7 @@ public static class ApiRoutes
         public const string ConfirmPayment = Base + "/user/orders/updatePayment/{orderId}";
         public const string ShipOrder = Base + "/user/orders/ship/{orderId}";
         public const string CancelOrder = Base + "/user/orders/cancel/{orderId}";
+        public const string RejectOrder = Base + "/user/orders/reject/{orderId}";
 
     }
 

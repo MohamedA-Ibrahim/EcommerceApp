@@ -8,7 +8,7 @@ public static class ApplicationDbContextSeed
     public static async Task SeedDefaultUserAsync(UserManager<ApplicationUser> userManager,
         RoleManager<IdentityRole> roleManager)
     {
-        //Create the roles for admina and normal users
+        //Create the roles for admin and normal users
         var administratorRole = new IdentityRole("Admin");
         var userRole = new IdentityRole("User");
 

@@ -85,17 +85,22 @@ namespace Web.Services
             return category;
         }
 
-        public async Task<bool> DeleteAsync(int categoryId)
+        public async Task<(bool success, string message)> DeleteAsync(int categoryId)
         {
             var category = await _unitOfWork.Category.GetFirstOrDefaultAsync(categoryId);
 
             if (category == null)
-                return false;
+                return (false, "category not found");
+
+            bool categoryHasItems = await _unitOfWork.Category.CategoryHasItems(categoryId);
+
+            if(categoryHasItems)
+                return (false, "category contains items");
 
             _unitOfWork.Category.Remove(category);
             await _unitOfWork.SaveAsync();
 
-            return true;
+            return (true, "Delete success");
         }
 
     }

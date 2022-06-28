@@ -108,10 +108,12 @@ namespace Web.Services
             if (item.SellerId != _currentUserService.UserId)
                 return (false, "You don't own this item");
 
-
             if (item.Sold)
                 return (false, "You can't delete a sold item");
 
+            var itemExistsInOrder = await _unitOfWork.Item.ItemExistsInOrder(itemId);
+            if (itemExistsInOrder)
+                return (false, "This item is placed in an order. it can't be deleted unless the order is rejected or cancelled");
 
             _unitOfWork.Item.Remove(item);
             await _unitOfWork.SaveAsync();

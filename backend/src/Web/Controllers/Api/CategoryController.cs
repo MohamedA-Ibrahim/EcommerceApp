@@ -98,8 +98,8 @@ public class CategoryController : Controller
     public async Task<IActionResult> Delete([FromRoute] int categoryId)
     {
        var deleted = await _categoryService.DeleteAsync(categoryId);
-        if(!deleted)
-            return NotFound();
+        if (!deleted.success)
+            return BadRequest(deleted.message);
 
         return NoContent();
     }

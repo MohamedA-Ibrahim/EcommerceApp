@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220630192628_RemoveIsClosed")]
+    [Migration("20220630195010_RemoveIsClosed")]
     partial class RemoveIsClosed
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

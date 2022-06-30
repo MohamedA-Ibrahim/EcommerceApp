@@ -114,7 +114,7 @@ namespace Web.Controllers
                 TempData["warning"] = "you are not the seller";
                 return RedirectToAction("Index");
             }
-            if (order.IsClosed)
+            if (order.OrderStatus == OrderStatus.Shipped)
             {
                 TempData["warning"] = "you can not accept the closed order";
                 return RedirectToAction("Index");
@@ -162,11 +162,7 @@ namespace Web.Controllers
                 TempData["warning"] = "you are not the buyer";
                 return RedirectToAction("Index");
             }
-            if (order.IsClosed)
-            {
-                TempData["warning"] = "you can not delete the closed order";
-                return RedirectToAction("Index");
-            }
+
             return View(order);
         }
 
@@ -192,11 +188,6 @@ namespace Web.Controllers
             if (order.Item.SellerId != _currentUserService.UserId)
             {
                 TempData["warning"] = "you are not the seller";
-                return RedirectToAction("Index");
-            }
-            if (order.IsClosed)
-            {
-                TempData["warning"] = "you can not reject the closed order";
                 return RedirectToAction("Index");
             }
             return View(order);

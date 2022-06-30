@@ -10,8 +10,6 @@ namespace Domain.Entities
         public string BuyerId { get; set; }
         public ApplicationUser Buyer { get; set; }
 
-        [Display(Name = "Is Order Closed")]
-        public bool IsClosed { get; set; }
 
         [Required]
         public DateTime OrderDate { get; set; }

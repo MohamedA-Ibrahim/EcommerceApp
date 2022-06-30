@@ -227,9 +227,6 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsClosed")
-                        .HasColumnType("bit");
-
                     b.Property<int>("ItemId")
                         .HasColumnType("int");
 

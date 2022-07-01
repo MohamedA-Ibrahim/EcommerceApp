@@ -24,7 +24,7 @@ namespace Web.Services
 
         public async Task<List<Order>> GetSellerOrdersAsync()
         {
-            var orders = await _unitOfWork.Order.GetAllIncludingAsync(x => x.Item.SellerId == _currentUserService.UserId, null, x => x.Item, x=> x.Item.Seller);
+            var orders = await _unitOfWork.Order.GetAllIncludingAsync(x => x.Item.SellerId == _currentUserService.UserId, null, x=> x.Item.Seller, x => x.Item, x => x.Buyer);
 
             return orders;
         }
@@ -32,8 +32,7 @@ namespace Web.Services
         public async Task<List<Order>> GetBuyerOrdersAsync()
         {
             //Get all buyer orders except orders cancelled by the buyer
-            var orders = await _unitOfWork.Order.GetAllIncludingAsync(x => x.BuyerId == _currentUserService.UserId && x.OrderStatus != OrderStatus.Cancelled,
-                null, x => x.Buyer, x => x.Item, x => x.Item.Seller);
+            var orders = await _unitOfWork.Order.GetAllIncludingAsync(x => x.BuyerId == _currentUserService.UserId && x.OrderStatus != OrderStatus.Cancelled, null, x => x.Buyer, x => x.Item.Seller, x => x.Item);
 
             return orders;
         } 
@@ -58,6 +57,7 @@ namespace Web.Services
             var order = new Order
             {
                 ItemId = orderRequest.ItemId,
+                BuyerId = _currentUserService.UserId,
                 PhoneNumber = orderRequest.PhoneNumber,
                 StreetAddress = orderRequest.StreetAddress,
                 City = orderRequest.City,

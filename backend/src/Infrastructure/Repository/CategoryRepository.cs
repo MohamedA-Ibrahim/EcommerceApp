@@ -1,5 +1,6 @@
 ﻿using Domain.Entities;
 using Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repository;
 
@@ -15,5 +16,10 @@ public class CategoryRepository : Repository<Category>, ICategoryRepository
     public void Update(Category category)
     {
         _db.Categories.Update(category);
+    }
+
+    public async Task<bool> CategoryHasItems(int categoryId)
+    {
+        return await _db.Items.AnyAsync(x => x.CategoryId == categoryId);
     }
 }

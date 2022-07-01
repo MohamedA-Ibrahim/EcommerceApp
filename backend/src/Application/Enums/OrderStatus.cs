@@ -1,16 +1,12 @@
 ﻿namespace Application.Enums
 {
-    public static class OrderStatus
+    public enum OrderStatus
     {
-        public const string StatusPending = "Pending";
-        public const string StatusApproved = "Approved";
-        public const string StatusInProcess = "Processing";
-        public const string StatusShipped = "Shipped";
-        public const string StatusCancelled = "Cancelled";
-
-        public const string PaymentStatusPending = "Pending";
-        public const string PaymentStatusApproved = "Approved";
-        public const string PaymentStatusRejected = "Rejected";
-
+        Pending = 0,
+        InProcess = 1,
+        Approved = 2,
+        Shipped = 3,
+        Cancelled = 4,
+        Rejected = 5
     }
 }

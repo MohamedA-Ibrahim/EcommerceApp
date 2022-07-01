@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_conditional_rendering/conditional.dart';
 
+import '../testing.dart';
+
 class ItemModule extends StatelessWidget
 {
   @override
@@ -44,6 +46,9 @@ class ItemModule extends StatelessWidget
       child: GestureDetector(
         onTap: ()
         {
+          Log.v("on tap item in item module item is ${cubit.items[index].name}");
+          cubit.item_itemDetails = cubit.items[index];
+          cubit.getAttributeValues_itemDetaielsScreen(cubit.item_itemDetails!.id!);
           Navigator.push(context, MaterialPageRoute(builder: (context)=> ItemsDetailsScreen(cubit.items[index])));
         },
         child: Container(

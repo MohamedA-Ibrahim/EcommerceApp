@@ -103,18 +103,6 @@ namespace Infrastructure.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -123,8 +111,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("CreatedBy");
 
                     b.ToTable("AttributeTypes");
                 });
@@ -140,20 +126,8 @@ namespace Infrastructure.Migrations
                     b.Property<int>("AttributeTypeId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int?>("ItemId")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Value")
                         .IsRequired()
@@ -163,8 +137,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AttributeTypeId");
-
-                    b.HasIndex("CreatedBy");
 
                     b.HasIndex("ItemId");
 
@@ -179,23 +151,11 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -204,8 +164,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CreatedBy");
 
                     b.ToTable("Categories");
                 });
@@ -221,12 +179,6 @@ namespace Infrastructure.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -237,12 +189,6 @@ namespace Infrastructure.Migrations
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(300)
@@ -251,6 +197,9 @@ namespace Infrastructure.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
+                    b.Property<string>("SellerId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<bool>("Sold")
                         .HasColumnType("bit");
 
@@ -258,7 +207,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("CreatedBy");
+                    b.HasIndex("SellerId");
 
                     b.ToTable("Items");
                 });
@@ -271,39 +220,27 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<string>("BuyerId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("City")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("IsClosed")
-                        .HasColumnType("bit");
-
                     b.Property<int>("ItemId")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("OrderStatus")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("OrderStatus")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("PaymentDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("PaymentStatus")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("PaymentStatus")
+                        .HasColumnType("int");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
@@ -312,10 +249,6 @@ namespace Infrastructure.Migrations
                     b.Property<string>("RecieverName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SellerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("ShippingDate")
                         .HasColumnType("datetime2");
@@ -326,11 +259,9 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedBy");
+                    b.HasIndex("BuyerId");
 
                     b.HasIndex("ItemId");
-
-                    b.HasIndex("SellerId");
 
                     b.ToTable("Orders");
                 });
@@ -379,18 +310,6 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(40)
                         .HasColumnType("nvarchar(40)");
 
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(15)
@@ -406,9 +325,12 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedBy");
+                    b.HasIndex("UserId");
 
                     b.ToTable("UserAddresses");
                 });
@@ -558,12 +480,6 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.ApplicationUser", "ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("CreatedBy");
-
-                    b.Navigation("ApplicationUser");
-
                     b.Navigation("Category");
                 });
 
@@ -575,28 +491,13 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.ApplicationUser", "ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("CreatedBy");
-
                     b.HasOne("Domain.Entities.Item", "Item")
                         .WithMany("AttributeValues")
                         .HasForeignKey("ItemId");
 
-                    b.Navigation("ApplicationUser");
-
                     b.Navigation("AttributeType");
 
                     b.Navigation("Item");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Category", b =>
-                {
-                    b.HasOne("Domain.Entities.ApplicationUser", "ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("CreatedBy");
-
-                    b.Navigation("ApplicationUser");
                 });
 
             modelBuilder.Entity("Domain.Entities.Item", b =>
@@ -607,20 +508,20 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.ApplicationUser", "ApplicationUser")
+                    b.HasOne("Domain.Entities.ApplicationUser", "Seller")
                         .WithMany("Items")
-                        .HasForeignKey("CreatedBy");
-
-                    b.Navigation("ApplicationUser");
+                        .HasForeignKey("SellerId");
 
                     b.Navigation("Category");
+
+                    b.Navigation("Seller");
                 });
 
             modelBuilder.Entity("Domain.Entities.Order", b =>
                 {
-                    b.HasOne("Domain.Entities.ApplicationUser", "ApplicationUser")
+                    b.HasOne("Domain.Entities.ApplicationUser", "Buyer")
                         .WithMany()
-                        .HasForeignKey("CreatedBy");
+                        .HasForeignKey("BuyerId");
 
                     b.HasOne("Domain.Entities.Item", "Item")
                         .WithMany("Orders")
@@ -628,17 +529,9 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.ApplicationUser", "Seller")
-                        .WithMany()
-                        .HasForeignKey("SellerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ApplicationUser");
+                    b.Navigation("Buyer");
 
                     b.Navigation("Item");
-
-                    b.Navigation("Seller");
                 });
 
             modelBuilder.Entity("Domain.Entities.RefreshToken", b =>
@@ -652,11 +545,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.UserAddress", b =>
                 {
-                    b.HasOne("Domain.Entities.ApplicationUser", "ApplicationUser")
+                    b.HasOne("Domain.Entities.ApplicationUser", "User")
                         .WithMany()
-                        .HasForeignKey("CreatedBy");
+                        .HasForeignKey("UserId");
 
-                    b.Navigation("ApplicationUser");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

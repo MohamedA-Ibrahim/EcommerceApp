@@ -17,7 +17,8 @@ public class Program
             var services = scope.ServiceProvider;
 
             var context = services.GetRequiredService<ApplicationDbContext>();
-            if (context.Database.IsSqlServer()) context.Database.Migrate();
+            if (context.Database.IsSqlServer())
+                context.Database.Migrate();
 
             var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
             var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();

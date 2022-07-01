@@ -104,4 +104,128 @@ class DioHelper
     );
   }
 
+  Future<Response> getAttributeValues(int itemId) async
+  {
+    return await dio.get("$get_AttributeValue$itemId");
+  }
+
+  Future<Response> getUserAddress() async
+  {
+    return await dio.get(
+      get_UserAddress,
+      options: Options(
+        headers: {
+          "Authorization": "bearer ${CacheHelper.getToken()}"
+        }
+      )
+    );
+  }
+
+  Future<Response> postUserAddress(String phoneNumber, String streetAddress, String city, String recieverName) async
+  {
+    return await dio.post(
+      post_UserAddress,
+      data: {
+        "phoneNumber": phoneNumber,
+        "streetAddress": streetAddress,
+        "city": city,
+        "recieverName": recieverName
+      },
+      options: Options(
+        headers:{
+          "Authorization": "bearer ${CacheHelper.getToken()}"
+        }
+      )
+    );
+  }
+
+  Future<Response> getItemsPostedByUser() async
+  {
+    return await dio.get(
+      get_GetItemsPostedByUser,
+      options: Options(
+        headers: {
+          "Authorization": "bearer ${CacheHelper.getToken()}"
+        }
+      )
+    );
+  }
+
+  Future<Response> postOrder(int itemId, String sellerId, String phoneNumber, String streetAddress, String city, String recieverName) async
+  {
+    return await dio.post(
+      post_CreateAnOrder,
+      data: {
+        "itemId": itemId,
+        "sellerId": sellerId,
+        "phoneNumber": phoneNumber,
+        "streetAddress": streetAddress,
+        "city": city,
+        "recieverName": recieverName
+      },
+      options: Options(
+        headers: {
+          "Authorization": "bearer ${CacheHelper.getToken()}"
+        }
+      )
+    );
+  }
+
+  Future<Response> getBoughtOrders() async
+  {
+    return await dio.get(
+      get_BoughtOrders,
+      options: Options(
+        headers: {
+          "Authorization": "bearer ${CacheHelper.getToken()}"
+        }
+      )
+    );
+  }
+
+  Future<Response> putUpdateAttributeValueForItem(int id, String value) async
+  {
+    return await dio.put(
+      "$put_AttributeValue$id",
+      data: {
+        "id": id,
+        "value": value
+      },
+      options: Options(
+        headers: {
+          "Authorization": "bearer ${CacheHelper.getToken()}"
+        }
+      )
+    );
+  }
+
+  Future<Response> putUpdateItemDetails(int id, String name, String discription, double price, int categoryId) async
+  {
+    return await dio.put(
+        "$put_UpdateAnItemById$id",
+      data: {
+        "name": name,
+        "description": discription,
+        "price": price,
+        "categoryId": categoryId,
+      },
+      options: Options(
+          headers: {
+            "Authorization": "bearer ${CacheHelper.getToken()}"
+          }
+      )
+    );
+  }
+
+  Future<Response> deleteItemById(int id) async
+  {
+    return await dio.delete(
+      "$delete_DeleteAnItemById$id",
+      options: Options(
+        headers: {
+          "Authorization": "bearer ${CacheHelper.getToken()}"
+        }
+      )
+    );
+  }
 }

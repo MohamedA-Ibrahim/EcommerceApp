@@ -1,5 +1,6 @@
 ﻿using Domain.Entities;
 using Infrastructure.Persistence;
+using Application.Enums;
 
 namespace Infrastructure.Repository;
 
@@ -11,6 +12,8 @@ public class ItemRepository : Repository<Item>, IItemRepository
     {
         _db = db;
     }
+
+
 
     public void Update(Item item)
     {
@@ -44,9 +47,15 @@ public class ItemRepository : Repository<Item>, IItemRepository
         if (item == null)
             return false;
 
-        if (item.CreatedBy != userId)
+        if (item.SellerId != userId)
             return false;
 
         return true;
+    }
+
+    public async Task<bool> ItemExistsInOrder(int itemId)
+    {
+        return _db.Orders.Any(x=> x.ItemId == itemId 
+        && (x.OrderStatus != OrderStatus.Cancelled || x.OrderStatus != OrderStatus.Rejected));
     }
 }

@@ -151,6 +151,13 @@ GlobalKey<FormState> formKey = GlobalKey();
                       itemCount: cubit.attributeValuesControllers_addItemScreen.length,
                       separatorBuilder: (context, index) => SizedBox(height: 10,),
                       itemBuilder: (context, index) => TextFormField(
+                        validator: (value)
+                        {
+                          if(value == null || value.isEmpty)
+                            {
+                              return "Please Enter Value of Attribute";
+                            }
+                        },
                         controller: cubit.attributeValuesControllers_addItemScreen[index],
                         keyboardType: TextInputType.text,
                         decoration: InputDecoration(
@@ -247,7 +254,7 @@ GlobalKey<FormState> formKey = GlobalKey();
             if(value.statusCode == 200)
               {
                 Log.v("Success post image");
-                cubit.postNewItem_addItemScreen(cubit.name_addItemScreen.text.toString(), cubit.discription_addItemScreen.text.toString(), int.parse(cubit.price_addItemScreen.text.toString()), value.data.toString(), cubit.categoryForItem_addItemScreen!.id!);
+                cubit.postNewItem_addItemScreen(context, cubit.name_addItemScreen.text.toString(), cubit.discription_addItemScreen.text.toString(), int.parse(cubit.price_addItemScreen.text.toString()), value.data.toString(), cubit.categoryForItem_addItemScreen!.id!);
               }
           }).catchError((e)
           {

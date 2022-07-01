@@ -11,7 +11,7 @@ namespace Web.Mapping
             CreateMap<AttributeValue, AttributeValueResponse>();
             CreateMap<AttributeType, AttributeTypeResponse>();
             CreateMap<Item, ItemResponse>()
-                     .ForMember(dest => dest.Seller, opt => opt.MapFrom(src => src.ApplicationUser));
+                     .ForMember(dest => dest.Seller, opt => opt.MapFrom(src => src.Seller));
 
             CreateMap<Category, CategoryResponse>();
             CreateMap<UserAddress, UserAddressResponse>();

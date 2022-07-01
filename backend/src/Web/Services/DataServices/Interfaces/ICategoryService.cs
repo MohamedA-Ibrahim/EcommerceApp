@@ -12,6 +12,6 @@ namespace Web.Services.DataServices.Interfaces
         Task<Category> GetAsync(int categoryId);
         Task<Category> CreateAsync(CreateCategoryRequest categoryRequest);
         Task<Category> UpdateAsync(int categoryId, UpdateCategoryRequest request, bool saveOldImage = false);
-        Task<bool> DeleteAsync(int categoryId);
+        Task<(bool success, string message)> DeleteAsync(int categoryId);
     }
 }

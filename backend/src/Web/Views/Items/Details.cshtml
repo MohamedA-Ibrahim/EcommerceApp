@@ -1,4 +1,5 @@
-﻿@using Microsoft.AspNetCore.Identity
+﻿@using Domain.Entities
+@using Microsoft.AspNetCore.Identity
 @model Domain.Entities.Item
 
 @inject UserManager<ApplicationUser> UserManager
@@ -21,7 +22,6 @@
                 <h1>@Model.Name</h1>
                 <h3>@Model.Price L.E</h3>
                 <h5><a href="#!">@Model.Category.Name</a></h5>
-                <p>Added on : @Model.Created</p>
             </div>
         </div>
         <div class="card m-1">
@@ -29,8 +29,8 @@
                 <h5>Seller details</h5>
             </div>
             <div class="card-body">
-                <h3>@Model.ApplicationUser.ProfileName</h3>
-                <p>Phone : @Model.ApplicationUser.PhoneNumber</p>
+                <h3>@Model.Seller.ProfileName</h3>
+                <p>Phone : @Model.Seller.PhoneNumber</p>
             </div>
         </div>
     </div>
@@ -57,14 +57,14 @@
         <div class="col-md-4">
             <div class="card m-1">
                 <div class="card-body">
-                    @if (Model.CreatedBy == userID)
+                    @if (Model.SellerId == userID)
                     {
                         <a asp-action="Upsert" asp-controller="Items" asp-route-id="@Model.Id" class="btn btn-primary d-block"><i class="bi bi-pencil-square mx-1"></i>Edit</a>
                         <a onClick="DeleteAndRedirect('/Items/Delete/${data}','/Items/Index')" class="btn btn-danger d-block"> <i class="bi bi-trash-fill mx-1"></i> Delete</a>
                     }
-                    else if (Model.Orders.Any(x => x.CreatedBy == userID))
+                    else if (Model.Orders.Any(x => x.BuyerId == userID))
                     {
-                        var order = Model.Orders.FirstOrDefault(x => x.CreatedBy == userID);
+                        var order = Model.Orders.FirstOrDefault(x => x.BuyerId == userID);
                         <h2>@order.OrderStatus</h2>
                         <p>Payment : @order.PaymentStatus</p>
                         <a asp-action="Details" asp-controller="Orders" asp-route-id="@order.Id" class="btn btn-primary d-block"><i class="bi bi-list-nested mx-1"></i>View Details</a>
@@ -77,7 +77,7 @@
             </div>
         </div>
     }
-    @if (Model.CreatedBy == userID)
+    @if (Model.SellerId == userID)
     {
         <div class="col-12">
             <div class="card m-1">
@@ -101,7 +101,7 @@
                             @foreach (var order in Model.Orders)
                             {
                                 <tr>
-                                    <td>@order.ApplicationUser.ProfileName</td>
+                                    <td>@order.Buyer.ProfileName</td>
                                     <td>@order.OrderDate</td>
                                     <td>@order.OrderStatus</td>
                                     @if (!Model.Sold)
@@ -121,7 +121,7 @@
     }
 </div>
 @section Scripts{
-    @if(Model.CreatedBy == userID){
+    @if(Model.SellerId == userID){
 <script src="~/js/item.js"></script>
     }
 }

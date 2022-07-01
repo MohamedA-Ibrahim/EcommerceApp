@@ -1,4 +1,4 @@
-//push Thursday 26/5/2022 2:39AM
+//push Tuesday 28/6/2022 12:44PM
 
 import 'package:ecommerce_app/layout/home_screen.dart';
 import 'package:ecommerce_app/layout/on_bording_screen.dart';
@@ -38,12 +38,12 @@ class MyApp extends StatelessWidget
           String? token = CacheHelper.getToken();
           if(token != null)
           {
-            printDebug("Token is not Null");
+            //printDebug("Token is not Null");
             home = HomeScreen();
             Map<String, dynamic> jsonToken = JwtDecoder.decode(CacheHelper.getToken()!);
             AppCubit.get(context).user = UserModel(CacheHelper.getToken(), CacheHelper.getRefreshToken(), jsonToken);
-            Log.v("Token ${AppCubit.get(context).user!.token!}");
-            Log.v("User is ${AppCubit.get(context).user!.role}");
+            //Log.v("Token ${AppCubit.get(context).user!.token!}");
+            //Log.v("User is ${AppCubit.get(context).user!.role}");
           }
           return MaterialApp(
             debugShowCheckedModeBanner: false,

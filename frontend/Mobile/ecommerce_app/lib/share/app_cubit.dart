@@ -21,7 +21,9 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:permission_handler/permission_handler.dart';
-
+import '../model/address_model.dart';
+import '../model/item_brought_by_me_model.dart';
+import '../module/attribute_value_model.dart';
 import '../module/categoru_module.dart';
 
 class AppCubit extends Cubit<AppStates>
@@ -72,6 +74,40 @@ class AppCubit extends Cubit<AppStates>
   //variabel for Category Details
   CategoryModel? categorty_categoryDetails;
   List<String> attributeType_categoryDetails = [];
+
+  //variabel for Item Detaile
+  ItemModel? item_itemDetails;
+  Response? itemAttributesValues_itemsDetailsScreen;
+
+  //variabel for Adddress Screen
+  AddressModel? userAddress_addressScreen;
+  TextEditingController phoneNumberController_addressScreen = TextEditingController();
+  TextEditingController streetAddressController_addressScreen = TextEditingController();
+  TextEditingController cityController_addressScreen = TextEditingController();
+  TextEditingController recieverNameController_addressScreen = TextEditingController();
+
+  //variabel for Items By User
+  List<ItemModel> itemsPostedByUser_itemsByUser = [];
+
+  //variable for search category screen
+  List<CategoryModel> category_searchCategoryScreen = [];
+
+  //variabel for search item screen
+  List<ItemModel> item_searchItemScreen = [];
+
+  //variabel for your purchases
+  ItemsBroughtByMeModel? itemsBroughtByMeModel;
+
+  //variabel for search item category screen
+  List<ItemModel> searchItemsCategoryByName_searchItemsByCategoryScreen = [];
+
+  //variabel for update item details posted by user screen
+  List<TextEditingController> attributeValueController_updateItemDetailsPostedByUser = [];
+  List<AttributeValueModel> attributeValuesItem_updateItemDetailsPostedByUser = [];
+  ItemModel? itemPostedByUser_updateIOtemDetailsPostedByUser;
+  TextEditingController nameController_updateItemDetailsPostedByUser = TextEditingController();
+  TextEditingController descriptionController_updateItemDetailsPostedByUser = TextEditingController();
+  TextEditingController priceController_updateItemDetailsPostedByUser = TextEditingController();
 
   AppCubit() : super(AppInitState());
 
@@ -159,7 +195,7 @@ class AppCubit extends Cubit<AppStates>
     });
   }
 
-///////////////////////////////////////////////////////////////////////////////////////////
+
 
   //function for homeScreen
   void buildItemModule_homeScreen()
@@ -182,16 +218,16 @@ class AppCubit extends Cubit<AppStates>
     currentIndexBottomNavigationBar_homeScreen = 2;
     emit(AppChangeState());
   }
-  ////////////////////////////////////////////////////////////////////////////////////////
+
 
   //function for Item Module
   void getItemsData_itemModule()
   {
 
-    printDebug("Start get Item data");
+    //printDebug("Start get Item data");
     dio.get_item().then((value)
     {
-      printDebug("Success get ItemData");
+      //printDebug("Success get ItemData");
       //printDebug(value.data.toString());
       if(value.statusCode == 200)
         {
@@ -201,10 +237,10 @@ class AppCubit extends Cubit<AppStates>
           {
             items.add(ItemModel.fromJson(value.data["data"][i]));
           }
-          printDebug("Success parsing");
+          //Log.v(items[0].seller!.id);
           //printDebug(items[0].name!);
           //printDebug(items[0].category!.name!);
-          printDebug(items.length.toString());
+          //printDebug(items.length.toString());
           emit(AppChangeState());
         }
       else
@@ -216,18 +252,18 @@ class AppCubit extends Cubit<AppStates>
       Log.catchE(e);
     });
   }
-////////////////////////////////////////////////////////////////////////////////////////
+
 
   //function for category Module
   void getCategoriesData_categoryModule() async
   {
-    printDebug("Start get category");
+    //printDebug("Start get category");
     dio.get_category().then((value)
     {
-      printDebug("Success get data categoy");
+      //printDebug("Success get data categoy");
       if(value.statusCode == 200)
         {
-          Log.v("getCategoriesData_categoryModule Status code 200");
+          //Log.v("getCategoriesData_categoryModule Status code 200");
           //Log.v(value.data["data"].toString());
           isfinish_categoryModule = true;
           categories.clear();
@@ -238,7 +274,7 @@ class AppCubit extends Cubit<AppStates>
         }
       else
       {
-        Log.w("Error Requested ${value.statusCode}");
+        //Log.w("Error Requested ${value.statusCode}");
       }
       //printDebug("Success parsing");
       //printDebug(categories[0].name!);
@@ -250,7 +286,7 @@ class AppCubit extends Cubit<AppStates>
     });
   }
 
-////////////////////////////////////////////////////////////////////////////////////////
+
   //function for add Catrgory Screen
   void postNewCategory_addCategoryScreen(String name, String descreption, String imageUrl, BuildContext context)
   {
@@ -262,44 +298,50 @@ class AppCubit extends Cubit<AppStates>
       if(value.statusCode == 200)
         {
           Log.v("Success Response");
-          Log.v(value.data.toString());
-          getCategoriesData_categoryModule();
+          //Log.v(value.data.toString());
+
           Fluttertoast.showToast(msg: "Success Create Category", toastLength: Toast.LENGTH_LONG);
           //post attribute for category
-          Log.v("Start Post Attribute");
+          //Log.v(jsonEncode(categoryAttributes_addCategoryScreen));
           Log.v(value.data["id"].toString());
-          Log.v(jsonEncode(categoryAttributes_addCategoryScreen));
-          Dio().post(
-            post_AttributeType,
-            data: {
-              "categoryId": value.data["id"],
-              "attributeTypes": categoryAttributes_addCategoryScreen.toList()
-            },
-            options: Options(
-              headers: {"Authorization": "bearer ${user!.token}"},
-              contentType: Headers.jsonContentType,
-              responseType: ResponseType.json,
-              validateStatus: (_) => true
-            )
-          ).then((value2){
-            Log.v("Success post attribute");
-            if(value2.statusCode == 200)
-              {
-                Log.v(value2.statusCode.toString());
-                Log.v("Success post Attribut");
-              }
-            else
-              {
-                Log.w("Faild post Attribute");
-                Log.w(value2.statusCode.toString());
-                Log.w(value2.data.toString());
-              }
-          }).catchError((e){
-            Log.e(e);
-          });
+          Log.v("Start Post Attribute");
+          for(int i = 0; i < categoryAttributes_addCategoryScreen.length; i++)
+            {
+              Dio().post(
+                  post_AttributeType,
+                  data:
+                    [{
+                      "categoryId": value.data["id"],
+                      "attributeTypeName": categoryAttributes_addCategoryScreen[i].toString()
+                    }]
+                  ,
+                  options: Options(
+                      headers: {"Authorization": "bearer ${user!.token}"},
+                      contentType: Headers.jsonContentType,
+                      responseType: ResponseType.json,
+                      validateStatus: (_) => true
+                  )
+              ).then((value2){
+                Log.v("complete post attribute");
+                if(value2.statusCode == 200)
+                {
+                  Log.v(value2.statusCode.toString());
+                  Log.v("Success post Attribut");
+                }
+                else
+                {
+                  Log.w("Faild post Attribute");
+                  Log.w(value2.statusCode.toString());
+                  Log.w(value2.data.toString());
+                }
+              }).catchError((e){
+                Log.catchE(e);
+              });
+            }
           Navigator.pop(context);
           imageCategory_addCategoryScreen = null;
           categoryAttributes_addCategoryScreen.clear();
+          getCategoriesData_categoryModule();
         }
       else
         {
@@ -338,7 +380,7 @@ class AppCubit extends Cubit<AppStates>
   }
 
   //function for Add Item Screem
-  void postNewItem_addItemScreen(String name, String description, int price, String imageUrl, int categoryId)
+  void postNewItem_addItemScreen(BuildContext context, String name, String description, int price, String imageUrl, int categoryId)
   {
     Log.v(CacheHelper.getToken()!);
     Log.v(imageUrl);
@@ -362,14 +404,23 @@ class AppCubit extends Cubit<AppStates>
     ).
     then((value)
     {
-      Log.v("Success post item");
+      Log.v("complete post item");
       {
         if(value.statusCode == 200)
           {
-            Log.v("Success Response");
-            Log.v(value.data.toString());
+            Log.v("Success Post Item");
+            //Log.v(value.data.toString());
             getItemsData_itemModule();
             Fluttertoast.showToast(msg: "Success Create Item", toastLength: Toast.LENGTH_LONG);
+            postItemAttribute_addItemScreen(value.data["id"]).then((value)
+            {
+              Log.v("complete  post Attributessssss");
+              Navigator.pop(context);
+            }).catchError((e)
+            {
+              Log.e("Error in post Item");
+              Log.catchE(e);
+            });
           }
         else
           {
@@ -395,7 +446,15 @@ class AppCubit extends Cubit<AppStates>
     });
     return await Dio().post(
       post_Image,
-      data: formData
+      data: formData,
+      options: Options(
+        headers: {
+          "Authorization": "bearer ${CacheHelper.getToken()}"
+        },
+        responseType: ResponseType.plain,
+        contentType: Headers.jsonContentType,
+        validateStatus: (_) => true
+      )
     );
   }
   void getAttributeTypeByCategoryId_addItemScreen(int categoryId)
@@ -430,6 +489,44 @@ class AppCubit extends Cubit<AppStates>
     {
       Log.catchE(e);
     });
+  }
+  Future postItemAttribute_addItemScreen(int itemId) async
+  {
+    Log.v("Start post Item Attribute");
+    for(int i = 0; i < attributeTypeByCategoryId_addItemScreen.length; i++)
+      {
+        await Dio().post(
+          post_AttributeValue,
+          data: [
+            {
+              "itemId": itemId,
+              "attributeTypeId": attributeTypeByCategoryId_addItemScreen[i]["id"],
+              "attributeValue": attributeValuesControllers_addItemScreen[i].text.toString()
+            }
+          ],
+          options: Options(
+            validateStatus: (_) => true,
+            contentType: Headers.jsonContentType,
+            responseType: ResponseType.json,
+            headers: {
+              "Authorization": "bearer ${CacheHelper.getToken()}"
+            }
+          )
+        ).then((value)
+        {
+          Log.v("Complete Start Attribute");
+          if(value.statusCode == 200)
+            {
+              Log.v("Success post Attribute");
+            }
+          else
+            {
+              Log.faildResponse(value, "Post Attribute item");
+            }
+        }).catchError((e){
+          Log.e("Error in post attribute");
+          Log.catchE(e);});
+      }
   }
 
   //function for Category Details
@@ -476,6 +573,362 @@ class AppCubit extends Cubit<AppStates>
     }).catchError((e)
     {
       Log.e(e);
+    });
+  }
+
+
+  //function for Item Details
+  void getAttributeValues_itemDetaielsScreen(int itemId)
+  {
+    dio.getAttributeValues(itemId).then((value)
+    {
+      if(value.statusCode == 200)
+        {
+          itemAttributesValues_itemsDetailsScreen = value;
+          emit(AppChangeState());
+        }
+      else
+        {
+          Log.faildResponse(value, "get Attribute Values");
+        }
+    }).catchError((e)
+    {
+      Log.catchE(e);
+    });
+  }
+
+  void postOrder_itemDetaielsScreen(ItemModel item)
+  {
+    Log.v("Start post Order");
+    
+    Dio().post(
+      post_CreateAnOrder,
+      data: {
+        "itemId": item.id,
+        "sellerId": item.seller!.id,
+        "phoneNumber": userAddress_addressScreen!.phoneNumber,
+        "streetAddress": userAddress_addressScreen!.streetAddress,
+        "city": userAddress_addressScreen!.city,
+        "recieverName": userAddress_addressScreen!.recieverName
+      },
+      options: Options(
+        contentType: Headers.jsonContentType,
+        responseType: ResponseType.json,
+        validateStatus: (_) => true
+      )
+    ).then((value)
+    {
+      if(value.statusCode == 200)
+        {}
+    }).catchError((e)
+    {
+
+    });
+  }
+
+  //functions for User Address
+  void getUserAddress_addressScreen() async
+  {
+    Log.v("Start get Address");
+    dio.getUserAddress().then((value)
+    {
+      //Log.v("Complete get Address");
+      if(value.statusCode == 200)
+        {
+          //Log.v("Success get user Address");
+          userAddress_addressScreen = AddressModel.fromJson(value.data);
+          cityController_addressScreen.text = userAddress_addressScreen!.city;
+          phoneNumberController_addressScreen.text = userAddress_addressScreen!.phoneNumber;
+          streetAddressController_addressScreen.text = userAddress_addressScreen!.streetAddress;
+          recieverNameController_addressScreen.text = userAddress_addressScreen!.recieverName;
+        }
+      else
+        {
+          Log.faildResponse(value, "User Address");
+        }
+    }).catchError((e)
+    {
+      Log.catchE(e);
+    });
+  }
+
+  void postUserAddress_addressScreen()
+  {
+    Log.v("Start Post User Address");
+    dio.postUserAddress(phoneNumberController_addressScreen.text.toString(), streetAddressController_addressScreen.text.toString(), cityController_addressScreen.text.toString(), recieverNameController_addressScreen.text.toString()).
+    then((value)
+    {
+      if(value.statusCode == 200)
+        {
+          Log.v("Success post Address");
+        }
+      else
+        {
+          Log.faildResponse(value, "post User Address");
+        }
+    }).catchError((e){Log.catchE(e);});
+  }
+
+  //function for Items by User
+  void getItemsPostedByUser()
+  {
+    emit(AppLoadingState());
+    itemsPostedByUser_itemsByUser.clear();
+    Log.v("Start get Items Posted By User");
+    dio.getItemsPostedByUser().then((value)
+    {
+      Log.v("complete get Items Posted By User");
+      if(value.statusCode == 200)
+        {
+          Log.v("Success get Items");
+          for(int i = 0; i < value.data["data"].length; i++)
+            {
+              itemsPostedByUser_itemsByUser.add(ItemModel.fromJson(value.data["data"][i]));
+            }
+          emit(AppChangeState());
+        }
+      else
+        {
+          Log.faildResponse(value, "Get Item Posted By User");
+          emit(AppChangeState());
+        }
+    }).catchError((e)
+    {
+      Log.catchE(e);
+      emit(AppChangeState());
+    });
+  }
+  void deleteItemById_itemsByUser(int id)
+  {
+    Log.v("Start delete Item");
+    dio.deleteItemById(id).then((value)
+    {
+      Log.v("Complete delete Item");
+      if(value.statusCode == 204 || value.statusCode == 200)
+        {
+          Log.v("Success delete Item");
+          getItemsPostedByUser();
+          getItemsData_itemModule();
+          Fluttertoast.showToast(msg: "DELETE", toastLength: Toast.LENGTH_LONG);
+          emit(AppChangeState());
+        }
+      else
+        {
+          Log.faildResponse(value, "Delete Item");
+        }
+    }).catchError((e)
+    {
+      Log.catchE(e);
+    });
+  }
+
+  //function for search category screen
+  void searchCategory_searchCategoryScreen(String value)
+  {
+    emit(AppLoadingState());
+    category_searchCategoryScreen.clear();
+    value = value.toLowerCase();
+    for(int i = 0; i < categories.length; i++)
+      {
+        String name = categories[i].name!;
+        name = name.toLowerCase();
+        if(name.contains(value))
+          {
+            category_searchCategoryScreen.add(categories[i]);
+          }
+      }
+    emit(AppChangeState());
+  }
+
+  //function for search Item Screeb
+  void searchItem_searchItemScreen(String value)
+  {
+    emit(AppLoadingState());
+    item_searchItemScreen.clear();
+    value = value.toLowerCase();
+    for(int i = 0; i < items.length; i++)
+    {
+      String name = items[i].name!;
+      name = name.toLowerCase();
+      if(name.contains(value))
+      {
+        item_searchItemScreen.add(items[i]);
+      }
+    }
+    emit(AppChangeState());
+  }
+
+  //function for order Items
+  void postOrdee_order(BuildContext context, ItemModel item)
+  {
+    dio.getUserAddress().then((value)
+    {
+      //Log.v("Complete get Address");
+      if(value.statusCode == 200)
+      {
+        //Log.v("Success get user Address");
+        userAddress_addressScreen = AddressModel.fromJson(value.data);
+        Log.v("Start post order");
+        dio.postOrder(item.id!,
+            item.seller!.id,
+            userAddress_addressScreen!.phoneNumber,
+            userAddress_addressScreen!.streetAddress,
+            userAddress_addressScreen!.city,
+            userAddress_addressScreen!.recieverName).
+        then((value2)
+        {
+          if(value2.statusCode == 200)
+          {
+            Log.v("Sucess post order");
+            getItemsData_itemModule();
+            Navigator.pop(context);
+          }
+          else if(value2.statusCode == 400)
+          {
+            Log.faildResponse(value, "post order");
+            Fluttertoast.showToast(msg: value.data.toString(), toastLength: Toast.LENGTH_LONG);
+          }
+          else
+          {
+            Log.faildResponse(value2, "post order");
+          }
+        }).catchError((e)
+        {
+          Log.catchE(e);
+        });
+      }
+      else
+      {
+        Log.faildResponse(value, "User Address");
+      }
+    }).catchError((e)
+    {
+      Log.catchE(e);
+    });
+  }
+
+  //function for your purchases Screen
+  void getItemsBroughtByUser_yourPurchasesScreen()
+  {
+    emit(AppLoadingState());
+    Log.v("start get Items bought by me");
+    dio.getBoughtOrders().then((value)
+    {
+      Log.v("Complete et Items bought by me");
+      if(value.statusCode == 200)
+        {
+          Log.v("Sucess et Items bought by me");
+          itemsBroughtByMeModel = ItemsBroughtByMeModel.fromJson(value);
+        }
+      else
+        {
+          Log.faildResponse(value, "items bought by me");
+        }
+      emit(AppChangeState());
+    }).catchError((e)
+    {
+      Log.catchE(e);
+      emit(AppChangeState());
+    });
+  }
+
+  //function for search item By Category screen
+  void searchItemCategoryByName_searchItemCategoryScreen(String name)
+  {
+    emit(AppLoadingState());
+    searchItemsCategoryByName_searchItemsByCategoryScreen.clear();
+    name = name.toLowerCase();
+    for(int i = 0; i < itemsByCategoryId.length; i++)
+      {
+        String value = itemsByCategoryId[i].name!;
+        value = value.toLowerCase();
+        if(value.contains(name))
+          {
+            searchItemsCategoryByName_searchItemsByCategoryScreen.add(itemsByCategoryId[i]);
+          }
+      }
+    //Log.v(searchItemsCategoryByName_searchItemsByCategoryScreen.toString());
+    emit(AppChangeState());
+  }
+
+  //function for update item details posted by user screen
+  void getAttributeValuesForItems_updateItemDetailsPostedByUser(int id)
+  {
+    attributeValueController_updateItemDetailsPostedByUser.clear();
+    attributeValuesItem_updateItemDetailsPostedByUser.clear();
+    dio.getAttributeValues(id).then((value)
+    {
+      Log.v("Complete get Attribute values");
+      if(value.statusCode == 200)
+        {
+          Log.v("Success get Attribute Values");
+          for(int i = 0; i < value.data.length; i++)
+            {
+              TextEditingController c = TextEditingController();
+              c.text = value.data[i]["value"];
+              attributeValueController_updateItemDetailsPostedByUser.add(c);
+              attributeValuesItem_updateItemDetailsPostedByUser.add(AttributeValueModel.json(value.data[i]));
+            }
+          Log.v(attributeValuesItem_updateItemDetailsPostedByUser[0].value);
+          emit(AppChangeState());
+        }
+      else
+        {
+          Log.faildResponse(value, "Attribute values");
+        }
+    }).catchError((e)
+    {
+      Log.catchE(e);
+    });
+  }
+  void updateItemDetails_updateItemsDetailsPostedByUser()
+  {
+    Log.v("Start update item details");
+    double price = double.parse(priceController_updateItemDetailsPostedByUser.text.toString());
+    dio.putUpdateItemDetails(
+        itemPostedByUser_updateIOtemDetailsPostedByUser!.id!,
+        nameController_updateItemDetailsPostedByUser.text.toString(),
+        descriptionController_updateItemDetailsPostedByUser.text.toString(),
+        price,
+        itemPostedByUser_updateIOtemDetailsPostedByUser!.category!.id!).
+    then((value)
+    {
+      Log.v("Complet update item details");
+      if(value.statusCode == 200)
+        {
+          Log.v("Success update item details");
+          for(int i = 0; i < attributeValuesItem_updateItemDetailsPostedByUser.length; i++)
+            {
+              Log.v("start Update Attribute value");
+              dio.putUpdateAttributeValueForItem(
+                  attributeValuesItem_updateItemDetailsPostedByUser[i].id,
+                  attributeValueController_updateItemDetailsPostedByUser[i].text.toString()).then((value2)
+              {
+                Log.v("Complete update Attribute value");
+                if(value2.statusCode == 200)
+                  {
+                    Log.v("Success put Attribute value");
+                  }
+                else
+                  {
+                    Log.faildResponse(value, "put Attribute value");
+                  }
+              }).catchError((e)
+              {
+                Log.catchE(e);
+              });
+            }
+          getItemsPostedByUser();
+          getItemsData_itemModule();
+          Fluttertoast.showToast(msg: "Update", toastLength: Toast.LENGTH_LONG);
+        }
+      else
+        {
+          Log.faildResponse(value, "update item details");
+        }
+    }).catchError((e)
+    {
+      Log.catchE(e);
     });
   }
 }

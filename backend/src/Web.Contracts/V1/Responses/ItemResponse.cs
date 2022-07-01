@@ -18,5 +18,7 @@
         public DateTime? ExpirationDate { get; set; }
 
         public bool Sold { get; set; }
+        
+        public ICollection<OrderResponse> Orders { get; set; }
     }
 }

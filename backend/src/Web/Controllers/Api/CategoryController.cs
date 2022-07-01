@@ -19,7 +19,7 @@ public class CategoryController : Controller
     private ICategoryService _categoryService;
 
 
-    public CategoryController(IMapper mapper,ICategoryService categoryService)
+    public CategoryController(IMapper mapper, ICategoryService categoryService)
     {
         _mapper = mapper;
         _categoryService = categoryService;
@@ -32,7 +32,7 @@ public class CategoryController : Controller
     /// <returns></returns>
 
     [HttpGet(ApiRoutes.Categories.GetAll)]
-    public async Task<IActionResult> GetAll([FromQuery] string categoryName, [FromQuery] PaginationFilter paginationFilter)
+    public async Task<IActionResult> GetAll([FromQuery] string? categoryName, [FromQuery] PaginationFilter paginationFilter)
     {
         var paginationResponse = await _categoryService.GetAllAsync(categoryName, paginationFilter);
         return Ok(paginationResponse);
@@ -98,8 +98,8 @@ public class CategoryController : Controller
     public async Task<IActionResult> Delete([FromRoute] int categoryId)
     {
        var deleted = await _categoryService.DeleteAsync(categoryId);
-        if(!deleted)
-            return NotFound();
+        if (!deleted.success)
+            return BadRequest(deleted.message);
 
         return NoContent();
     }

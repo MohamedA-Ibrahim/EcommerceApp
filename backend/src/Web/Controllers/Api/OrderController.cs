@@ -136,5 +136,19 @@ namespace Web.Controllers
 
             return Ok(orderStatus.message);
         }
+
+        /// <summary>
+        /// Cancel an order and set item sold status to false
+        /// </summary>
+        /// <param name="orderId">The id of the order</param>
+        [HttpPut(ApiRoutes.Orders.RejectOrder)]
+        public async Task<IActionResult> RejectOrder([FromRoute] int orderId)
+        {
+            var orderStatus = await _orderService.RejectOrderAsync(orderId);
+            if (!orderStatus.success)
+                return BadRequest(new { error = orderStatus.message });
+
+            return Ok(orderStatus.message);
+        }
     }
 }

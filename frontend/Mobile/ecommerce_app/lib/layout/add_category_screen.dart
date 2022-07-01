@@ -1,9 +1,11 @@
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:ecommerce_app/share/app_cubit.dart';
 import 'package:ecommerce_app/share/app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import '../share/share_api.dart';
 import '../share/share_componant.dart';
 import '../testing.dart';
 
@@ -31,7 +33,9 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
       {
         AppCubit cubit = AppCubit.get(context);
         return Scaffold(
-          appBar: AppBar(),
+          appBar: AppBar(
+
+          ),
           body: Center(
             child: SingleChildScrollView(
               child: Padding(

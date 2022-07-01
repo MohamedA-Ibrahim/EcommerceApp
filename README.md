@@ -23,4 +23,4 @@ To run the frontend web
 
 ## Demo
 * [Api](https://ecommeapi.azurewebsites.net/swagger/index.html)
-* [WebUI (WIP)](https://ecommerceview.azurewebsites.net/)
+* [WebUI (WIP)](https://ecommeapi.azurewebsites.net/)

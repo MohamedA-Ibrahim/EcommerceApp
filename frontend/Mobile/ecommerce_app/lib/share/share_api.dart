@@ -28,7 +28,6 @@ String delete_Category = "$baseUrl/categories/";
 
 String get_GetCategoryById = "$baseUrl/categories/";
 
-
 String GetUserAddress = "$baseUrl/user/address";
 
 String PostUserAddress = "$baseUrl/user/address";
@@ -37,4 +36,16 @@ String post_AttributeType = "$baseUrl/attributeTypes";
 
 String get_AttributeType = "$baseUrl/attributeTypes/";
 
-String post_AttrbuteValue = "$baseUrl/attributeValues";
+String post_AttributeValue = "$baseUrl/attributeValues";
+
+String get_AttributeValue = "$baseUrl/attributeValues/";
+
+String put_AttributeValue = "$baseUrl/attributeValues/";
+
+String post_UserAddress = "$baseUrl/user/address";
+
+String get_UserAddress = "$baseUrl/user/address";
+
+String post_CreateAnOrder = "$baseUrl/user/orders";
+
+String get_BoughtOrders = "$baseUrl/user/boughtOrders";

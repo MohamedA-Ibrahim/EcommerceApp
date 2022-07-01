@@ -2,7 +2,7 @@
 {
     public class PaginationFilter
     {
-        public PaginationFilter()
+       public PaginationFilter()
         {
             PageNumber = 1;
             PageSize = 10;

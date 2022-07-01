@@ -3,7 +3,6 @@
     public class CreateOrderRequest
     {
         public int ItemId { get; set; }
-        public string SellerId { get; set; }
 
         public string PhoneNumber { get; set; }
 

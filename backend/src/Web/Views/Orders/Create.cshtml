@@ -50,7 +50,22 @@
 </div>
 
 @section Scripts {
-    @{
-    await Html.RenderPartialAsync("_ValidationScriptsPartial");
-}
+    <partial name="_ValidationScriptsPartial"/>
+    <script>
+        $("form").validate({
+  rules: {
+    username: {
+      required: true,
+      // Using the normalizer to trim the value of the element
+      // before validating it.
+      normalizer: function(value) {
+        // Note: the value of `this` inside the `normalizer` is the corresponding
+        // DOMElement. In this example, `this` reference the `username` element.
+        // Trim the value of the input
+        return $.trim(value);
+      }
+    }
+  }
+});
+    </script>
 }

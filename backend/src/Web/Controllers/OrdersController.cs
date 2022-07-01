@@ -66,7 +66,6 @@ namespace Web.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Order order)
         {
             var item = await _itemService.GetAsync(order.ItemId);
@@ -86,14 +85,24 @@ namespace Web.Controllers
                 TempData["warning"] = "item is already sold!";
                 return RedirectToAction("Details", "Item", new { id = item.Id });
             }
+            order.BuyerId = user.Id;
             order.Id = 0;
             order.OrderDate = DateUtil.GetCurrentDate();
             order.OrderStatus = OrderStatus.Pending;
             order.PaymentStatus = PaymentStatus.Pending;
-            await _unitOfWork.Order.AddAsync(order);
-            await _unitOfWork.SaveAsync();
-            TempData["success"] = "Order Creted Successfully";
-            return RedirectToAction("Index");
+
+            if (ModelState.IsValid)
+            {
+                await _unitOfWork.Order.AddAsync(order);
+                await _unitOfWork.SaveAsync();
+                TempData["success"] = "Order Creted Successfully";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                order.Item = item;
+                return View(order);
+            }
         }
 
         /// <summary>
@@ -109,7 +118,7 @@ namespace Web.Controllers
                 TempData["error"] = "Order not found!";
                 return RedirectToAction("Index");
             }
-            if(order.Item.SellerId != _currentUserService.UserId)
+            if (order.Item.SellerId != _currentUserService.UserId)
             {
                 TempData["warning"] = "you are not the seller";
                 return RedirectToAction("Index");
@@ -122,7 +131,7 @@ namespace Web.Controllers
             return View(order);
         }
 
-        [HttpPost,AutoValidateAntiforgeryToken]
+        [HttpPost, AutoValidateAntiforgeryToken]
         public async Task<IActionResult> Accept()
         {
             return RedirectToAction("Index");
@@ -141,7 +150,7 @@ namespace Web.Controllers
                 TempData["warning"] = "you are not the seller or buyer in this order";
                 return RedirectToAction("Index");
             }
-            return View(order.Item.SellerId == _currentUserService.UserId? "DetailsSeller": "DetailsBuyer", order);
+            return View(order.Item.SellerId == _currentUserService.UserId ? "DetailsSeller" : "DetailsBuyer", order);
         }
 
         /// <summary>

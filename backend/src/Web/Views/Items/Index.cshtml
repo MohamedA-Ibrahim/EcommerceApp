@@ -33,7 +33,7 @@
                     <td>
                         <div class="w-75 btn-group" role="group">
                             <a asp-action="Upsert" asp-controller="Items" asp-route-id="@item.Id" class="btn btn-primary mx-2"> <i class="bi bi-pencil-square mx-1"></i> Edit</a>
-                            <a onClick="Delete('/Items/Delete/${data}')" class="btn btn-danger mx-2"> <i class="bi bi-trash-fill mx-1"></i> Delete</a>
+                            <a onClick="Delete('/Items/Delete/@item.Id')" class="btn btn-danger mx-2"> <i class="bi bi-trash-fill mx-1"></i> Delete</a>
                         </div>
                     </td>
                 </tr>

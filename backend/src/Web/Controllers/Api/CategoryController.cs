@@ -32,7 +32,7 @@ public class CategoryController : Controller
     /// <returns></returns>
 
     [HttpGet(ApiRoutes.Categories.GetAll)]
-    public async Task<IActionResult> GetAll([FromQuery] string categoryName, [FromQuery] PaginationFilter paginationFilter)
+    public async Task<IActionResult> GetAll([FromQuery] string? categoryName, [FromQuery] PaginationFilter paginationFilter)
     {
         var paginationResponse = await _categoryService.GetAllAsync(categoryName, paginationFilter);
         return Ok(paginationResponse);

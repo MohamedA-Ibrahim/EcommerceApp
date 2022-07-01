@@ -17,11 +17,12 @@ public static class ApiRoutes
 
     public static class Items
     {
+        public const string Get = Base + "/items/{itemId}";
+        public const string GetWithOrders = Base + "/items/d/{itemId}";
         public const string GetAll = Base + "/items";
         public const string GetUserItems = Base + "/user/items";
         public const string Update = Base + "/items/{itemId}";
         public const string Delete = Base + "/items/{itemId}";
-        public const string Get = Base + "/items/{itemId}";
         public const string Create = Base + "/items";
     }
 

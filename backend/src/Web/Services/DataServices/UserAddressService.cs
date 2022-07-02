@@ -34,7 +34,8 @@ namespace Web.Services
                     PhoneNumber = request.PhoneNumber,
                     StreetAddress = request.StreetAddress,
                     City = request.City,
-                    RecieverName = request.RecieverName
+                    RecieverName = request.RecieverName,
+                    UserId = _currentUserService.UserId
                 };
 
                 await _unitOfWork.UserAddress.AddAsync(address);

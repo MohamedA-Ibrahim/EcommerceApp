@@ -64,7 +64,15 @@
         </div>
 
         <div class="col-2 pt-4">
-            <img src="https://ecommerceapiservice.azurewebsites.net/api/v1@Model.Item.ImageUrl" width="200" style="border-radius:5px; border:1px solid #bbb9b9" />
+            @if(Model.Item.ImageUrl == null)
+            {
+                <img src="~/Images/no-image.jpg" width="300" style="border-radius:5px; border:1px solid #bbb9b9" />
+            }
+            else
+            {
+                <img src="@Model.Item.ImageUrl" width="300" style="border-radius:5px; border:1px solid #bbb9b9" />
+            }
+
         </div>
 
 

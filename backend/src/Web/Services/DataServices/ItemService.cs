@@ -69,6 +69,7 @@ namespace Web.Services
         {
             return await _unitOfWork.Item.GetFirstOrDefaultAsync(itemId);
         }
+
         public async Task<Item> GetWithDetailsAsync(int itemId)
         {
             var iqItem = _unitOfWork.Item.DBSet.Where(x => x.Id == itemId)

@@ -121,7 +121,12 @@ namespace Web.Controllers.User
             return RedirectToAction("Index");
         }
 
-
+        #region Search
+        public async Task<IActionResult> Search(string query)
+        {
+            return View(_itemServices);
+        }
+        #endregion
 
         #region API Calls from AJAX
 

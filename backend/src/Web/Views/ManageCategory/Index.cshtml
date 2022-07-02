@@ -21,7 +21,7 @@
         @foreach (var cat in Model)
         {
             <div class="col-md-6 col-lg-4 col-xl-3">
-                <div class="card shadow">
+                <div class="card shadow m-1">
                     <img asp-append-version="true" src="@(string.IsNullOrWhiteSpace(cat.ImageUrl)?"~/Images/no-image.jpg":cat.ImageUrl)" class="card-img-top" style="height:250px;width:100%;object-fit:cover;" alt="Image">
                     <div class="card-body">
                         <h5 class="card-title">@cat.Name</h5>

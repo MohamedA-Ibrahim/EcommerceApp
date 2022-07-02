@@ -35,6 +35,24 @@ namespace Web.Controllers.User
         }
 
         [AllowAnonymous]
+        public async Task<IActionResult> GategoryItems(int id)
+        {
+            var cat = await _unitOfWork.Category.GetFirstOrDefaultAsync(id);
+            if (cat == null)
+            {
+                TempData["warning"] = "category not found";
+                return RedirectToAction("Index", "Home");
+            }
+
+            var catItemsVM = new CatItemsVM()
+            {
+                Items = (await _itemServices.GetForSaleByCategoryAsync(id)).Data,
+                Category = cat
+            };
+            return View(catItemsVM);
+        }
+
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int id)
         {
             var item = await _itemServices.GetWithDetailsAsync(id);
@@ -92,17 +110,17 @@ namespace Web.Controllers.User
                 {
                     foreach (var attValue in await _unitOfWork.AttributeValue.GetAllAsync(x => x.ItemId == itemVM.Item.Id))
                     {
-                        attValue.Value = itemVM.Item.AttributeValues.Where(x=>x.AttributeTypeId == attValue.AttributeTypeId).FirstOrDefault().Value;
+                        attValue.Value = itemVM.Item.AttributeValues.Where(x => x.AttributeTypeId == attValue.AttributeTypeId).FirstOrDefault().Value;
                     }
                 }
-                else if(itemVM.Item.CategoryId != oldCategoryID)
+                else if (itemVM.Item.CategoryId != oldCategoryID)
                 {
                     //remove old attribute value
                     _unitOfWork.AttributeValue.RemoveRange(await _unitOfWork.AttributeValue.GetAllAsync(x => x.ItemId == itemVM.Item.Id));
                     await _unitOfWork.SaveAsync();
 
                     //assign itemID for all attribute values
-                    foreach(var attValue in itemVM.Item.AttributeValues)
+                    foreach (var attValue in itemVM.Item.AttributeValues)
                     {
                         attValue.ItemId = itemVM.Item.Id;
                     }
@@ -122,9 +140,11 @@ namespace Web.Controllers.User
         }
 
         #region Search
+
+        [AllowAnonymous]
         public async Task<IActionResult> Search(string query)
         {
-            return View((await _itemServices.GetForSaleAsync(query,null)).Data);
+            return View((await _itemServices.GetForSaleAsync(query, null)).Data);
         }
         #endregion
 

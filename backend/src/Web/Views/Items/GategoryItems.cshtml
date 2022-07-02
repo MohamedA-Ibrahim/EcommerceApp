@@ -1,0 +1,19 @@
+﻿@model CatItemsVM
+@{
+    ViewData["title"] = @Model.Category.Name + " - Items";
+}
+<div class="card m-1">
+    <div class="card-body row">
+        <div class="col-sm-6">
+            <img asp-append-version="true" src="@(string.IsNullOrWhiteSpace(Model.Category.ImageUrl)?"~/Images/no-image.jpg":Model.Category.ImageUrl)" class="card-img-top" style="max-height:400px; object-fit:contain" alt="Image">
+        </div>
+        <div class="col-sm-6">
+            <div class=" align-middle">
+                <h1 class="card-title">@Model.Category.Name</h1>
+                <p class="card-text">@Model.Category.Description</p>
+            </div>
+        </div>
+    </div>
+</div>
+<hr class=col-12 />
+@await Html.PartialAsync("_items",Model.Items)

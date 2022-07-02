@@ -129,7 +129,7 @@ class RegisterScreen extends StatelessWidget
           color: Colors.blue,
           child: Center(
             child: Text(
-              "REGIST NOW",
+              "REGISTER NOW",
               style: TextStyle(
                   color: Colors.white
               ),

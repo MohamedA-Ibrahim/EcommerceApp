@@ -151,13 +151,12 @@ class DioHelper
     );
   }
 
-  Future<Response> postOrder(int itemId, String sellerId, String phoneNumber, String streetAddress, String city, String recieverName) async
+  Future<Response> postOrder(int itemId, String phoneNumber, String streetAddress, String city, String recieverName) async
   {
     return await dio.post(
       post_CreateAnOrder,
       data: {
         "itemId": itemId,
-        "sellerId": sellerId,
         "phoneNumber": phoneNumber,
         "streetAddress": streetAddress,
         "city": city,
@@ -226,6 +225,102 @@ class DioHelper
           "Authorization": "bearer ${CacheHelper.getToken()}"
         }
       )
+    );
+  }
+
+  Future<Response> getSoldOrder() async
+  {
+    return await dio.get(
+      get_SoldOrders,
+      options: Options(
+        headers: {
+          "Authorization": "bearer ${CacheHelper.getToken()}"
+        }
+      )
+    );
+  }
+
+  Future<Response> getBoughtOrder() async
+  {
+    return await dio.get(
+      get_BoughtOrders,
+      options: Options(
+        headers: {
+          "Authorization": "bearer ${CacheHelper.getToken()}"
+        }
+      )
+    );
+  }
+
+  Future<Response> putCanselOrder(int orderId) async
+  {
+    return await dio.put(
+      "$put_CanselOrder$orderId",
+      options: Options(
+        headers: {
+          "Authorization": "bearer ${CacheHelper.getToken()}"
+        }
+      )
+    );
+  }
+
+  Future<Response> putRejectOrder(int orderId) async
+  {
+    return await dio.put(
+      "$put_RrjrctOrder$orderId",
+      options: Options(
+        headers: {
+          "Authorization": "bearer ${CacheHelper.getToken()}"
+        }
+      )
+    );
+  }
+
+  Future<Response> getItemDetails(int itemId) async
+  {
+    return await dio.get(
+      "$get_ItemDetails$itemId",
+      options: Options(
+          headers: {
+            "Authorization": "bearer ${CacheHelper.getToken()}"
+          }
+      )
+    );
+  }
+
+  Future<Response> startProcessingOrder(int orderId) async
+  {
+    return await dio.put(
+      "$put_StartProcessing$orderId",
+        options: Options(
+            headers: {
+              "Authorization": "bearer ${CacheHelper.getToken()}"
+            }
+        )
+    );
+  }
+
+  Future<Response> confirmPayment(int orderId) async
+  {
+    return await dio.put(
+      "$put_ConfirmPayment$orderId",
+        options: Options(
+            headers: {
+              "Authorization": "bearer ${CacheHelper.getToken()}"
+            }
+        )
+    );
+  }
+
+  Future<Response> shipOrder(int orderId) async
+  {
+    return await dio.put(
+      "$put_ShipOrder$orderId",
+        options: Options(
+            headers: {
+              "Authorization": "bearer ${CacheHelper.getToken()}"
+            }
+        )
     );
   }
 }

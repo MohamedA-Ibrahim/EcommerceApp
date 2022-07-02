@@ -74,7 +74,6 @@ class ItemModule extends StatelessWidget
             Image(
               image: cubit.items[index].imageUrl != null ? NetworkImage(cubit.items[index].imageUrl!) : AssetImage("assets/images/error_image.jpg") as ImageProvider,
               fit: BoxFit.cover,
-
             )
           ],
           ),

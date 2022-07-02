@@ -1,3 +1,4 @@
+import 'package:ecommerce_app/layout/create_order_screen.dart';
 import 'package:ecommerce_app/model/category_model.dart';
 import 'package:ecommerce_app/model/item_model.dart';
 import 'package:ecommerce_app/share/app_cubit.dart';
@@ -62,9 +63,13 @@ class _ItemsDetailsScreenState extends State<ItemsDetailsScreen>
                         style: Theme.of(context).textTheme.bodyText1,
                       ),
                       SizedBox(width: 25,),
-                      Text(
-                        item.description!,
-                        style: Theme.of(context).textTheme.bodyText1,
+                      Expanded(
+                        child: Container(
+                          child: Text(
+                            item.description!,
+                            style: Theme.of(context).textTheme.bodyText1,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -132,7 +137,7 @@ class _ItemsDetailsScreenState extends State<ItemsDetailsScreen>
                   TextButton(
                     onPressed: ()
                     {
-                      cubit.postOrdee_order(context, item);
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => CreateOrderScreen(item.id!)));
                     },
                     child: Container(
                       height: 50,

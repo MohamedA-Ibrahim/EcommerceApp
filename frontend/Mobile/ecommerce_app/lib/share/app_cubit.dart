@@ -23,6 +23,8 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../model/address_model.dart';
 import '../model/item_brought_by_me_model.dart';
+import '../model/order_model.dart';
+import '../model/requested_order_model.dart';
 import '../module/attribute_value_model.dart';
 import '../module/categoru_module.dart';
 
@@ -79,12 +81,12 @@ class AppCubit extends Cubit<AppStates>
   ItemModel? item_itemDetails;
   Response? itemAttributesValues_itemsDetailsScreen;
 
-  //variabel for Adddress Screen
+  //variabel for Create Order Screen
   AddressModel? userAddress_addressScreen;
-  TextEditingController phoneNumberController_addressScreen = TextEditingController();
-  TextEditingController streetAddressController_addressScreen = TextEditingController();
-  TextEditingController cityController_addressScreen = TextEditingController();
-  TextEditingController recieverNameController_addressScreen = TextEditingController();
+  TextEditingController phoneNumberController_createOrderScreen = TextEditingController();
+  TextEditingController streetAddressController_createOrderScreen = TextEditingController();
+  TextEditingController cityController_createOrderScreen = TextEditingController();
+  TextEditingController recieverNameController_createOrderScreen = TextEditingController();
 
   //variabel for Items By User
   List<ItemModel> itemsPostedByUser_itemsByUser = [];
@@ -108,6 +110,12 @@ class AppCubit extends Cubit<AppStates>
   TextEditingController nameController_updateItemDetailsPostedByUser = TextEditingController();
   TextEditingController descriptionController_updateItemDetailsPostedByUser = TextEditingController();
   TextEditingController priceController_updateItemDetailsPostedByUser = TextEditingController();
+
+  //variabel for order created by loged screen
+  List<OrderModel> myOrders_orderCreatedByLogedUserScreen = [];
+
+  //variabel for order requested by other User Screen
+  List<RequestedOrderModel> requestedOrder_orderRequestedByOtherUserScreen = [];
 
   AppCubit() : super(AppInitState());
 
@@ -397,6 +405,8 @@ class AppCubit extends Cubit<AppStates>
       },
       options: Options(
         validateStatus: (_)=>true,
+        responseType: ResponseType.json,
+        contentType: Headers.jsonContentType,
         headers: {
           "Authorization": "bearer ${CacheHelper.getToken()}",
         }
@@ -412,7 +422,7 @@ class AppCubit extends Cubit<AppStates>
             //Log.v(value.data.toString());
             getItemsData_itemModule();
             Fluttertoast.showToast(msg: "Success Create Item", toastLength: Toast.LENGTH_LONG);
-            postItemAttribute_addItemScreen(value.data["id"]).then((value)
+            postItemAttribute_addItemScreen(value.data["id"]).then((value2)
             {
               Log.v("complete  post Attributessssss");
               Navigator.pop(context);
@@ -424,9 +434,11 @@ class AppCubit extends Cubit<AppStates>
           }
         else
           {
+            Log.v("فى مشكله فى عمل item");
             Log.w("Faild Response ${value.statusCode}");
             Log.w(value.data.toString());
             Log.v(value.statusMessage!);
+            Log.v(value.toString());
             Fluttertoast.showToast(msg: "Error", toastLength: Toast.LENGTH_LONG);
           }
         emit(AppChangeState());
@@ -597,78 +609,6 @@ class AppCubit extends Cubit<AppStates>
     });
   }
 
-  void postOrder_itemDetaielsScreen(ItemModel item)
-  {
-    Log.v("Start post Order");
-    
-    Dio().post(
-      post_CreateAnOrder,
-      data: {
-        "itemId": item.id,
-        "sellerId": item.seller!.id,
-        "phoneNumber": userAddress_addressScreen!.phoneNumber,
-        "streetAddress": userAddress_addressScreen!.streetAddress,
-        "city": userAddress_addressScreen!.city,
-        "recieverName": userAddress_addressScreen!.recieverName
-      },
-      options: Options(
-        contentType: Headers.jsonContentType,
-        responseType: ResponseType.json,
-        validateStatus: (_) => true
-      )
-    ).then((value)
-    {
-      if(value.statusCode == 200)
-        {}
-    }).catchError((e)
-    {
-
-    });
-  }
-
-  //functions for User Address
-  void getUserAddress_addressScreen() async
-  {
-    Log.v("Start get Address");
-    dio.getUserAddress().then((value)
-    {
-      //Log.v("Complete get Address");
-      if(value.statusCode == 200)
-        {
-          //Log.v("Success get user Address");
-          userAddress_addressScreen = AddressModel.fromJson(value.data);
-          cityController_addressScreen.text = userAddress_addressScreen!.city;
-          phoneNumberController_addressScreen.text = userAddress_addressScreen!.phoneNumber;
-          streetAddressController_addressScreen.text = userAddress_addressScreen!.streetAddress;
-          recieverNameController_addressScreen.text = userAddress_addressScreen!.recieverName;
-        }
-      else
-        {
-          Log.faildResponse(value, "User Address");
-        }
-    }).catchError((e)
-    {
-      Log.catchE(e);
-    });
-  }
-
-  void postUserAddress_addressScreen()
-  {
-    Log.v("Start Post User Address");
-    dio.postUserAddress(phoneNumberController_addressScreen.text.toString(), streetAddressController_addressScreen.text.toString(), cityController_addressScreen.text.toString(), recieverNameController_addressScreen.text.toString()).
-    then((value)
-    {
-      if(value.statusCode == 200)
-        {
-          Log.v("Success post Address");
-        }
-      else
-        {
-          Log.faildResponse(value, "post User Address");
-        }
-    }).catchError((e){Log.catchE(e);});
-  }
-
   //function for Items by User
   void getItemsPostedByUser()
   {
@@ -711,6 +651,10 @@ class AppCubit extends Cubit<AppStates>
           getItemsData_itemModule();
           Fluttertoast.showToast(msg: "DELETE", toastLength: Toast.LENGTH_LONG);
           emit(AppChangeState());
+        }
+      else if(value.statusCode == 400)
+        {
+          Fluttertoast.showToast(msg: value.data["error"], toastLength: Toast.LENGTH_LONG);
         }
       else
         {
@@ -756,55 +700,6 @@ class AppCubit extends Cubit<AppStates>
       }
     }
     emit(AppChangeState());
-  }
-
-  //function for order Items
-  void postOrdee_order(BuildContext context, ItemModel item)
-  {
-    dio.getUserAddress().then((value)
-    {
-      //Log.v("Complete get Address");
-      if(value.statusCode == 200)
-      {
-        //Log.v("Success get user Address");
-        userAddress_addressScreen = AddressModel.fromJson(value.data);
-        Log.v("Start post order");
-        dio.postOrder(item.id!,
-            item.seller!.id,
-            userAddress_addressScreen!.phoneNumber,
-            userAddress_addressScreen!.streetAddress,
-            userAddress_addressScreen!.city,
-            userAddress_addressScreen!.recieverName).
-        then((value2)
-        {
-          if(value2.statusCode == 200)
-          {
-            Log.v("Sucess post order");
-            getItemsData_itemModule();
-            Navigator.pop(context);
-          }
-          else if(value2.statusCode == 400)
-          {
-            Log.faildResponse(value, "post order");
-            Fluttertoast.showToast(msg: value.data.toString(), toastLength: Toast.LENGTH_LONG);
-          }
-          else
-          {
-            Log.faildResponse(value2, "post order");
-          }
-        }).catchError((e)
-        {
-          Log.catchE(e);
-        });
-      }
-      else
-      {
-        Log.faildResponse(value, "User Address");
-      }
-    }).catchError((e)
-    {
-      Log.catchE(e);
-    });
   }
 
   //function for your purchases Screen
@@ -931,6 +826,215 @@ class AppCubit extends Cubit<AppStates>
       Log.catchE(e);
     });
   }
+
+  // function for Create Order Screen
+  void postOrder_createOrderScreen(BuildContext context, int itemId, String phoneNumber, String streetAddress, String city, String recieverName)
+  {
+    Log.v("Start Post Order");
+    dio.postOrder(itemId, phoneNumber, streetAddress, city, recieverName).
+    then((value)
+    {
+      Log.v("Complete Post Order");
+      if(value.statusCode == 200)
+        {
+          Log.v("Success Post Order");
+          Fluttertoast.showToast(msg: "Success Order", toastLength: Toast.LENGTH_LONG);
+          Navigator.pop(context);
+          Navigator.pop(context);
+        }
+      else if(value.statusCode == 400)
+        {
+          Log.v("Success Post Order");
+          Fluttertoast.showToast(msg: value.data.toString(), toastLength: Toast.LENGTH_LONG);
+        }
+      else
+        {
+          Log.faildResponse(value, "Post Order");
+        }
+    }).catchError((e)
+    {
+      Log.catchE(e);
+    });
+  }
+
+  //function for order created By Loged Screen
+  void getMyOrders_orderCreatedByLogedScreen()
+  {
+    Log.v("Start get My Orders");
+    emit(AppLoadingState());
+    myOrders_orderCreatedByLogedUserScreen.clear();
+    dio.getBoughtOrder().then((value)
+    {
+      Log.v("Complete get my orders");
+      if(value.statusCode == 200)
+        {
+          Log.v("Success get my orders");
+          for(int i = 0; i < value.data.length; i++)
+            {
+              myOrders_orderCreatedByLogedUserScreen.add(OrderModel.fromJson(value.data[i]));
+            }
+          //Log.v(myOrders_orderCreatedByLogedUserScreen[0].itemName!);
+          emit(AppChangeState());
+        }
+      else
+        {
+          Log.faildResponse(value, "Get My Orders");
+          emit(AppChangeState());
+        }
+    }).catchError((e)
+    {
+      Log.catchE(e);
+      emit(AppChangeState());
+    });
+  }
+
+  void cancelOrder_orderCreatedByLogedUser(int orderId)
+  {
+    Log.v("Start Cancel Order");
+    emit(AppLoadingState());
+    dio.putCanselOrder(orderId).then((value)
+    {
+      Log.v("Complete Cancel Order");
+      if(value.statusCode == 200)
+        {
+          Log.v("Success Order cancelled");
+          Fluttertoast.showToast(msg: value.data.toString(), toastLength: Toast.LENGTH_LONG);
+          getMyOrders_orderCreatedByLogedScreen();
+          emit(AppChangeState());
+        }
+      else
+        {
+          Log.faildResponse(value, "Cancel order");
+          emit(AppChangeState());
+        }
+    }).catchError((e)
+    {
+      Log.catchE(e);
+      emit(AppChangeState());
+    });
+  }
+
+  //function for order requestes by other user
+  void getAllRequestedOrder_orderRequestedByOtherUser(int itemId)
+  {
+    emit(AppLoadingState());
+    requestedOrder_orderRequestedByOtherUserScreen.clear();
+    Log.v("Start get requested order");
+    dio.getItemDetails(itemId).then((value)
+    {
+      Log.v("Complete get requested order");
+      if(value.statusCode == 200)
+        {
+          Log.v("Success get requested order");
+          for(int i = 0; i < value.data["orders"].length; i++)
+            {
+              requestedOrder_orderRequestedByOtherUserScreen.add(RequestedOrderModel.fromJson(value.data["orders"][i]));
+            }
+          emit(AppChangeState());
+        }
+      else
+        {
+          Log.faildResponse(value, "get requested order");
+          emit(AppChangeState());
+        }
+    }).catchError((e)
+    {
+      Log.catchE(e);
+      emit(AppChangeState());
+    });
+  }
+  void rejectOrder_orderRequestedByOtherUser(int orderId, int itemId)
+  {
+    Log.v("Start reject order");
+    dio.putRejectOrder(orderId).then((value)
+    {
+      Log.v("Complet reject order");
+      if(value.statusCode == 200)
+        {
+          Log.v("Success reject order");
+          Fluttertoast.showToast(msg: value.data.toString(), toastLength: Toast.LENGTH_SHORT);
+          getAllRequestedOrder_orderRequestedByOtherUser(itemId);
+          emit(AppChangeState());
+        }
+      else
+        {
+          Log.faildResponse(value, "reject order");
+        }
+    }).catchError((e)
+    {
+      
+    });
+  }
+
+  void startProcessing_orderRequestedByOtherUser(int orderId, int itemId)
+  {
+    emit(AppLoadingState());
+    dio.startProcessingOrder(orderId).then((value)
+    {
+      if(value.statusCode == 200)
+        {
+          Fluttertoast.showToast(msg: value.data.toString(), toastLength: Toast.LENGTH_SHORT);
+          getAllRequestedOrder_orderRequestedByOtherUser(itemId);
+          emit(AppChangeState());
+        }
+      else
+        {
+          Log.faildResponse(value, "Start Proccessing");
+          emit(AppChangeState());
+        }
+    }).catchError((e)
+    {
+      Log.catchE(e);
+      emit(AppChangeState());
+    });
+  }
+
+  void confirmPayment_orderRequestedByOtherUser(int orderId, int itemId)
+  {
+    emit(AppLoadingState());
+    dio.confirmPayment(orderId).then((value)
+    {
+      if(value.statusCode == 200)
+        {
+          Fluttertoast.showToast(msg: value.data.toString(), toastLength: Toast.LENGTH_SHORT);
+          getAllRequestedOrder_orderRequestedByOtherUser(itemId);
+          emit(AppChangeState());
+        }
+      else
+        {
+          Log.faildResponse(value, "Confirm Payment");
+          emit(AppChangeState());
+        }
+    }).catchError((e)
+    {
+      Log.catchE(e);
+      emit(AppChangeState());
+    });
+  }
+
+  void shipOrder_orderRequestedByOtherUser(int orderId, int itemId)
+  {
+    emit(AppLoadingState());
+    dio.shipOrder(orderId).then((value)
+    {
+      if(value.statusCode == 200)
+        {
+          Fluttertoast.showToast(msg: value.data.toString(), toastLength: Toast.LENGTH_SHORT);
+          getAllRequestedOrder_orderRequestedByOtherUser(itemId);
+          emit(AppChangeState());
+        }
+      else
+        {
+          Log.faildResponse(value, "ship Payment");
+          emit(AppChangeState());
+        }
+    }).catchError((e)
+    {
+      Log.catchE(e);
+      emit(AppChangeState());
+    });
+  }
+
 }
 
 //ImCG4IInMiIAZM1tIW1KHn4e1JM=

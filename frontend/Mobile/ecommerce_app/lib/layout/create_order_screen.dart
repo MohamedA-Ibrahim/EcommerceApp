@@ -3,14 +3,18 @@ import 'package:ecommerce_app/share/app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class AddressScreen extends StatefulWidget
+class CreateOrderScreen extends StatefulWidget
 {
+  int itemId;
+  CreateOrderScreen(this.itemId);
   @override
-  State<AddressScreen> createState() => _AddressScreenState();
+  State<CreateOrderScreen> createState() => _CreateOrderScreenState(itemId);
 }
 
-class _AddressScreenState extends State<AddressScreen>
+class _CreateOrderScreenState extends State<CreateOrderScreen>
 {
+  int itemId;
+  _CreateOrderScreenState(this.itemId);
   @override
   Widget build(BuildContext context)
   {
@@ -29,7 +33,7 @@ class _AddressScreenState extends State<AddressScreen>
               child: Column(
                 children: [
                   TextFormField(
-                    controller: cubit.phoneNumberController_addressScreen,
+                    controller: cubit.phoneNumberController_createOrderScreen,
                     keyboardType: TextInputType.phone,
                     decoration: InputDecoration(
                       label: Text("Phone Number"),
@@ -38,7 +42,7 @@ class _AddressScreenState extends State<AddressScreen>
                   ),
                   SizedBox(height: 15,),
                   TextFormField(
-                    controller: cubit.streetAddressController_addressScreen,
+                    controller: cubit.streetAddressController_createOrderScreen,
                     keyboardType: TextInputType.text,
                     decoration: InputDecoration(
                         label: Text("street Address"),
@@ -47,7 +51,7 @@ class _AddressScreenState extends State<AddressScreen>
                   ),
                   SizedBox(height: 15,),
                   TextFormField(
-                    controller: cubit.cityController_addressScreen,
+                    controller: cubit.cityController_createOrderScreen,
                     keyboardType: TextInputType.text,
                     decoration: InputDecoration(
                         label: Text("City"),
@@ -56,7 +60,7 @@ class _AddressScreenState extends State<AddressScreen>
                   ),
                   SizedBox(height: 15,),
                   TextFormField(
-                    controller: cubit.recieverNameController_addressScreen,
+                    controller: cubit.recieverNameController_createOrderScreen,
                     keyboardType: TextInputType.text,
                     decoration: InputDecoration(
                         label: Text("Reciever Name"),
@@ -67,7 +71,14 @@ class _AddressScreenState extends State<AddressScreen>
                   TextButton(
                     onPressed: ()
                     {
-                      cubit.postUserAddress_addressScreen();
+                      cubit.postOrder_createOrderScreen(
+                          context,
+                          itemId,
+                          cubit.phoneNumberController_createOrderScreen.text.toString(),
+                          cubit.streetAddressController_createOrderScreen.text.toString(),
+                          cubit.cityController_createOrderScreen.text.toString(),
+                          cubit.recieverNameController_createOrderScreen.text.toString()
+                      );
                     },
                     child: Container(
                       width: double.infinity,
@@ -75,7 +86,7 @@ class _AddressScreenState extends State<AddressScreen>
                       color: Colors.blue,
                       child: Center(
                         child: Text(
-                          "Update",
+                          "Order",
                           style: TextStyle(
                             color: Colors.black
                           ),

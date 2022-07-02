@@ -49,3 +49,17 @@ String get_UserAddress = "$baseUrl/user/address";
 String post_CreateAnOrder = "$baseUrl/user/orders";
 
 String get_BoughtOrders = "$baseUrl/user/boughtOrders";
+
+String get_SoldOrders = "$baseUrl/user/soldOrders";
+
+String put_CanselOrder = "$baseUrl/user/orders/cancel/";
+
+String put_RrjrctOrder = "$baseUrl/user/orders/reject/";
+
+String get_ItemDetails = "$baseUrl/items/d/";
+
+String put_StartProcessing = "$baseUrl/user/orders/startProcessing/";
+
+String put_ConfirmPayment = "$baseUrl/user/orders/confirmPayment/";
+
+String put_ShipOrder = "$baseUrl/user/orders/shipOrder/";

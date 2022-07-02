@@ -1,3 +1,4 @@
+import 'package:ecommerce_app/layout/order_requested_by_other_other_user_screen.dart';
 import 'package:ecommerce_app/layout/update_item_details_posted_by_user.dart';
 import 'package:ecommerce_app/share/app_cubit.dart';
 import 'package:flutter/material.dart';
@@ -86,6 +87,26 @@ class _ItemsByUserScreenState extends State<ItemsByUserScreen>
               ),
               Row(
                 children: [
+                  TextButton(
+                    onPressed: ()
+                    {
+                      cubit.getAllRequestedOrder_orderRequestedByOtherUser(cubit.itemsPostedByUser_itemsByUser[index].id!);
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => OrderRequestedByOtherUserScreen()));
+                    },
+                    child: Container(
+                      width: 70,
+                      height: 40,
+                      color: Colors.blue,
+                      child: Center(
+                        child: Text(
+                          "ORDERS",
+                          style: TextStyle(
+                              color: Colors.black
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                   Spacer(),
                   TextButton(
                     onPressed: ()

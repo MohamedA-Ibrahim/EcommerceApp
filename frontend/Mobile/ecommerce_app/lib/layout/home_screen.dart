@@ -85,7 +85,7 @@ class HomeScreen extends StatelessWidget
             unselectedItemColor: Colors.black,
             items: [
               BottomNavigationBarItem(
-                label: "Advertisement",
+                label: "Items",
                 icon: Icon(Icons.menu_sharp)
               ),
               BottomNavigationBarItem(
@@ -119,7 +119,7 @@ class HomeScreen extends StatelessWidget
                             children: [
                               ListTile(
                                 leading: Icon(Icons.menu_sharp),
-                                title: Text("Advertisement"),
+                                title: Text("Item"),
                                 onTap: ()
                                 {
                                   Navigator.push(context, MaterialPageRoute(builder: (context)=> AddItemScreen())).then((value) => Navigator.pop(context));

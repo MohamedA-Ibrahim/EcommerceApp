@@ -10,7 +10,7 @@
 <div class="row">
     <div class="col-md-8 pb-2">
         <div class="card m-1 h-100">
-            <img asp-append-version="true" src="@(string.IsNullOrWhiteSpace(Model.ImageUrl)?"~/Images/no-image.jpg":Model.ImageUrl)" class="w-100  h-100" style="object-fit:contain; max-height:600px" alt="@Model.Name" />
+            <img asp-append-version="true" src="@(string.IsNullOrWhiteSpace(Model.ImageUrl)?"~/Images/no-image.jpg":Model.ImageUrl)" class="w-100  h-100" style="object-fit:contain; max-height:400px" alt="@Model.Name" />
         </div>
     </div>
     <div class="col-md-4">
@@ -104,13 +104,9 @@
                                     <td>@order.Buyer.ProfileName</td>
                                     <td>@order.OrderDate</td>
                                     <td>@order.OrderStatus</td>
-                                    @if (!Model.Sold)
-                                    {
-                                        <td>
-                                            <a asp-action="Accept" asp-controller="Orders" asp-route-id="@order.Id" class="btn btn-primary"><i class="bi bi-bag-check-fill mx-1"></i>Accept</a>
-                                            <a asp-action="Details" asp-controller="Orders" asp-route-id="@order.Id" class="btn btn-primary"><i class="bi bi-list-nested mx-1"></i>Details</a>
-                                        </td>
-                                    }
+                                    <td>
+                                        <a asp-action="Details" asp-controller="Orders" asp-route-id="@order.Id" class="btn btn-primary"><i class="bi bi-list-nested mx-1"></i>Details</a>
+                                    </td>
                                 </tr>
                             }
                         </tbody>
@@ -121,7 +117,8 @@
     }
 </div>
 @section Scripts{
-    @if(Model.SellerId == userID){
-<script src="~/js/item.js"></script>
+    @if (Model.SellerId == userID)
+    {
+        <script src="~/js/item.js"></script>
     }
 }

@@ -1,0 +1,14 @@
+﻿@model IEnumerable<Web.Contracts.V1.Responses.ItemResponse>
+
+@{
+    ViewData["Title"] = "Search";
+}
+
+<div class="row">
+    <h1>Search</h1>
+    <input id="search1" class="form-control me-2 col" type="search" placeholder="Search" value="@Context.Request.Query["query"]" aria-label="Search">
+    <button class="btn btn-outline-success col-auto" onclick="Search('#search1')" type="button"><i class="bi bi-search"></i></button>
+</div>
+<hr class=col-12 />
+
+@await Html.PartialAsync("_items", Model)

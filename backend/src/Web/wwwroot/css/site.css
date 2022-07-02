@@ -28,3 +28,9 @@ html,body{
     min-height: 90%;
     position: relative;
 }
+.align-middle {
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}

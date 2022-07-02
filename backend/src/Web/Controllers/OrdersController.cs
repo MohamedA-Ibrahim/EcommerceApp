@@ -13,6 +13,7 @@ namespace Web.Controllers
     [Authorize]
     public class OrdersController : Controller
     {
+        #region Constractor and properities
         private readonly IUnitOfWork _unitOfWork;
         private readonly IOrderService _orderService;
         private readonly IItemService _itemService;
@@ -27,12 +28,16 @@ namespace Web.Controllers
             this._userManger = userManger;
             _currentUserService = currentUserService;
         }
+        #endregion
 
+        #region My Orders
         public async Task<IActionResult> Index()
         {
             return View(await _orderService.GetBuyerOrdersAsync());
         }
+        #endregion
 
+        #region Create Order
         /// <summary>
         /// GET method for creating new order
         /// </summary>
@@ -58,7 +63,7 @@ namespace Web.Controllers
                 return RedirectToAction("Details", "Item", new { id = item.Id });
             }
 
-            return View(new Order() { SellerId = item.SellerId, Item = item, PhoneNumber = user.PhoneNumber, RecieverName = user.ProfileName, ItemId = item.Id });
+            return View(new Order() { Item = item, PhoneNumber = user.PhoneNumber, RecieverName = user.ProfileName, ItemId = item.Id });
         }
 
         /// <summary>
@@ -66,7 +71,6 @@ namespace Web.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Order order)
         {
             var item = await _itemService.GetAsync(order.ItemId);
@@ -86,126 +90,142 @@ namespace Web.Controllers
                 TempData["warning"] = "item is already sold!";
                 return RedirectToAction("Details", "Item", new { id = item.Id });
             }
+            order.BuyerId = user.Id;
             order.Id = 0;
             order.OrderDate = DateUtil.GetCurrentDate();
             order.OrderStatus = OrderStatus.Pending;
             order.PaymentStatus = PaymentStatus.Pending;
-            await _unitOfWork.Order.AddAsync(order);
-            await _unitOfWork.SaveAsync();
-            TempData["success"] = "Order Creted Successfully";
-            return RedirectToAction("Index");
-        }
 
-        /// <summary>
-        /// GET Method for accept order
-        /// </summary>
-        /// <param name="id">order ID</param>
-        /// <returns></returns>
-        public async Task<IActionResult> Accept(int id)
-        {
-            var order = await _orderService.GetAsync(id);
-            if (order == null)
+            if (ModelState.IsValid)
             {
-                TempData["error"] = "Order not found!";
+                await _unitOfWork.Order.AddAsync(order);
+                await _unitOfWork.SaveAsync();
+                TempData["success"] = "Order Creted Successfully";
                 return RedirectToAction("Index");
             }
-            if(order.SellerId != _currentUserService.UserId)
+            else
             {
-                TempData["warning"] = "you are not the seller";
-                return RedirectToAction("Index");
+                order.Item = item;
+                return View(order);
             }
-            if (order.IsClosed)
-            {
-                TempData["warning"] = "you can not accept the closed order";
-                return RedirectToAction("Index");
-            }
-            return View(order);
         }
+        #endregion
 
-        [HttpPost,AutoValidateAntiforgeryToken]
-        public async Task<IActionResult> Accept()
-        {
-            return RedirectToAction("Index");
-        }
+        #region View Details
 
         public async Task<IActionResult> Details(int id)
         {
-            var order = await _orderService.GetAsync(id);
+            var order = await _unitOfWork.Order.GetWithDetails(id);
             if (order == null)
             {
                 TempData["error"] = "Order not found!";
                 return RedirectToAction("Index");
             }
-            if (order.SellerId != _currentUserService.UserId && order.BuyerId != _currentUserService.UserId)
+            if (order.Item.SellerId != _currentUserService.UserId && order.BuyerId != _currentUserService.UserId)
             {
                 TempData["warning"] = "you are not the seller or buyer in this order";
                 return RedirectToAction("Index");
             }
-            return View(order.SellerId == _currentUserService.UserId? "DetailsSeller": "DetailsBuyer", order);
+            return View(order.Item.SellerId == _currentUserService.UserId ? "DetailsSeller" : "DetailsBuyer", order);
         }
 
-        /// <summary>
-        /// GET Method for accept order
-        /// </summary>
-        /// <param name="id">order ID</param>
-        /// <returns></returns>
-        public async Task<IActionResult> Delete(int id)
-        {
-            var order = await _orderService.GetAsync(id);
-            if (order == null)
-            {
-                TempData["error"] = "Order not found!";
-                return RedirectToAction("Index");
-            }
-            if (order.BuyerId != _currentUserService.UserId)
-            {
-                TempData["warning"] = "you are not the buyer";
-                return RedirectToAction("Index");
-            }
-            if (order.IsClosed)
-            {
-                TempData["warning"] = "you can not delete the closed order";
-                return RedirectToAction("Index");
-            }
-            return View(order);
-        }
+        #endregion
 
+        #region Seller Operations
+
+        #region Start processing Order
         [HttpPost, AutoValidateAntiforgeryToken]
-        public async Task<IActionResult> Delete()
+        public async Task<IActionResult> StartProcessing(int id)
         {
-            return RedirectToAction("Index");
+            var result = await _orderService.StartProcessingAsync(id);
+            if (result.success)
+            {
+                TempData["success"] = result.message;
+            }
+            else
+            {
+                TempData["warning"] = result.message;
+            }
+            return RedirectToAction("Details", new { id = id });
         }
+        #endregion
 
-        /// <summary>
-        /// GET Method for accept order
-        /// </summary>
-        /// <param name="id">order ID</param>
-        /// <returns></returns>
+        #region Confirm Payment Order
+        [HttpPost, AutoValidateAntiforgeryToken]
+        public async Task<IActionResult> ConfirmPayment(int id)
+        {
+            var result = await _orderService.ConfirmPaymentAsync(id);
+            if (result.success)
+            {
+                TempData["success"] = result.message;
+            }
+            else
+            {
+                TempData["warning"] = result.message;
+            }
+            return RedirectToAction("Details", new { id = id });
+        }
+        #endregion
+
+        #region Ship Order
+        [HttpPost, AutoValidateAntiforgeryToken]
+        public async Task<IActionResult> Ship(int id)
+        {
+            var result = await _orderService.ShipOrderAsync(id);
+            if (result.success)
+            {
+                TempData["success"] = result.message;
+            }
+            else
+            {
+                TempData["warning"] = result.message;
+            }
+            return RedirectToAction("Details", new { id = id });
+        }
+        #endregion
+
+        #region Reject Order 
+        [HttpPost, AutoValidateAntiforgeryToken]
         public async Task<IActionResult> Reject(int id)
         {
-            var order = await _orderService.GetAsync(id);
-            if (order == null)
+            var result = await _orderService.RejectOrderAsync(id);
+            if (result.success)
             {
-                TempData["error"] = "Order not found!";
-                return RedirectToAction("Index");
+                TempData["success"] = result.message;
             }
-            if (order.SellerId != _currentUserService.UserId)
+            else
             {
-                TempData["warning"] = "you are not the seller";
-                return RedirectToAction("Index");
+                TempData["warning"] = result.message;
             }
-            if (order.IsClosed)
-            {
-                TempData["warning"] = "you can not reject the closed order";
-                return RedirectToAction("Index");
-            }
-            return View(order);
+            return RedirectToAction("Details", new { id = id });
         }
+        #endregion
 
+        #endregion
+
+        #region Buyer Operations
+        #region Cancel Order 
+        /// <summary>
+        /// POST Method for cancel the order
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost, AutoValidateAntiforgeryToken]
-        public async Task<IActionResult> Reject()
+        public async Task<IActionResult> Cancel(int id)
         {
-            return RedirectToAction("Index");
+            var result = await _orderService.CancelOrderAsync(id);
+            if (result.success)
+            {
+                TempData["success"] = result.message;
+            }
+            else
+            {
+                TempData["warning"] = result.message;
+            }
+            return RedirectToAction("Details",new { id = id });
         }
+        #endregion
+        #endregion
+
     }
 }

@@ -28,14 +28,35 @@ namespace Web.Services
             _currentUserService = currentUserService;
         }
 
-        public async Task<PagedResponse<ItemResponse>> GetForSaleAsync(string itemName=null, PaginationFilter paginationFilter=null)
+        public async Task<PagedResponse<ItemResponse>> GetForSaleAsync(string query=null, PaginationFilter paginationFilter=null)
+        {
+            List<Item> items;
+
+            if (query != null)
+                items = await _unitOfWork.Item.GetAllIncludingAsync(x => !x.Sold && (x.Name.Contains(query)|| x.Category.Name.Contains(query)), paginationFilter, x => x.Category, u => u.Seller);
+            else
+                items = await _unitOfWork.Item.GetAllIncludingAsync(x => !x.Sold, paginationFilter, x => x.Category, u => u.Seller);
+
+            var itemResponse = _mapper.Map<List<ItemResponse>>(items);
+
+            if (paginationFilter == null || paginationFilter.PageNumber < 1 || paginationFilter.PageSize < 1)
+            {
+                return new PagedResponse<ItemResponse>(itemResponse);
+            }
+
+            var totalRecords = await _unitOfWork.Item.CountAsync();
+            var paginationResponse = PaginationHelpers.CreatePaginatedResponse(itemResponse, paginationFilter, totalRecords, _uriService);
+            return paginationResponse;
+        }
+
+        public async Task<PagedResponse<ItemResponse>> GetForSaleByCategoryAsync(int categoryId, string itemName = null, PaginationFilter paginationFilter = null)
         {
             List<Item> items;
 
             if (itemName != null)
-                items = await _unitOfWork.Item.GetAllIncludingAsync(x => !x.Sold && x.Name.Contains(itemName), paginationFilter, x => x.Category, u => u.Seller);
+                items = await _unitOfWork.Item.GetAllIncludingAsync(x => x.CategoryId == categoryId && !x.Sold && x.Name.Contains(itemName), paginationFilter, x => x.Category, u => u.Seller);
             else
-                items = await _unitOfWork.Item.GetAllIncludingAsync(x => !x.Sold, paginationFilter, x => x.Category, u => u.Seller);
+                items = await _unitOfWork.Item.GetAllIncludingAsync(x => x.CategoryId == categoryId && !x.Sold, paginationFilter, x => x.Category, u => u.Seller);
 
             var itemResponse = _mapper.Map<List<ItemResponse>>(items);
 
@@ -69,6 +90,7 @@ namespace Web.Services
         {
             return await _unitOfWork.Item.GetFirstOrDefaultAsync(itemId);
         }
+
         public async Task<Item> GetWithDetailsAsync(int itemId)
         {
             var iqItem = _unitOfWork.Item.DBSet.Where(x => x.Id == itemId)
@@ -108,10 +130,12 @@ namespace Web.Services
             if (item.SellerId != _currentUserService.UserId)
                 return (false, "You don't own this item");
 
-
             if (item.Sold)
                 return (false, "You can't delete a sold item");
 
+            var itemExistsInOrder = await _unitOfWork.Item.ItemExistsInOrder(itemId);
+            if (itemExistsInOrder)
+                return (false, "This item is placed in an order. it can't be deleted unless the order is rejected or cancelled");
 
             _unitOfWork.Item.Remove(item);
             await _unitOfWork.SaveAsync();

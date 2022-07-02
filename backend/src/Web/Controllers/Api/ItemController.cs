@@ -31,13 +31,25 @@ public class ItemController : ControllerBase
     }
 
     /// <summary>
-    /// Get items for sale
+    /// Get items for sale with category and seller details
     /// </summary>
     /// <param name="itemName">Search items by item name (optional)</param>
-    [HttpGet(ApiRoutes.Items.GetAll)]
-    public async Task<IActionResult> GetForSaleAsync([FromQuery] string itemName, [FromQuery] PaginationFilter paginationFilter)
+    [HttpGet(ApiRoutes.Items.GetForSale)]
+    public async Task<IActionResult> GetForSaleAsync([FromQuery] string? itemName, [FromQuery] PaginationFilter paginationFilter)
     {      
         var paginationResponse = await _itemService.GetForSaleAsync(itemName, paginationFilter);
+
+        return Ok(paginationResponse);
+    }
+
+    /// <summary>
+    /// Get items for sale with by category
+    /// </summary>
+    /// <param name="itemName">Search items by item name (optional)</param>
+    [HttpGet(ApiRoutes.Items.GetForSaleByCategory)]
+    public async Task<IActionResult> GetForSaleByCategoryAsync([FromQuery] int categoryId, [FromQuery] string? itemName, [FromQuery] PaginationFilter paginationFilter)
+    {
+        var paginationResponse = await _itemService.GetForSaleByCategoryAsync(categoryId, itemName, paginationFilter);
 
         return Ok(paginationResponse);
     }
@@ -71,6 +83,23 @@ public class ItemController : ControllerBase
 
         return Ok(_mapper.Map<ItemResponse>(item));
     }
+
+    /// <summary>
+    /// Get an Item by Id with its details(category, attribute values, seller and orders for this item)
+    /// </summary>
+    /// <param name="itemId">The id of the item</param>
+    /// <returns></returns>
+    [HttpGet(ApiRoutes.Items.GetWithOrders)]
+    public async Task<IActionResult> GetByIdWithOrders([FromRoute] int itemId)
+    {
+        var item = await _itemService.GetWithDetailsAsync(itemId);
+
+        if (item == null)
+            return NotFound();
+
+        return Ok(_mapper.Map<ItemResponse>(item));
+    }
+
 
     /// <summary>
     /// Create a new item for sale

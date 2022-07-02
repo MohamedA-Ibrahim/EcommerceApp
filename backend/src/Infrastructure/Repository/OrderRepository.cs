@@ -32,12 +32,28 @@ public class OrderRepository : Repository<Order>, IOrderRepository
 
     public async Task<bool> UserIsOrderSellerAsync(int orderId, string userId)
     {
-        return await _db.Orders.AnyAsync(x=> x.Id == orderId && x.SellerId == userId);
+        return await _db.Orders.AnyAsync(x=> x.Id == orderId && x.Item.SellerId == userId);
     }
 
     public async Task<bool> UserIsOrderBuyerAsync(int orderId, string userId)
     {
         return await _db.Orders.AnyAsync(x => x.Id == orderId && x.BuyerId == userId);
 
+    }
+
+    public async Task<bool> UserHasExistingOrderForItem(int itemId, string userId)
+    {
+        return await _db.Orders.AnyAsync(x => x.ItemId == itemId && x.BuyerId == userId);
+    }
+
+    public async Task<Order> GetWithDetails(int id)
+    {
+        return await _db.Orders.Where(x => x.Id == id)
+            .Include(x => x.Item)
+            .Include(x => x.Item.AttributeValues).ThenInclude(a => a.AttributeType)
+            .Include(x=>x.Item.Seller)
+            .Include(x=>x.Item.Category)
+            .Include(x=>x.Buyer)
+            .FirstOrDefaultAsync();
     }
 }

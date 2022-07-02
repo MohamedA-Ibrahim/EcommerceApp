@@ -9,5 +9,6 @@ public interface IOrderRepository : IRepository<Order>
     Task UpdateStatusAsync(int id, OrderStatus orderStatus, PaymentStatus paymentStatus);
     Task<bool> UserIsOrderSellerAsync(int orderId, string userId);
     Task<bool> UserIsOrderBuyerAsync(int orderId, string userId);
-
+    Task<bool> UserHasExistingOrderForItem(int itemId, string userId);
+    Task<Order> GetWithDetails(int id);
 }

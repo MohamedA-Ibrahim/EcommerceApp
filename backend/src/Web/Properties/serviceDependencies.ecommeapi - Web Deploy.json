@@ -8,7 +8,8 @@
     },
     "mssql1": {
       "secretStore": "AzureAppSettings",
-      "type": "mssql.onprem",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/fayoumedu/databases/EcommerceDb",
+      "type": "mssql.azure",
       "connectionId": "ConnectionStrings:DefaultConnection"
     }
   }

@@ -24,7 +24,7 @@ namespace Web.Services
 
         public async Task<List<Order>> GetSellerOrdersAsync()
         {
-            var orders = await _unitOfWork.Order.GetAllIncludingAsync(x => x.SellerId == _currentUserService.UserId, null, x => x.Item, x=> x.Seller);
+            var orders = await _unitOfWork.Order.GetAllIncludingAsync(x => x.Item.SellerId == _currentUserService.UserId, null, x=> x.Item.Seller, x => x.Item, x => x.Buyer);
 
             return orders;
         }
@@ -32,15 +32,14 @@ namespace Web.Services
         public async Task<List<Order>> GetBuyerOrdersAsync()
         {
             //Get all buyer orders except orders cancelled by the buyer
-            var orders = await _unitOfWork.Order.GetAllIncludingAsync(x => x.BuyerId == _currentUserService.UserId && x.OrderStatus != OrderStatus.Cancelled,
-                null, x => x.Buyer, x => x.Item, x => x.Seller);
+            var orders = await _unitOfWork.Order.GetAllIncludingAsync(x => x.BuyerId == _currentUserService.UserId && x.OrderStatus != OrderStatus.Cancelled, null, x => x.Buyer, x => x.Item.Seller, x => x.Item);
 
             return orders;
         } 
 
         public async Task<Order> GetAsync(int orderId)
         {
-            var order = await _unitOfWork.Order.GetFirstOrDefaultIncludingAsync(orderId, x => x.Buyer, x => x.Item, x=> x.Seller);
+            var order = await _unitOfWork.Order.GetFirstOrDefaultIncludingAsync(orderId, x => x.Buyer, x => x.Item, x=> x.Item.Seller);
             return order;
         }
 
@@ -51,16 +50,18 @@ namespace Web.Services
             if (userOwnsItem)
                 return (null, "You can't buy your own item!");
 
-            var sellerId = (await _unitOfWork.Item.GetFirstOrDefaultAsync(orderRequest.ItemId)).SellerId;
+            bool userHasExistingOrderForItem = await _unitOfWork.Order.UserHasExistingOrderForItem(orderRequest.ItemId, _currentUserService.UserId);
+            if(userHasExistingOrderForItem)
+                return (null, "You can't buy the same item twice!");
 
             var order = new Order
             {
                 ItemId = orderRequest.ItemId,
+                BuyerId = _currentUserService.UserId,
                 PhoneNumber = orderRequest.PhoneNumber,
                 StreetAddress = orderRequest.StreetAddress,
                 City = orderRequest.City,
                 RecieverName = orderRequest.RecieverName,
-                SellerId = sellerId,
                 OrderDate = DateUtil.GetCurrentDate(),
                 OrderStatus = OrderStatus.Pending,
                 PaymentStatus = PaymentStatus.Pending
@@ -84,6 +85,12 @@ namespace Web.Services
             if (!userOwnsOrder)
                 return (false, "You are not the seller of this order");
 
+            if (order.OrderStatus == OrderStatus.Cancelled)
+                return (false, "The order was cancelled by the buyer");
+
+            if (order.OrderStatus == OrderStatus.Rejected)
+                return (false, "You can't accept an order that you rejected");
+
             order.OrderStatus = OrderStatus.InProcess;
             order.PaymentStatus = PaymentStatus.Pending;
 
@@ -104,7 +111,13 @@ namespace Web.Services
             if (!userOwnsOrder)
                 return (false, "You are not the seller of this order");
 
-            order.OrderStatus = OrderStatus.Approved;
+            if (order.OrderStatus == OrderStatus.Cancelled)
+                return (false, "The order was cancelled by the buyer");
+
+            if (order.OrderStatus == OrderStatus.Rejected)
+                return (false, "You can't confirm payment on an order that you rejected");
+
+            order.OrderStatus = OrderStatus.Confirmed;
             order.PaymentStatus = PaymentStatus.Approved;
             order.PaymentDate = DateUtil.GetCurrentDate();
 
@@ -124,7 +137,7 @@ namespace Web.Services
 
         public async Task<(bool success, string message)> ShipOrderAsync(int orderId)
         {
-            var order = await _unitOfWork.Order.GetFirstOrDefaultIncludingAsync(orderId, x => x.Seller, x => x.Item);
+            var order = await _unitOfWork.Order.GetFirstOrDefaultIncludingAsync(orderId, x => x.Item, x=> x.Item.Seller);
             if (order == null)
                 return (false, "Order doesn't exist");
 
@@ -163,6 +176,12 @@ namespace Web.Services
             if (order.OrderStatus == OrderStatus.Shipped)
                 return (false, "The order has already been shipped. it can't be cancelled");
 
+            if (order.OrderStatus == OrderStatus.Cancelled)
+                return (false, "The order is already cancelled");
+
+            if (order.OrderStatus == OrderStatus.Rejected)
+                return (false, "The order is already rejected");
+
             order.OrderStatus = OrderStatus.Cancelled;
 
             _unitOfWork.Order.Update(order);
@@ -185,6 +204,12 @@ namespace Web.Services
 
             if (order.OrderStatus == OrderStatus.Shipped)
                 return (false, "The order has already been shipped. it can't be rejected");
+
+            if (order.OrderStatus == OrderStatus.Cancelled)
+                return (false, "The order is already cancelled by the user");
+
+            if (order.OrderStatus == OrderStatus.Rejected)
+                return (false, "The order is already rejected");
 
             order.OrderStatus = OrderStatus.Rejected;
 

@@ -3,10 +3,11 @@
 @{
     ViewData["Title"] = "Order Details";
 }
+
 <div class="row">
     <div class="col-md-8 pb-2">
         <div class="card m-1 h-100">
-            <img asp-append-version="true" src="@(string.IsNullOrWhiteSpace(Model.Item.ImageUrl)?"~/Images/no-image.jpg":Model.Item.ImageUrl)" class="w-100  h-100" style="object-fit:contain; max-height:400px" alt="@Model.Item.Name" />
+            <img asp-append-version="true" src="@(string.IsNullOrWhiteSpace(Model.Item.ImageUrl)?"~/Images/no-image.jpg":Model.Item.ImageUrl)" class="w-100  h-100" style="object-fit:contain; max-height:600px" alt="@Model.Item.Name" />
         </div>
     </div>
     <div class="col-md-4">
@@ -20,7 +21,7 @@
                 <h5><a href="#!">@Model.Item.Category.Name</a></h5>
             </div>
         </div>
-
+        
         <div class="card m-1">
             <div class="card-header">
                 <h5>Order details</h5>
@@ -33,6 +34,15 @@
         </div>
         <div class="card m-1">
             <div class="card-header">
+                <h5>Seller details</h5>
+            </div>
+            <div class="card-body">
+                <h3>@Model.Item.Seller.ProfileName</h3>
+                <p>Phone : @Model.Item.Seller.PhoneNumber</p>
+            </div>
+        </div>
+        <div class="card m-1">
+            <div class="card-header">
                 <h5>Buyer details</h5>
             </div>
             <div class="card-body">
@@ -40,39 +50,6 @@
                 <p>Phone : @Model.Buyer.PhoneNumber</p>
             </div>
         </div>
-
-        @if (Model.OrderStatus < Application.Enums.OrderStatus.Shipped)
-        {
-            @Html.AntiForgeryToken()
-            <div class="card m-1">
-                @if (Model.OrderStatus == Application.Enums.OrderStatus.Pending)
-                {
-                    <form class="card-body" method="post" asp-action="StartProcessing" asp-controller="Orders" asp-route-id="@Model.Id">
-                        <button type="submit" class="btn btn-primary w-100"><i class="bi bi-check2-square mx-1"></i>Start Processing</button>
-                    </form>
-                }
-                else if(Model.OrderStatus == Application.Enums.OrderStatus.InProcess)
-                {
-                    <form class="card-body" method="post" asp-action="ConfirmPayment" asp-controller="Orders" asp-route-id="@Model.Id">
-                        <button type="submit" class="btn btn-primary w-100"><i class="bi bi-bag-check mx-1"></i>Confirm Payment</button>
-                    </form>
-                }
-                else if(Model.OrderStatus == Application.Enums.OrderStatus.Confirmed)
-                {
-                    <form class="card-body" method="post" asp-action="Ship" asp-controller="Orders" asp-route-id="@Model.Id">
-                        <button type="submit" class="btn btn-primary w-100"><i class="bi bi-truck mx-1"></i>Ship Order</button>
-                    </form>
-                }
-
-                @* Reject Order *@
-                @if (Model.OrderStatus < Application.Enums.OrderStatus.Confirmed)
-                {
-                    <form class="card-body" method="post" asp-action="Reject" asp-controller="Orders" asp-route-id="@Model.Id">
-                        <button type="submit" class="btn btn-danger w-100"><i class="bi bi-x-lg mx-1"></i>Reject</button>
-                    </form>
-                }
-            </div>
-        }
     </div>
     <div class="col-md-8">
         <div class="card m-1">

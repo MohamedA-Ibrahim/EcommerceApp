@@ -1,8 +1,13 @@
 ﻿@model IEnumerable<Item>
+
+@{
+    ViewData["Title"] = "My Items";
+}
+
 <div class="container p-3">
     <div class="row pt-4">
         <div class="col-6">
-            <h2 class="text-primary">Item List</h2>
+            <h2 class="text-primary">My Item</h2>
         </div>
         <div class="col-6 text-end">
             <a asp-controller="Items" asp-action="Upsert" class="btn btn-primary">
@@ -33,7 +38,7 @@
                     <td>
                         <div class="w-75 btn-group" role="group">
                             <a asp-action="Upsert" asp-controller="Items" asp-route-id="@item.Id" class="btn btn-primary mx-2"> <i class="bi bi-pencil-square mx-1"></i> Edit</a>
-                            <a onClick="Delete('/Items/Delete/${data}')" class="btn btn-danger mx-2"> <i class="bi bi-trash-fill mx-1"></i> Delete</a>
+                            <a onClick="Delete('/Items/Delete/@item.Id')" class="btn btn-danger mx-2"> <i class="bi bi-trash-fill mx-1"></i> Delete</a>
                         </div>
                     </td>
                 </tr>

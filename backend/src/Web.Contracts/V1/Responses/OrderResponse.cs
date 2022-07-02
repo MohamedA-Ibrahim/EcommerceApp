@@ -5,12 +5,8 @@
         public int Id { get; set; }
 
         public ApplicationUserResponse Buyer { get; set; }
-        public ApplicationUserResponse Seller { get; set; }
-
+        public OrderItemResponse Item { get; set; }
         public DateTime OrderDate { get; set; }
-
-        public int ItemId { get; set; }
-        public string ItemName { get; set; }
 
         public DateTime? ShippingDate { get; set; }
         public DateTime? PaymentDate { get; set; }

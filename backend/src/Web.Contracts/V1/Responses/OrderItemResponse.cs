@@ -1,6 +1,6 @@
 ﻿namespace Web.Contracts.V1.Responses
 {
-    public class ItemResponse
+    public class OrderItemResponse
     {
         public int Id { get; set; }
 
@@ -18,7 +18,5 @@
         public DateTime? ExpirationDate { get; set; }
 
         public bool Sold { get; set; }
-        
-        public ICollection<OrderResponse> Orders { get; set; }
     }
 }

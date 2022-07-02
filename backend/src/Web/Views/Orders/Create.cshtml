@@ -17,7 +17,6 @@
             <div asp-validation-summary="ModelOnly" class="text-danger col-12"></div>
             @Html.AntiForgeryToken()
             @Html.HiddenFor(x=>x.ItemId)
-            @Html.HiddenFor(x=>x.SellerId)
             <div class="col-md-6">
                 <div class="form-group">
                     <label asp-for="RecieverName" class="control-label"></label>
@@ -51,7 +50,22 @@
 </div>
 
 @section Scripts {
-    @{
-    await Html.RenderPartialAsync("_ValidationScriptsPartial");
-}
+    <partial name="_ValidationScriptsPartial"/>
+    <script>
+        $("form").validate({
+  rules: {
+    username: {
+      required: true,
+      // Using the normalizer to trim the value of the element
+      // before validating it.
+      normalizer: function(value) {
+        // Note: the value of `this` inside the `normalizer` is the corresponding
+        // DOMElement. In this example, `this` reference the `username` element.
+        // Trim the value of the input
+        return $.trim(value);
+      }
+    }
+  }
+});
+    </script>
 }

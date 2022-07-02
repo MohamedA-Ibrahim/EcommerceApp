@@ -5,7 +5,7 @@
        public PaginationFilter()
         {
             PageNumber = 1;
-            PageSize = 10;
+            PageSize = 50;
         }
 
         public PaginationFilter(int pageNumber, int pageSize)

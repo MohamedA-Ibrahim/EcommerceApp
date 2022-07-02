@@ -72,6 +72,8 @@ namespace Web.Controllers.User
                 CategoryList = new SelectList(await _unitOfWork.Category.GetAllAsync(), "Id", "Name")
             };
 
+
+
             if (id != null && id > 0)
             {
                 var userID = _userManager.GetUserId(User);
@@ -100,6 +102,9 @@ namespace Web.Controllers.User
 
             if (itemVM.Item.Id == 0)
             {
+                var userID = _userManager.GetUserId(User);
+                itemVM.Item.SellerId = userID;
+
                 await _unitOfWork.Item.AddAsync(itemVM.Item);
                 TempData["success"] = "Item created succesfully";
             }

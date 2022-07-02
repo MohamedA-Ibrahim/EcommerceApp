@@ -13,24 +13,28 @@
     @if (SignInManager.IsSignedIn(User))
     {
         <li class="nav-item">
-                <a class="nav-link " asp-controller="Items" asp-action="Index"><i class="bi bi-boxes"></i> My Ads</a>
-            </li>
+            <a class="nav-link " asp-controller="Items" asp-action="Index"><i class="bi bi-boxes"></i> My Ads</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link " asp-controller="Orders" asp-action="Index"><i class="bi bi-boxes"></i>My Orders</a>
+        </li>
+        
         @if (User.IsInRole("Admin"))
         {
             <li class="nav-item">
                 <a class="nav-link " asp-controller="ManageCategory" asp-action="Index"><i class="bi bi-cogs"></i>Categories Manage</a>
             </li>
-        }
-        
-        <li class="nav-item">
-                <a class="nav-link " asp-controller="Orders" asp-action="Index"><i class="bi bi-boxes"></i>My Orders</a>
+            <li class="nav-item">
+                <a class="nav-link " asp-controller="OrderReport" asp-action="Index"><i class="bi bi-cogs"></i>Orders Report</a>
             </li>
+        }
     }
     @* <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Admin Pages</a>
-        <div class="dropdown-menu">
-        </div>
-        </li>*@
+    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Admin Pages</a>
+    <div class="dropdown-menu">
+    </div>
+    </li>*@
 </ul>
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))

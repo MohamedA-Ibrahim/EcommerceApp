@@ -30,7 +30,7 @@
 @foreach (var item in Model) {
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Item.Seller.ProfileName)
+                @Html.DisplayFor(model => item.Item.Seller.ProfileName)
             </th>
             <td>
                 @Html.DisplayFor(modelItem => item.Item.Name)
@@ -45,7 +45,7 @@
                 @Html.DisplayFor(modelItem => item.OrderStatus)
             </td>
             <td>
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ })
+                <a asp-controller="OrderReport" asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">Details</a>
             </td>
         </tr>
 }

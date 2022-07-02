@@ -1,0 +1,73 @@
+﻿@model Domain.Entities.Order
+
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<h1>Order Details</h1>
+<div class="row">
+    <div class="col-md-8 pb-2">
+        <div class="card m-1 h-100">
+            <img asp-append-version="true" src="@(string.IsNullOrWhiteSpace(Model.Item.ImageUrl)?"~/Images/no-image.jpg":Model.Item.ImageUrl)" class="w-100  h-100" style="object-fit:contain; max-height:600px" alt="@Model.Item.Name" />
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card m-1">
+            <div class="card-header @(Model.Item.Sold?"bg-danger":"bg-info") ">
+                <h3 class="text-white">@(Model.Item.Sold?"Sold":"Ready for Sale")</h3>
+            </div>
+            <div class="card-body">
+                <h1>@Model.Item.Name</h1>
+                <h3>@Model.Item.Price L.E</h3>
+                <h5><a href="#!">@Model.Item.Category.Name</a></h5>
+            </div>
+        </div>
+        <div class="card m-1">
+            <div class="card-header">
+                <h5>Seller details</h5>
+            </div>
+            <div class="card-body">
+                <h3>@Model.Item.Seller.ProfileName</h3>
+                <p>Phone : @Model.Item.Seller.PhoneNumber</p>
+            </div>
+        </div>
+        <div class="card m-1">
+            <div class="card-header">
+                <h5>Buyer details</h5>
+            </div>
+            <div class="card-body">
+                <h3>@Model.Buyer.ProfileName</h3>
+                <p>Phone : @Model.Buyer.PhoneNumber</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card m-1">
+            <div class="card-header">
+                <h5>Item details</h5>
+            </div>
+            <div class="card-body">
+                <div class=row>
+                    @foreach (var att in Model.Item.AttributeValues)
+                    {
+                        <div class="col-lg-6 row justify-content-between">
+                            <h5 class="col-auto">@att.AttributeType.Name :</h5>
+                            <p class="col-auto">@att.Value</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card m-1">
+            <div class="card-header">
+                <h5>Order details</h5>
+            </div>
+            <div class="card-body">
+                <h2>@Model.OrderStatus</h2>
+                <p>Payment : @Model.PaymentStatus</p>
+            </div>
+        </div>
+    </div>
+</div>

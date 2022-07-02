@@ -18,5 +18,16 @@ namespace Web.Controllers.Admin
         {
             return View(await _unitOfWork.Order.GetAllIncludingAsync(null, null, x => x.Buyer, x => x.Item, x => x.Item.Seller));
         }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            var order = await _unitOfWork.Order.GetWithDetails(id);
+            if(order == null)
+            {
+                TempData["error"] = "Order not found";
+                return RedirectToAction("Index");
+            }
+            return View(order);
+        }
     }
 }

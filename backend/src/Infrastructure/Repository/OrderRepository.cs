@@ -45,4 +45,15 @@ public class OrderRepository : Repository<Order>, IOrderRepository
     {
         return await _db.Orders.AnyAsync(x => x.ItemId == itemId && x.BuyerId == userId);
     }
+
+    public async Task<Order> GetWithDetails(int id)
+    {
+        return await _db.Orders.Where(x => x.Id == id)
+            .Include(x => x.Item)
+            .Include(x => x.Item.AttributeValues).ThenInclude(a => a.AttributeType)
+            .Include(x=>x.Item.Seller)
+            .Include(x=>x.Item.Category)
+            .Include(x=>x.Buyer)
+            .FirstOrDefaultAsync();
+    }
 }

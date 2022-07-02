@@ -22,6 +22,17 @@
                 <h5><a href="#!">@Model.Item.Category.Name</a></h5>
             </div>
         </div>
+        
+        <div class="card m-1">
+            <div class="card-header">
+                <h5>Order details</h5>
+            </div>
+            <div class="card-body">
+                <h2>@Model.OrderStatus</h2>
+                <p>Ordered Date : @Model.OrderDate</p>
+                <p>Payment : @Model.PaymentStatus</p>
+            </div>
+        </div>
         <div class="card m-1">
             <div class="card-header">
                 <h5>Seller details</h5>
@@ -62,11 +73,14 @@
     <div class="col-md-4">
         <div class="card m-1">
             <div class="card-header">
-                <h5>Order details</h5>
+                <h5>Delivery Details</h5>
             </div>
             <div class="card-body">
-                <h2>@Model.OrderStatus</h2>
-                <p>Payment : @Model.PaymentStatus</p>
+                <h4>Shipping Date : @Model.ShippingDate</h4>
+                <p>Reciever Name : @Model.RecieverName</p>
+                <p>Phone Number : @Model.PhoneNumber</p>
+                <p>City : @Model.City</p>
+                <p>Street Address : @Model.StreetAddress</p>
             </div>
         </div>
     </div>

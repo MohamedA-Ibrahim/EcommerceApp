@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web.Contracts", "Web.Contra
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{82D966F3-1D10-4F46-A35F-40B7E95DFDFB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecommerce.UnitTests", "..\tests\Ecommerce.UnitTests\Ecommerce.UnitTests.csproj", "{0560018D-6E05-4F52-8057-974F968BD545}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ecommerce.UnitTests", "..\tests\Ecommerce.UnitTests\Ecommerce.UnitTests.csproj", "{0560018D-6E05-4F52-8057-974F968BD545}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

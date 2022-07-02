@@ -49,6 +49,27 @@ namespace Web.Services
             return paginationResponse;
         }
 
+        public async Task<PagedResponse<ItemResponse>> GetForSaleByCategoryAsync(int categoryId, string itemName = null, PaginationFilter paginationFilter = null)
+        {
+            List<Item> items;
+
+            if (itemName != null)
+                items = await _unitOfWork.Item.GetAllIncludingAsync(x => x.CategoryId == categoryId && !x.Sold && x.Name.Contains(itemName), paginationFilter, x => x.Category, u => u.Seller);
+            else
+                items = await _unitOfWork.Item.GetAllIncludingAsync(x => x.CategoryId == categoryId && !x.Sold, paginationFilter, x => x.Category, u => u.Seller);
+
+            var itemResponse = _mapper.Map<List<ItemResponse>>(items);
+
+            if (paginationFilter == null || paginationFilter.PageNumber < 1 || paginationFilter.PageSize < 1)
+            {
+                return new PagedResponse<ItemResponse>(itemResponse);
+            }
+
+            var totalRecords = await _unitOfWork.Item.CountAsync();
+            var paginationResponse = PaginationHelpers.CreatePaginatedResponse(itemResponse, paginationFilter, totalRecords, _uriService);
+            return paginationResponse;
+        }
+
         public async Task<PagedResponse<ItemResponse>> GetPostedByUserAsync(PaginationFilter paginationFilter)
         {
             var items = await _unitOfWork.Item.GetAllIncludingAsync(x => x.SellerId == _currentUserService.UserId, paginationFilter, x => x.Category);

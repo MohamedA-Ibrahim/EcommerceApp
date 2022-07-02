@@ -117,7 +117,7 @@ namespace Web.Services
             if (order.OrderStatus == OrderStatus.Rejected)
                 return (false, "You can't confirm payment on an order that you rejected");
 
-            order.OrderStatus = OrderStatus.Approved;
+            order.OrderStatus = OrderStatus.Confirmed;
             order.PaymentStatus = PaymentStatus.Approved;
             order.PaymentDate = DateUtil.GetCurrentDate();
 

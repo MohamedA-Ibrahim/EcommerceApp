@@ -1,90 +1,109 @@
 ﻿@model Domain.Entities.Order
 
 @{
-    ViewData["Title"] = "DetailsSeller";
+    ViewData["Title"] = "Order Details";
 }
+<div class="row">
+    <div class="col-md-8 pb-2">
+        <div class="card m-1 h-100">
+            <img asp-append-version="true" src="@(string.IsNullOrWhiteSpace(Model.Item.ImageUrl)?"~/Images/no-image.jpg":Model.Item.ImageUrl)" class="w-100  h-100" style="object-fit:contain; max-height:600px" alt="@Model.Item.Name" />
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card m-1">
+            <div class="card-header @(Model.Item.Sold?"bg-danger":"bg-info") ">
+                <h3 class="text-white">@(Model.Item.Sold?"Sold":"Ready for Sale")</h3>
+            </div>
+            <div class="card-body">
+                <h1>@Model.Item.Name</h1>
+                <h3>@Model.Item.Price L.E</h3>
+                <h5><a href="#!">@Model.Item.Category.Name</a></h5>
+            </div>
+        </div>
 
-<h1>DetailsSeller</h1>
+        <div class="card m-1">
+            <div class="card-header">
+                <h5>Order details</h5>
+            </div>
+            <div class="card-body">
+                <h2>@Model.OrderStatus</h2>
+                <p>Ordered Date : @Model.OrderDate</p>
+                <p>Payment : @Model.PaymentStatus</p>
+            </div>
+        </div>
+        <div class="card m-1">
+            <div class="card-header">
+                <h5>Buyer details</h5>
+            </div>
+            <div class="card-body">
+                <h3>@Model.Buyer.ProfileName</h3>
+                <p>Phone : @Model.Buyer.PhoneNumber</p>
+            </div>
+        </div>
 
-<div>
-    <h4>Order</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Item.SellerId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Item.SellerId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OrderDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OrderDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ItemId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ItemId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ShippingDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ShippingDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PaymentDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PaymentDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OrderStatus)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OrderStatus)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PaymentStatus)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PaymentStatus)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PhoneNumber)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PhoneNumber)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StreetAddress)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StreetAddress)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.City)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.City)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.RecieverName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.RecieverName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Id)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Id)
-        </dd>
-    </dl>
-</div>
-<div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    <a asp-action="Index">Back to List</a>
+        @if (Model.OrderStatus < Application.Enums.OrderStatus.Shipped)
+        {
+            @Html.AntiForgeryToken()
+            <div class="card m-1">
+                @if (Model.OrderStatus == Application.Enums.OrderStatus.Pending)
+                {
+                    <form class="card-body" method="post" asp-action="StartProcessing" asp-controller="Orders" asp-route-id="@Model.Id">
+                        <button type="submit" class="btn btn-primary w-100"><i class="bi bi-check2-square mx-1"></i>Start Processing</button>
+                    </form>
+                }
+                else if(Model.OrderStatus == Application.Enums.OrderStatus.InProcess)
+                {
+                    <form class="card-body" method="post" asp-action="ConfirmPayment" asp-controller="Orders" asp-route-id="@Model.Id">
+                        <button type="submit" class="btn btn-primary w-100"><i class="bi bi-bag-check mx-1"></i>Confirm Payment</button>
+                    </form>
+                }
+                else if(Model.OrderStatus == Application.Enums.OrderStatus.Confirmed)
+                {
+                    <form class="card-body" method="post" asp-action="Ship" asp-controller="Orders" asp-route-id="@Model.Id">
+                        <button type="submit" class="btn btn-primary w-100"><i class="bi bi-truck mx-1"></i>Ship Order</button>
+                    </form>
+                }
+
+                @* Reject Order *@
+                @if (Model.OrderStatus < Application.Enums.OrderStatus.Confirmed)
+                {
+                    <form class="card-body" method="post" asp-action="Reject" asp-controller="Orders" asp-route-id="@Model.Id">
+                        <button type="submit" class="btn btn-danger w-100"><i class="bi bi-x-lg mx-1"></i>Reject</button>
+                    </form>
+                }
+            </div>
+        }
+    </div>
+    <div class="col-md-8">
+        <div class="card m-1">
+            <div class="card-header">
+                <h5>Item details</h5>
+            </div>
+            <div class="card-body">
+                <div class=row>
+                    @foreach (var att in Model.Item.AttributeValues)
+                    {
+                        <div class="col-lg-6 row justify-content-between">
+                            <h5 class="col-auto">@att.AttributeType.Name :</h5>
+                            <p class="col-auto">@att.Value</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card m-1">
+            <div class="card-header">
+                <h5>Delivery Details</h5>
+            </div>
+            <div class="card-body">
+                <h4>Shipping Date : @Model.ShippingDate</h4>
+                <p>Reciever Name : @Model.RecieverName</p>
+                <p>Phone Number : @Model.PhoneNumber</p>
+                <p>City : @Model.City</p>
+                <p>Street Address : @Model.StreetAddress</p>
+            </div>
+        </div>
+    </div>
 </div>

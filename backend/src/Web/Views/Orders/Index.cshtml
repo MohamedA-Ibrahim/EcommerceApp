@@ -3,65 +3,59 @@
 @{
     ViewData["Title"] = "My Orders";
 }
-<div class="card shadow">
-    <div class="card-header">
-        <h3>My Orders</h3>
-    </div>
-    <div class="card-body overflow-auto">
-        <table id="tblData" class="table">
-            <thead>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Item.Name)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Item.Price)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.OrderDate)
-                    </th>
-                    <th>
-                        Seller
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.OrderStatus)
-                    </th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var order in Model)
-                {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => order.Item.Name)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => order.Item.Price)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => order.OrderDate)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => order.Item.Seller.ProfileName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => order.OrderStatus)
-                        </td>
-                        <td>
-                            <a asp-action="Details" asp-controller="Orders" asp-route-id="@order.Id" class="btn btn-primary"><i class="bi bi-list-nested mx-1"></i>Details</a>
-                            <a asp-action="Delete" asp-controller="Orders" asp-route-id="@order.Id" class="btn btn-danger"><i class="bi bi-trash-fill mx-1"></i>Delete</a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-</div>
+<h3>My Orders</h3>
+<table id="tblData" class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Item.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Item.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderDate)
+            </th>
+            <th>
+                Seller
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderStatus)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => order.Item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => order.Item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => order.OrderDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => order.Item.Seller.ProfileName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => order.OrderStatus)
+                </td>
+                <td>
+                    <a asp-action="Details" asp-controller="Orders" asp-route-id="@order.Id" class="btn btn-primary"><i class="bi bi-list-nested mx-1"></i>Details</a>
+                    <a asp-action="Delete" asp-controller="Orders" asp-route-id="@order.Id" class="btn btn-danger"><i class="bi bi-trash-fill mx-1"></i>Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
 @section scripts{
-<script>
+    <script>
             $(document).ready(function () {
         dataTable =  $('#tblData').DataTable();
     });
 </script>
-}
+    }

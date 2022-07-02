@@ -24,7 +24,7 @@ namespace Web.Services
 
         public async Task<List<Order>> GetSellerOrdersAsync()
         {
-            var orders = await _unitOfWork.Order.GetAllIncludingAsync(x => x.Item.SellerId == _currentUserService.UserId, null, x => x.Item, x=> x.Item.Seller);
+            var orders = await _unitOfWork.Order.GetAllIncludingAsync(x => x.Item.SellerId == _currentUserService.UserId, null, x=> x.Item.Seller, x => x.Item, x => x.Buyer);
 
             return orders;
         }
@@ -32,8 +32,7 @@ namespace Web.Services
         public async Task<List<Order>> GetBuyerOrdersAsync()
         {
             //Get all buyer orders except orders cancelled by the buyer
-            var orders = await _unitOfWork.Order.GetAllIncludingAsync(x => x.BuyerId == _currentUserService.UserId && x.OrderStatus != OrderStatus.Cancelled,
-                null, x => x.Buyer, x => x.Item, x => x.Item.Seller);
+            var orders = await _unitOfWork.Order.GetAllIncludingAsync(x => x.BuyerId == _currentUserService.UserId && x.OrderStatus != OrderStatus.Cancelled, null, x => x.Buyer, x => x.Item.Seller, x => x.Item);
 
             return orders;
         } 
@@ -58,6 +57,7 @@ namespace Web.Services
             var order = new Order
             {
                 ItemId = orderRequest.ItemId,
+                BuyerId = _currentUserService.UserId,
                 PhoneNumber = orderRequest.PhoneNumber,
                 StreetAddress = orderRequest.StreetAddress,
                 City = orderRequest.City,
@@ -85,6 +85,12 @@ namespace Web.Services
             if (!userOwnsOrder)
                 return (false, "You are not the seller of this order");
 
+            if (order.OrderStatus == OrderStatus.Cancelled)
+                return (false, "The order was cancelled by the buyer");
+
+            if (order.OrderStatus == OrderStatus.Rejected)
+                return (false, "You can't accept an order that you rejected");
+
             order.OrderStatus = OrderStatus.InProcess;
             order.PaymentStatus = PaymentStatus.Pending;
 
@@ -104,6 +110,12 @@ namespace Web.Services
             var userOwnsOrder = await _unitOfWork.Order.UserIsOrderSellerAsync(orderId, _currentUserService.UserId);
             if (!userOwnsOrder)
                 return (false, "You are not the seller of this order");
+
+            if (order.OrderStatus == OrderStatus.Cancelled)
+                return (false, "The order was cancelled by the buyer");
+
+            if (order.OrderStatus == OrderStatus.Rejected)
+                return (false, "You can't confirm payment on an order that you rejected");
 
             order.OrderStatus = OrderStatus.Approved;
             order.PaymentStatus = PaymentStatus.Approved;
@@ -164,6 +176,12 @@ namespace Web.Services
             if (order.OrderStatus == OrderStatus.Shipped)
                 return (false, "The order has already been shipped. it can't be cancelled");
 
+            if (order.OrderStatus == OrderStatus.Cancelled)
+                return (false, "The order is already cancelled");
+
+            if (order.OrderStatus == OrderStatus.Rejected)
+                return (false, "The order is already rejected");
+
             order.OrderStatus = OrderStatus.Cancelled;
 
             _unitOfWork.Order.Update(order);
@@ -186,6 +204,12 @@ namespace Web.Services
 
             if (order.OrderStatus == OrderStatus.Shipped)
                 return (false, "The order has already been shipped. it can't be rejected");
+
+            if (order.OrderStatus == OrderStatus.Cancelled)
+                return (false, "The order is already cancelled by the user");
+
+            if (order.OrderStatus == OrderStatus.Rejected)
+                return (false, "The order is already rejected");
 
             order.OrderStatus = OrderStatus.Rejected;
 

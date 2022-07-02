@@ -34,10 +34,22 @@ public class ItemController : ControllerBase
     /// Get items for sale with category and seller details
     /// </summary>
     /// <param name="itemName">Search items by item name (optional)</param>
-    [HttpGet(ApiRoutes.Items.GetAll)]
+    [HttpGet(ApiRoutes.Items.GetForSale)]
     public async Task<IActionResult> GetForSaleAsync([FromQuery] string? itemName, [FromQuery] PaginationFilter paginationFilter)
     {      
         var paginationResponse = await _itemService.GetForSaleAsync(itemName, paginationFilter);
+
+        return Ok(paginationResponse);
+    }
+
+    /// <summary>
+    /// Get items for sale with by category
+    /// </summary>
+    /// <param name="itemName">Search items by item name (optional)</param>
+    [HttpGet(ApiRoutes.Items.GetForSaleByCategory)]
+    public async Task<IActionResult> GetForSaleByCategoryAsync([FromQuery] int categoryId, [FromQuery] string? itemName, [FromQuery] PaginationFilter paginationFilter)
+    {
+        var paginationResponse = await _itemService.GetForSaleByCategoryAsync(categoryId, itemName, paginationFilter);
 
         return Ok(paginationResponse);
     }

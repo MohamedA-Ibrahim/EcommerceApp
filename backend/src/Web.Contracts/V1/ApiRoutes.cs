@@ -19,7 +19,9 @@ public static class ApiRoutes
     {
         public const string Get = Base + "/items/{itemId}";
         public const string GetWithOrders = Base + "/items/d/{itemId}";
-        public const string GetAll = Base + "/items";
+        public const string GetForSale = Base + "/items";
+        public const string GetForSaleByCategory = Base + "/items/{categoryId}";
+
         public const string GetUserItems = Base + "/user/items";
         public const string Update = Base + "/items/{itemId}";
         public const string Delete = Base + "/items/{itemId}";

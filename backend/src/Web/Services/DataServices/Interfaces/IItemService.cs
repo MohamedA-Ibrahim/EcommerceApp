@@ -15,5 +15,6 @@ namespace Web.Services.DataServices.Interfaces
         Task<PagedResponse<ItemResponse>> GetForSaleAsync(string itemName = null, PaginationFilter paginationFilter = null);
         Task<PagedResponse<ItemResponse>> GetPostedByUserAsync(PaginationFilter paginationFilter);
         Task<(Item item, string message)> UpdateAsync(int itemId, UpdateItemRequest request);
+        Task<PagedResponse<ItemResponse>> GetForSaleByCategoryAsync(int categoryId, string itemName = null, PaginationFilter paginationFilter = null);
     }
 }

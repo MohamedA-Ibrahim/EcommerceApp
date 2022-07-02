@@ -124,7 +124,7 @@ namespace Web.Controllers.User
         #region Search
         public async Task<IActionResult> Search(string query)
         {
-            return View(_itemServices);
+            return View((await _itemServices.GetForSaleAsync(query,null)).Data);
         }
         #endregion
 

@@ -19,7 +19,7 @@
         <li class="nav-item">
             <a class="nav-link " asp-controller="Orders" asp-action="Index"><i class="bi bi-boxes"></i>My Orders</a>
         </li>
-        
+
         @if (User.IsInRole("Admin"))
         {
             <li class="nav-item">
@@ -36,6 +36,10 @@
     </div>
     </li>*@
 </ul>
+<div class="d-flex" role="search">
+    <input id="search" class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+    <button class="btn btn-outline-success" onclick="Search('#search')" type="button"><i class="bi bi-search"></i></button>
+</div>
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))
     {

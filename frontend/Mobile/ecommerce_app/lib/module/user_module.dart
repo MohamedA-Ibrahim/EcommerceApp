@@ -1,6 +1,7 @@
 import 'package:ecommerce_app/layout/create_order_screen.dart';
 import 'package:ecommerce_app/layout/items_by_user.dart';
 import 'package:ecommerce_app/layout/order_created_by_loged_user_screen.dart';
+import 'package:ecommerce_app/layout/user_address_screen.dart';
 import 'package:ecommerce_app/layout/your_purchases_screen.dart';
 import 'package:ecommerce_app/share/app_cubit.dart';
 import 'package:ecommerce_app/share/app_state.dart';
@@ -29,6 +30,26 @@ class _UserModuleState extends State<UserModule> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                TextButton(
+                  onPressed: ()
+                  {
+                    cubit.getUserAddress_userAddressScreen();
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => UserAddressScreen()));
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    height: 40,
+                    color: Colors.blue,
+                    child: Center(
+                      child: Text(
+                        "Your Address",
+                        style: TextStyle(
+                            color: Colors.white
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
                 TextButton(
                   onPressed: ()
                   {

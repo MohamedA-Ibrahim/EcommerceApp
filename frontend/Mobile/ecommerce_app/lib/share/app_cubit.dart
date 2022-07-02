@@ -117,6 +117,13 @@ class AppCubit extends Cubit<AppStates>
   //variabel for order requested by other User Screen
   List<RequestedOrderModel> requestedOrder_orderRequestedByOtherUserScreen = [];
 
+  //variabel for user Address Screen
+  AddressModel? userAddress_userAddressScreen;
+  TextEditingController phoneNumberController_userAddressScreen = TextEditingController();
+  TextEditingController streetAddressController_userAddressScreen = TextEditingController();
+  TextEditingController cityController_userAddressScreen = TextEditingController();
+  TextEditingController recieverNameController_userAddressScreen = TextEditingController();
+
   AppCubit() : super(AppInitState());
 
   static AppCubit get(BuildContext context) => BlocProvider.of(context);
@@ -1035,6 +1042,47 @@ class AppCubit extends Cubit<AppStates>
     });
   }
 
+  //function for user Address Screen
+  void getUserAddress_userAddressScreen()
+  {
+    dio.getUserAddress().then((value)
+    {
+      if(value.statusCode == 200)
+        {
+          userAddress_userAddressScreen = AddressModel.fromJson(value.data);
+          phoneNumberController_userAddressScreen.text = userAddress_userAddressScreen!.phoneNumber;
+          streetAddressController_userAddressScreen.text = userAddress_userAddressScreen!.streetAddress;
+          cityController_userAddressScreen.text = userAddress_userAddressScreen!.city;
+          recieverNameController_userAddressScreen.text = userAddress_userAddressScreen!.recieverName;
+          emit(AppChangeState());
+        }
+      else
+        {
+          Log.faildResponse(value, "Get user address");
+        }
+    }).catchError((e)
+    {
+
+    });
+  }
+  void postUserAddress_userAddressScreen(String phoneNumber, String streetAddress, String city, String recieverName)
+  {
+    dio.postUserAddress(phoneNumber, streetAddress, city, recieverName).then((value)
+    {
+      if(value.statusCode == 200)
+        {
+          getUserAddress_userAddressScreen();
+          Fluttertoast.showToast(msg: "Success", toastLength: Toast.LENGTH_LONG);
+        }
+      else
+        {
+          Log.faildResponse(value, "post user Address");
+        }
+    }).catchError((e)
+    {
+      Log.catchE(e);
+    });
+  }
 }
 
 //ImCG4IInMiIAZM1tIW1KHn4e1JM=

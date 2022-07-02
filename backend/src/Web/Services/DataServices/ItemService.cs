@@ -28,12 +28,12 @@ namespace Web.Services
             _currentUserService = currentUserService;
         }
 
-        public async Task<PagedResponse<ItemResponse>> GetForSaleAsync(string itemName=null, PaginationFilter paginationFilter=null)
+        public async Task<PagedResponse<ItemResponse>> GetForSaleAsync(string query=null, PaginationFilter paginationFilter=null)
         {
             List<Item> items;
 
-            if (itemName != null)
-                items = await _unitOfWork.Item.GetAllIncludingAsync(x => !x.Sold && x.Name.Contains(itemName), paginationFilter, x => x.Category, u => u.Seller);
+            if (query != null)
+                items = await _unitOfWork.Item.GetAllIncludingAsync(x => !x.Sold && (x.Name.Contains(query)|| x.Category.Name.Contains(query)), paginationFilter, x => x.Category, u => u.Seller);
             else
                 items = await _unitOfWork.Item.GetAllIncludingAsync(x => !x.Sold, paginationFilter, x => x.Category, u => u.Seller);
 
@@ -90,6 +90,7 @@ namespace Web.Services
         {
             return await _unitOfWork.Item.GetFirstOrDefaultAsync(itemId);
         }
+
         public async Task<Item> GetWithDetailsAsync(int itemId)
         {
             var iqItem = _unitOfWork.Item.DBSet.Where(x => x.Id == itemId)

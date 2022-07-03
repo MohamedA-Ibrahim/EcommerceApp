@@ -137,6 +137,11 @@ class _ItemsDetailsScreenState extends State<ItemsDetailsScreen>
                   TextButton(
                     onPressed: ()
                     {
+                      cubit.getUserAddress_userAddressScreen();
+                      cubit.phoneNumberController_createOrderScreen.text = cubit.userAddress_userAddressScreen!.phoneNumber;
+                      cubit.recieverNameController_createOrderScreen.text = cubit.userAddress_userAddressScreen!.recieverName;
+                      cubit.cityController_createOrderScreen.text = cubit.userAddress_userAddressScreen!.city;
+                      cubit.streetAddressController_createOrderScreen.text = cubit.userAddress_userAddressScreen!.streetAddress;
                       Navigator.push(context, MaterialPageRoute(builder: (context) => CreateOrderScreen(item.id!)));
                     },
                     child: Container(

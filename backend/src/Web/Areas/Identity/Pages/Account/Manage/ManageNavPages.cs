@@ -23,7 +23,7 @@ namespace  Web.Areas.Identity.Pages.Account.Manage
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
-        public static string Addresses => "Addresses";
+        public static string Address => "Address";
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -76,7 +76,7 @@ namespace  Web.Areas.Identity.Pages.Account.Manage
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
-        public static string AddressesNavClass(ViewContext viewContext) => PageNavClass(viewContext, Addresses);
+        public static string AddressNavClass(ViewContext viewContext) => PageNavClass(viewContext, Address);
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used

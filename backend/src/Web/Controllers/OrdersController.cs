@@ -18,15 +18,17 @@ namespace Web.Controllers
         private readonly IOrderService _orderService;
         private readonly IItemService _itemService;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IUserAddressService _userAddressService;
         private readonly UserManager<ApplicationUser> _userManger;
 
-        public OrdersController(IUnitOfWork unitOfWork, IOrderService orderService, IItemService itemService, UserManager<ApplicationUser> userManger, ICurrentUserService currentUserService)
+        public OrdersController(IUnitOfWork unitOfWork, IOrderService orderService, IItemService itemService, UserManager<ApplicationUser> userManger, ICurrentUserService currentUserService, IUserAddressService userAddressService)
         {
             _unitOfWork = unitOfWork;
             _orderService = orderService;
             _itemService = itemService;
             this._userManger = userManger;
             _currentUserService = currentUserService;
+            _userAddressService = userAddressService;
         }
         #endregion
 
@@ -63,7 +65,24 @@ namespace Web.Controllers
                 return RedirectToAction("Details", "Item", new { id = item.Id });
             }
 
-            return View(new Order() { Item = item, PhoneNumber = user.PhoneNumber, RecieverName = user.ProfileName, ItemId = item.Id });
+            var userAddress = await _userAddressService.GetUserAddressAsync();
+
+            if(userAddress == null)
+                return View(new Order()
+                {
+                    Item = item,
+                    PhoneNumber = user.PhoneNumber,
+                    RecieverName = user.ProfileName,
+                    ItemId = item.Id
+                });
+            else
+            return View(new Order() { 
+                Item = item,
+                PhoneNumber = userAddress.PhoneNumber,
+                RecieverName = userAddress.RecieverName,
+                StreetAddress = userAddress.StreetAddress,
+                City = userAddress.City,
+                ItemId = item.Id });
         }
 
         /// <summary>

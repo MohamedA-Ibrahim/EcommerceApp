@@ -18,6 +18,10 @@ To run the API or the WebUI:
 - Apply Migrations
 - Run "Web" project
 
+## Permissions
+There are two roles in the app, user and admin. only admin can create categories and their attributes.
+You can find the login details for the admin [here](backend/src/Infrastructure/Persistence/ApplicationDbContextSeed.cs)
+
 ## Demo
 * [Api](https://ecommerce-web-demo.herokuapp.com/swagger/index.html)
 * [WebUI](https://ecommerce-web-demo.herokuapp.com/)

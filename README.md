@@ -13,14 +13,11 @@ Currently it has four projects:
 * WebApi
 
 ## How to run
-To run the API:
+To run the API or the WebUI:
 - First make sure you have sql server installed, then configure the connectionString in the appsettings.json in WebApi project
-- Run "WebApi" project
-
-To run the frontend web
-- Make sure that the api program is running
-- build and run the front end project when 
+- Apply Migrations
+- Run "Web" project
 
 ## Demo
-* [Api](https://ecommeapi.azurewebsites.net/swagger/index.html)
-* [WebUI (WIP)](https://ecommeapi.azurewebsites.net/)
+* [Api](https://ecommerce-web-demo.herokuapp.com/swagger/index.html)
+* [WebUI](https://ecommerce-web-demo.herokuapp.com/)

@@ -18,6 +18,7 @@ public class Program
 
             var context = services.GetRequiredService<ApplicationDbContext>();
 
+
             var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
             var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 

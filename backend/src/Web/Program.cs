@@ -1,7 +1,6 @@
 using Domain.Entities;
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Web;
 
 namespace WebUI;
@@ -17,7 +16,6 @@ public class Program
             var services = scope.ServiceProvider;
 
             var context = services.GetRequiredService<ApplicationDbContext>();
-
 
             var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
             var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();

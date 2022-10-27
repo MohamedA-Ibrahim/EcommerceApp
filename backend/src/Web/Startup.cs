@@ -48,6 +48,7 @@ public class Startup
         {
             app.UseDeveloperExceptionPage();
             app.UseMigrationsEndPoint();
+
         }
         else
         {

@@ -20,10 +20,11 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseNpgsql(
+            options.UseSqlServer(
                 configuration.GetConnectionString("DefaultConnection"),
                 b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
 
+        
         services.AddScoped(provider => (IApplicationDbContext)provider.GetRequiredService<ApplicationDbContext>());
 
         services.AddDefaultIdentity<ApplicationUser>(options =>
@@ -55,44 +56,8 @@ public static class DependencyInjection
         };
 
         services.AddSingleton(tokenValidationParameters);
-
-        //services.AddAuthentication(x =>
-        //    {
-        //        x.DefaultAuthenticateScheme = "JWT_OR_COOKIE";
-        //        x.DefaultScheme = "JWT_OR_COOKIE";
-        //        x.DefaultChallengeScheme = "JWT_OR_COOKIE";
-        //    }).AddCookie(cfg =>
-        //    {
-        //        cfg.SlidingExpiration = false;
-        //        cfg.LoginPath = "/Identity/Account/Login";
-        //        cfg.LogoutPath = "/Identity/Account/Logout";
-        //        cfg.ExpireTimeSpan = new TimeSpan(30, 0, 0, 0);
-        //    })
-        //    .AddJwtBearer(x =>
-        //    {
-        //        x.SaveToken = true;
-        //        x.TokenValidationParameters = tokenValidationParameters;
-
-        //    }).AddPolicyScheme("JWT_OR_COOKIE", "JWT_OR_COOKIE", options =>
-        //    {
-        //        // runs on each request
-        //        options.ForwardDefaultSelector = context =>
-        //        {
-        //            // filter by auth type
-        //            string authorization = context.Request.Headers[HeaderNames.Authorization];
-        //            if (!string.IsNullOrEmpty(authorization) && authorization.StartsWith("Bearer"))
-        //                return "Bearer";
-
-        //            // otherwise always check for cookie auth
-        //            return "Cookies";
-        //        };
-        //    });
+        
         services.AddAuthentication()
-        //.AddFacebook(facebookOptions =>
-        //{
-        //    facebookOptions.AppId = configuration["FacebookAuthSettings:AppId"];
-        //    facebookOptions.AppSecret = configuration["FacebookAuthSettings:AppSecret"];
-        //})
         .AddJwtBearer(x =>
             {
                 x.SaveToken = true;

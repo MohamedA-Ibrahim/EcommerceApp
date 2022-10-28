@@ -47,15 +47,13 @@ public class Startup
         if (env.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
-            app.UseMigrationsEndPoint();
-
         }
         else
         {
             app.UseExceptionHandler("/Error");
         }
 
-        app.UseHttpsRedirection();
+        //app.UseHttpsRedirection();
         app.UseStaticFiles();
 
         var swaggerOptions = new SwaggerSettings();

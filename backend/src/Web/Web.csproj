@@ -9,9 +9,6 @@
         <UserSecretsId>01a0aa59-1eea-4751-8216-2db95476fceb</UserSecretsId>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <DebugType>full</DebugType>
-        <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
-        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-        <DockerfileContext>..\..</DockerfileContext>
     </PropertyGroup>
 
     <ItemGroup>
@@ -20,18 +17,18 @@
         <PackageReference Include="Azure.Storage.Blobs" Version="12.14.1" />
         <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />
         <PackageReference Include="MailKit" Version="3.4.2" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="6.0.10" />
-        <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.10" />
-        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.10" />
-        <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.10" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.10" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.10">
+          <TreatAsUsed>true</TreatAsUsed>
+        </PackageReference>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.10">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+          <TreatAsUsed>true</TreatAsUsed>
         </PackageReference>
         <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.10">
           <ExcludeAssets></ExcludeAssets>
+          <TreatAsUsed>true</TreatAsUsed>
         </PackageReference>
         <PackageReference Include="MimeKit" Version="3.4.2" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />

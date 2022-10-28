@@ -14,7 +14,6 @@ namespace Web
     {
         public static IServiceCollection AddWebUIServices(this IServiceCollection services)
         {
-            services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddSingleton<ICurrentUserService, CurrentUserService>();
             services.AddSingleton<IEmailService, EmailService>();
             services.AddScoped<IAttributeTypeServices, AttributeTypeServices>();

@@ -22,6 +22,3 @@ To run the API or the WebUI:
 There are two roles in the app, user and admin. only admin can create categories and their attributes.
 You can find the login details for the admin [here](backend/src/Infrastructure/Persistence/ApplicationDbContextSeed.cs)
 
-## Demo
-* [Api](http://129.151.247.108//swagger/index.html)
-* [WebUI](http://129.151.247.108/)
